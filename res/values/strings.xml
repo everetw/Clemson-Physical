@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ClemsonPhysical</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_exercise_view">ExerciseView</string>
+    <string name="title_activity_log_view">LogView</string>
+    <string name="title_activity_compare_view">CompareView</string>
+    <string name="title_activity_user_video_view">UserVideoView</string>
+    <string name="title_activity_practitioner_video_view">PractitionerVideoView</string>
+    <string name="pref_username">User</string>
+    <string name="pref_username_desc">Patient\'s name</string>
+    <string name="pref_practitioner">Practitioner</string>
+    <string name="pref_practitioner_desc">Practitioner\'s name</string>
+    <string name="checkbox">Video Annotation</string>
+    <string name="checkbox_desc">Toggle annotation while watching videos</string>
+    <string name="title_activity_info_view">InfoView</string>
+
+</resources>
