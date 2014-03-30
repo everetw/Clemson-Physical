@@ -17,7 +17,7 @@ public class PractitionerVideoView extends VideoPlayerActivity {
 	}
 	
 	@Override
-	public void addAnnotation()
+	public void Annotate()
 	{
 		if (videoView.isPlaying())
 		{
@@ -28,6 +28,12 @@ public class PractitionerVideoView extends VideoPlayerActivity {
 			textView.setVisibility(View.VISIBLE);
 		}
 			
+	}
+
+	@Override
+	protected String getVideoSubdirectory() {
+		
+		return "exercises";
 	}
 
 

@@ -19,29 +19,68 @@ public class Exercise extends DatabaseObject {
 	 * 
 	 */
 	private static final long serialVersionUID = 3626262735123169717L;
-
+	private String exercise_name;
+	private String exercise_video_url;
+	private String exercise_instruction_url;
+	private String exercise_file_location;
+	
 	/**
-	 * 
+	 * 		"CREATE TABLE \"exercise\"(\n" +
+		"  \"idexercise\" INTEGER PRIMARY KEY NOT NULL,\n"+
+		"  \"exercise_name\" VARCHAR(45) NOT NULL,\n"+
+		"  \"exercise_video_url\" VARCHAR(127),\n"+
+		"  \"exercise_instruction_url\" VARCHAR(127),\n"+
+		"  \"exercise_file_location\" VARCHAR(127),\n"+
+		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
+		"  \"update_time\" TIMESTAMP\n"+
+		");",
 	 */
 	public Exercise() {
-		// TODO Auto-generated constructor stub
+		this(0,"","","","");
+	}
+	
+	public Exercise(int id, String name, String video_url, String instruction_url, String file_location)
+	{
+		this.id = id;
+		this.exercise_name = name;
+		this.exercise_file_location = file_location; 
+		this.exercise_instruction_url = instruction_url;
+		this.exercise_video_url = video_url;
 	}
 
 	/**
 	 * @param id
 	 */
 	public Exercise(int id) {
-		super(id);
-		// TODO Auto-generated constructor stub
+		this(id,"","","","");
 	}
 
+	public String getExerciseName()
+	{
+		return this.exercise_name;
+	}
+	
+	public void setExerciseName(String name)
+	{
+		this.exercise_name = name;	
+	}
+	
+	public String getFileLocation()
+	{
+		return this.exercise_file_location; 	
+	}
+	
+	public void setFileLocation(String file_location)
+	{
+		this.exercise_file_location = file_location;
+	}
 	/* (non-Javadoc)
 	 * @see com.example.clemsonphysical.DatabaseObject#getTableName()
 	 */
 	@Override
 	public String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
+
+		return "exercise";
 	}
 
 	/* (non-Javadoc)

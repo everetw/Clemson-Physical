@@ -32,7 +32,7 @@ import android.widget.VideoView;
 
 /// Fix surface has been released problem https://androidproblem.wordpress.com/category/mediaplayer/
 
-public class VideoPlayerActivity extends DisplayActivity implements OnCompletionListener {
+public abstract class VideoPlayerActivity extends DatabaseActivity implements OnCompletionListener {
 
 
 	protected VideoView videoView;
@@ -184,7 +184,7 @@ public class VideoPlayerActivity extends DisplayActivity implements OnCompletion
 	    	break;
 
 	    case R.id.action_add_annotation:
-	    	addAnnotation();
+	    	Annotate();
 	    	break;
 	    	
 	    case R.id.action_annotation_list:
@@ -203,10 +203,8 @@ public class VideoPlayerActivity extends DisplayActivity implements OnCompletion
 	    return true;
 	}
 
-	public void addAnnotation()
-	{
-		
-	}
+	public abstract void Annotate();
+
 
 	
     public void dispatchSelectImageIntent(ImageView iv, TextView tv)
@@ -317,7 +315,7 @@ public class VideoPlayerActivity extends DisplayActivity implements OnCompletion
 	    // Create an video file name
 	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 	    String videoFileName = "VID_" + timeStamp + "_";
-	    File storageDir = this.getExternalFilesDir("videos");
+	    File storageDir = this.getExternalFilesDir(getVideoSubdirectory());
 	    File video = File.createTempFile(
 	        videoFileName,  /* prefix */
 	        ".mp4",         /* suffix */
@@ -453,6 +451,7 @@ public class VideoPlayerActivity extends DisplayActivity implements OnCompletion
 	    mediaUri = savedInstanceState.getParcelable("media_uri");
 	}
     
+	protected abstract String getVideoSubdirectory();
 	
 	
 }

@@ -1,19 +1,41 @@
 package com.example.clemsonphysical;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
 
 public class UserVideoView extends VideoPlayerActivity {
 
+	private TextView textView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_user_video_view);
+		textView = (TextView)findViewById(R.id.textView1);
+		//setContentView(R.layout.activity_practitioner_video_view);
 	}
 	
-	public void Annotate(){
-		//to be filled out at a later date
+	@Override
+	public void Annotate()
+	{
+		if (videoView.isPlaying())
+		{
+			videoView.pause();
+			int currentTime = videoView.getCurrentPosition();
+			textView.setText(Integer.toString(currentTime));
+			textView.setTextColor(Color.rgb(255, 255, 255));
+			textView.setVisibility(View.VISIBLE);
+		}
+			
+	}
+	
+
+
+	@Override
+	protected String getVideoSubdirectory() {
+		
+		return "userlog";
 	}
 
 }

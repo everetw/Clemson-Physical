@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AndroidLookup</title>
+</head>
+<body>
+<h1>Car Maintenance</h1>
+<h2>Version: 0.2</h2>
+<h2>By: James Burton</h2>
+This program implements a database that keeps track of maintenance for your various vehicles. It can be used by an individual, a family, or a fleet/motor pool.
+<p>
+Add information into the tables on the screen. Each screen corresponds to a table in the schema.
+<p>
+<h2>Database Schema</h2>
+<a href="Schema.png"><img alt="Schema" src="Schema.png?w=303" width="303" height="202" /></a>
+<p>
+<strong>Vehicle</strong>: Vehicle (e.g. Batmobile)
+<p>
+<strong>Item</strong>: Maintenance Item (e.g. Change the oil every 5000 miles or 6 months.)
+<p>
+<strong>Location</strong>: Service shop. (e.g. Jiffy Lube)
+<p>
+<strong>Receipt</strong>: All work done at a location, and date (e.g. Service at Jiffy Lube on 2/22/2014)
+<p>
+<strong>Work</strong>: Work performed (e.g. Change the oil as part of service done at Jiffy Lube on 2/22/2014 for Batmobile).
+<p>
+<strong><em>Changes for 0.2:
+<p>
+</em></strong><em>Timestamps were added, but not used. Also mileage was moved from Receipt table to Work table because of it's association with a Vehicle.</em>
+<p>
+<em>This schema applies to both the internal and the external database. Data is stored on the external database and mirrored on the internal database for caching purposes. The only difference between the schemas is that are indices are only automatically generated on the external database.</em>
+<p>
+<em>Currently, the app assumes the external data is always right and the internal data is expendable. Data integrity is maintained by the internal SQLite database not being updated unless the external MySQL database has been successfully updated. A menu option on the main screen will force a refresh of the internal database from the external database.
+</em>
+<p>
+<h2>Preferences</h2>
+<p>
+<b>Autosave</b>
+<ul>
+<li>Should App automatically save changes or require you to press save button?</li>
+</ul>
+<p>
+<b>Color Theme</b>
+<ul>
+<li>Color for table selection highlighting. Default is Blue.</li>
+</ul>
+<p>
+<b>BaseURL</b>
+<ul>
+<li>URL location of scripts to access external database. Be sure to include trailing /</li>
+</ul>
+<p>
+
+<h1>Cool Stuff</h1>
+<p>
+<b>Version 0.2</b>
+<ul>
+<li>Multiple color select on table screens.</li>
+<li>Detail screens for Work and Receipt tables.</li>
+<li>Image capture.</li>
+<li>File I/O. Receipt images are saved in Application directory on the external SD card.</li>
+<li>Database synchronization.</li>
+</ul>
+<p>
+<b>Version 0.1</b>
+<ul>
+<li>Date Picker Dialog</li>
+<li>Image Selection from Android gallery</li>
+<li>Dynamically generated spinners</li>
+<li>Dynamic table generation</li>
+<li>HTML about page</li>
+<li>Multiple action bars</li>
+</ul>
+<h1>Acknowlegements</h1>
+<h2>Version 0.2</h2>
+<h3>Images</h3>
+Started with this <a href="//developer.android.com/training/camera/photobasics.html">http://developer.android.com/training/camera/photobasics.html</a> <strong>BUT</strong>, the tutorial has an error. See <a href="http://stackoverflow.com/questions/13912095/java-lang-nullpointerexception-on-bundle-extras-data-getextras">http://stackoverflow.com/questions/13912095/java-lang-nullpointerexception-on-bundle-extras-data-getextras</a>
+<p>
+Android Hive working with Camera API: <a href="http://www.androidhive.info/2013/09/android-working-with-camera-api/">http://www.androidhive.info/2013/09/android-working-with-camera-api/</a>
+<p>
+Rotating images from <a href="http://www.higherpass.com/Android/Tutorials/Working-With-Images-In-Android/3/">http://www.higherpass.com/Android/Tutorials/Working-With-Images-In-Android/3/</a>
+<p>
+Dialog to pick image from camera: <a href="http://stackoverflow.com/questions/10165302/dialog-to-pick-image-from-gallery-or-from-camera">http://stackoverflow.com/questions/10165302/dialog-to-pick-image-from-gallery-or-from-camera</a>
+<p>
+How to delete a file:<a href="http://www.mkyong.com/java/how-to-delete-file-in-java/"> http://www.mkyong.com/java/how-to-delete-file-in-java/</a>
+<p>
+<h3>Detail Screens</h3>
+<p>
+Passing an object in an intent: <a href="http://www.tutorialspoint.com/java/java_serialization.htm">http://www.tutorialspoint.com/java/java_serialization.htm</a>
+<p>
+<h3>Preferences</h3>
+<p>
+Preferences from <a href="http://developer.android.com/guide/topics/data/data-storage.html">http://developer.android.com/guide/topics/data/data-storage.html</a>
+<p>
+Settings dialog derived from information at <a href="http://developer.android.com/guide/topics/ui/settings.html">http://developer.android.com/guide/topics/ui/settings.html</a>
+<p>
+Radio button in preferences: <a href="http://stackoverflow.com/questions/6148952/how-to-get-selected-text-and-value-android-listpreference">http://stackoverflow.com/questions/6148952/how-to-get-selected-text-and-value-android-listpreference</a> and <a href="//stackoverflow.com/questions/4966816/how-to-create-radiobutton-group-in-preference-xml-window">http://stackoverflow.com/questions/4966816/how-to-create-radiobutton-group-in-preference-xml-window</a>
+<p>
+<h3>Database</h3>
+<p>
+Everything you need to know about connecting an Android application to a MySQL database via PHP. <strong>BEST. TUTORIAL. EVER.</strong> <a href="http://www.androidhive.info/2012/05/how-to-connect-android-with-php-mysql/">http://www.androidhive.info/2012/05/how-to-connect-android-with-php-mysql/</a>
+<p>
+Testing http POST/GET with curl <a href="http://stackoverflow.com/questions/1087185/http-testing-tool-easily-send-post-get-put">http://stackoverflow.com/questions/1087185/http-testing-tool-easily-send-post-get-put</a>
+<p>
+Workaround for truncating table that is a foreign key in MySQL: <a href="http://stackoverflow.com/questions/5452760/truncate-foreign-key-constrained-table">http://stackoverflow.com/questions/5452760/truncate-foreign-key-constrained-table</a>
+<p>
+<h3>Other</h3>
+<p>
+Eclipse PTI-PHP Tool integration plugin. Available in the Eclipse Marketplace. Update site is at http://www.phpsrc.org/eclipse/pti/
+<p>
+MacOS Mavericks built-in Apache server. Great for development testing.
+<p>
+<h2>Version 0.1</h2>
+Richard Kelly for pointing me to FluidUi for user interface design <a href="https://www.fluidui.com/">https://www.fluidui.com/</a>
+<p>
+MySqlWorkbench for table generation. <a href="http://www.mysql.com/products/workbench/">http://www.mysql.com/products/workbench/</a>
+<p>
+Thomas Henlich's SQLite plugin for MySQLWorkBench <a href="http://www.henlich.de/software/sqlite-export-plugin-for-mysql-workbench/">http://www.henlich.de/software/sqlite-export-plugin-for-mysql-workbench/</a>
+<p>
+Vogella Tutorials for the Image Picker <a href="http://blog.vogella.com/2011/09/13/android-how-to-get-an-image-via-an-intent/">http://blog.vogella.com/2011/09/13/android-how-to-get-an-image-via-an-intent/</a>
+<p>
+Database handler from <a href="http://www.androidhive.info/2011/11/android-sqlite-database-tutorial/">http://www.androidhive.info/2011/11/android-sqlite-database-tutorial/</a>
+<p>
+Create spinner from array <a href="http://stackoverflow.com/questions/2784081/android-create-spinner-programmatically-from-array">http://stackoverflow.com/questions/2784081/android-create-spinner-programmatically-from-array</a>
+<p>
+Date picker dialog from <a href="http://www.learn-android-easily.com/2013/06/datepicker-and-timepicker-dialog-in.html">http://www.learn-android-easily.com/2013/06/datepicker-and-timepicker-dialog-in.html</a>
+<p>
+And TONS more from <a href="http://stackoverflow.com">http://stackoverflow.com</a> and <a href="http://developer.android.com/">http://developer.android.com/</a>
+<p>
+All icons (besides those that come with Android) were downloaded from <a href="http://findicons.com/">http://findicons.com/</a>
+<p>
+Plus, Eclipse is just awesome, in case you didn't know that by now.
+<p>
+</body>
+</html>
