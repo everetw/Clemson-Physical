@@ -151,7 +151,7 @@ public abstract class DatabaseActivity extends DisplayActivity {
             try {
                 // Building Parameters
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair(myDatabaseObject.KEY_ID, Integer.toString(myDatabaseObject.getID())));
+                        params.add(new BasicNameValuePair(myDatabaseObject.KEY_ID, Integer.toString(myDatabaseObject.getId())));
                         
                         
  
@@ -298,7 +298,7 @@ public abstract class DatabaseActivity extends DisplayActivity {
             try {
                 // Building Parameters
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair(myDatabaseObject.KEY_ID, Integer.toString(myDatabaseObject.getID())));
+                params.add(new BasicNameValuePair(myDatabaseObject.KEY_ID, Integer.toString(myDatabaseObject.getId())));
  
                 // getting product details by making HTTP request
                 JSONObject json = jsonParser.makeHttpRequest(
@@ -629,7 +629,7 @@ public abstract class DatabaseActivity extends DisplayActivity {
 
 		    for (int index = 0; index < databaseObjectList.size(); index++)
 		    {
-		    	System.err.println("Adding id"+databaseObjectList.get(index).getID()+" for table "+databaseObjectList.get(index).getTableName());
+		    	System.err.println("Adding id"+databaseObjectList.get(index).getId()+" for table "+databaseObjectList.get(index).getTableName());
 		    	databaseObjectList.get(index).add(dbSQLite);
 		    }
 

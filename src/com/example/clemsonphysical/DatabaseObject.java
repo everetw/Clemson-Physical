@@ -7,6 +7,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+
 
 /// Class Must be serializable to pass in intent. 
 /// http://www.tutorialspoint.com/java/java_serialization.htm
@@ -71,12 +75,12 @@ public abstract class DatabaseObject implements java.io.Serializable
 	
 
 	
-	public void setID(int id)
+	public void setId(int id)
 	{
 		this.id=id;
 	}
 	
-	public int getID()
+	public int getId()
 	{
 		return this.id;
 	}
@@ -85,15 +89,36 @@ public abstract class DatabaseObject implements java.io.Serializable
 	
 	public abstract List<NameValuePair> getParams();
 	public abstract void setObjectFromJSON(JSONObject j) throws JSONException;
-	public abstract void update(DatabaseHandler db);
-	public abstract void add(DatabaseHandler db) throws Exception;
-	public abstract void delete(DatabaseHandler db);
-	public abstract DatabaseObject selectByID(DatabaseHandler db) throws Exception;
-	public abstract List<DatabaseObject> selectAll(DatabaseHandler db);
+	public abstract int update(DatabaseHandler dbh);
+	public abstract void add(DatabaseHandler dbh) throws Exception;
+
+	public void delete(DatabaseHandler dbh) {
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        db.delete(this.getTableName(), KEY_ID + " = ?",
+                new String[] { String.valueOf(this.getId()) });
+
+	}
 	
-	public void deleteAll(DatabaseHandler db) {
-		// TODO Auto-generated method stub
-		db.deleteAllRecordsFromTable(getTableName());
+	public int getCount(DatabaseHandler dbh)
+	{
+        String countQuery = "SELECT  * FROM " + this.getTableName();
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.close();
+ 
+        // return count
+        int count =  cursor.getCount();
+        
+        
+        return count;
+	}
+
+	public abstract DatabaseObject selectById(DatabaseHandler dbh) throws Exception;
+	public abstract List<DatabaseObject> selectAll(DatabaseHandler dbh);
+	
+	public void deleteAll(DatabaseHandler dbh) 
+	{
+		dbh.deleteAllRecordsFromTable(getTableName());
 	}
 		
 	

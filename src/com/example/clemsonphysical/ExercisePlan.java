@@ -6,7 +6,15 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
 public class ExercisePlan extends DatabaseObject {
+	
+	
+	public static final String KEY_ID = "idexercise_plan";
+	public static final String KEY_EXERCISE_PLAN_NAME =  "exercise_plan_name";
+	public static final String KEY_EXERCISE_PLAN_DESCRIPTION = "exercise_plan_description";
 	
 //	"CREATE TABLE \"exercise_plan\"(\n"+
 //	"  \"idexercise_plan\" INTEGER PRIMARY KEY NOT NULL,\n"+
@@ -34,22 +42,22 @@ public class ExercisePlan extends DatabaseObject {
 		this.exercise_plan_description = plan_description;
 	}
 	
-	public String getPlanName()
+	public String getName()
 	{
 		return this.exercise_plan_name;
 	}
 	
-	public void setPlanName(String plan_name)
+	public void setName(String plan_name)
 	{
 		this.exercise_plan_name = plan_name;
 	}
 	
-	public String getPlanDescription()
+	public String getDescription()
 	{
 		return this.exercise_plan_description;
 	}
 	
-	public void SetPlanDescription(String plan_description)
+	public void SetDescription(String plan_description)
 	{
 		this.exercise_plan_description = plan_description;
 	}
@@ -72,25 +80,43 @@ public class ExercisePlan extends DatabaseObject {
 	}
 
 	@Override
-	public void update(DatabaseHandler db) {
-		// TODO Auto-generated method stub
+	public int update(DatabaseHandler dbh) {
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, this.getId());
+        values.put(KEY_EXERCISE_PLAN_NAME, this.getName());
+        values.put(KEY_EXERCISE_PLAN_DESCRIPTION, this.getDescription());
+
+ 
+        // updating row
+        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+                new String[] { String.valueOf(getId()) });
+        
+        
+        return rc;
+
 
 	}
 
 	@Override
-	public void add(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
+	public void add(DatabaseHandler dbh) throws Exception {
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        //values.put(KEY_ID, this.getId());
+        values.put(KEY_EXERCISE_PLAN_NAME, this.getName());
+        values.put(KEY_EXERCISE_PLAN_DESCRIPTION, this.getDescription());
 
+		
+        // Inserting Row
+        db.insertOrThrow(this.getTableName(), null, values);
 	}
 
-	@Override
-	public void delete(DatabaseHandler db) {
-		// TODO Auto-generated method stub
 
-	}
 
 	@Override
-	public DatabaseObject selectByID(DatabaseHandler db) throws Exception {
+	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

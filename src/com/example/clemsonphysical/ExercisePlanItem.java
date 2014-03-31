@@ -6,8 +6,17 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
 public class ExercisePlanItem extends DatabaseObject {
 
+	public static final String KEY_ID = "exercise_plan_item_id";
+	public static final String KEY_EXERCISE_PLAN_IDEXERCISE_PLAN = "exercise_plan_idexercise_plan";
+	public static final String KEY_EXERCISE_IDEXERCISE = "exercise_idexercise";
+	public static final String KEY_EXERCISE_PLAN_ITEM_SEQUENCE = "exercise_plan_item_sequence";
+	public static final String KEY_EXERCISE_PLAN_ITEM_QUANTITY = "exercise_plan_item_quantity";
+	public static final String KEY_EXERCISE_PLAN_ITEM_DESCRIPTION = "exercise_plan_item_description";
 
 //	"CREATE TABLE \"exercise_plan_item\"(\n"+
 //	"  \"exercise_plan_item_id\" INTEGER PRIMARY KEY NOT NULL,\n"+
@@ -37,13 +46,14 @@ public class ExercisePlanItem extends DatabaseObject {
 	}
 
 	public ExercisePlanItem(int id) {
-		this(id,0,0,0,"");
+		this(id,0,0,0,0,"");
 		
 	}
 	
-	public ExercisePlanItem(int id, int exercise_id, int sequence, int quantity, String description) 
+	public ExercisePlanItem(int id, int exercise_id, int exercise_plan_id, int sequence, int quantity, String description) 
 	{
 		super(id);
+		this.exercise_plan_idexercise_plan = exercise_plan_id;
 		this.exercise_idexercise = exercise_id;
 		this.exercise_plan_item_sequence = sequence;
 		this.exercise_plan_item_quantity = quantity;
@@ -59,6 +69,16 @@ public class ExercisePlanItem extends DatabaseObject {
 	public void setExerciseId(int exercise_id)
 	{
 		this.exercise_idexercise = exercise_id;
+	}
+	
+	public int getExercisePlanId()
+	{
+		return this.exercise_plan_idexercise_plan;
+	}
+	
+	public void setExercisePlanId(int exercise_plan_id)
+	{
+		this.exercise_plan_idexercise_plan = exercise_plan_id;
 	}
 	
 	public int getSequence()
@@ -110,25 +130,48 @@ public class ExercisePlanItem extends DatabaseObject {
 	}
 
 	@Override
-	public void update(DatabaseHandler db) {
-		// TODO Auto-generated method stub
+	public int update(DatabaseHandler dbh) {
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        
+        //values.put(KEY_ID, this.getId());
+        values.put(KEY_EXERCISE_PLAN_IDEXERCISE_PLAN, this.getExercisePlanId());
+    	values.put(KEY_EXERCISE_IDEXERCISE, this.getExerciseId());
+    	values.put(KEY_EXERCISE_PLAN_ITEM_SEQUENCE, this.getSequence());
+    	values.put(KEY_EXERCISE_PLAN_ITEM_QUANTITY, this.getQuantity());
+    	values.put(KEY_EXERCISE_PLAN_ITEM_DESCRIPTION, this.getDescription());
+ 
+        // updating row
+        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+                new String[] { String.valueOf(getId()) });
+        
+        
+        return rc;
 
 	}
 
 	@Override
-	public void add(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
+	public void add(DatabaseHandler dbh) throws Exception {
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        
+        //values.put(KEY_ID, this.getId());
+        values.put(KEY_EXERCISE_PLAN_IDEXERCISE_PLAN, this.getExercisePlanId());
+    	values.put(KEY_EXERCISE_IDEXERCISE, this.getExerciseId());
+    	values.put(KEY_EXERCISE_PLAN_ITEM_SEQUENCE, this.getSequence());
+    	values.put(KEY_EXERCISE_PLAN_ITEM_QUANTITY, this.getQuantity());
+    	values.put(KEY_EXERCISE_PLAN_ITEM_DESCRIPTION, this.getDescription());
+		// Inserting Row
+        db.insertOrThrow(this.getTableName(), null, values);
 
 	}
 
-	@Override
-	public void delete(DatabaseHandler db) {
-		// TODO Auto-generated method stub
 
-	}
 
 	@Override
-	public DatabaseObject selectByID(DatabaseHandler db) throws Exception {
+	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

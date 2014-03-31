@@ -6,7 +6,16 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
 public class ExerciseLogAnnotation extends DatabaseObject {
+	
+	public static final String KEY_ID = "idexercise_annotation";
+	public static final String KEY_IDEXERCISE_LOG = "exercise_log_idexercise_log";
+	public static final String KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME = "exercise_log_annotation_video_time";
+	public static final String KEY_EXERCISE_LOG_ANNOTATION_ANNOTATION = "exercise_log_annotation_annotation";
+	public static final String KEY_CREATE_TIME = "create_time";
 	
 //	"CREATE TABLE \"exercise_log_annotation\"(\n"+
 //	"  \"idexercise_log_annotation\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n"+
@@ -83,7 +92,7 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 		return this.create_time;
 	}
 	
-	public void setCreateTime()
+	public void setCreateTime(String create_time)
 	{
 		this.create_time = create_time;
 	}
@@ -107,25 +116,43 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 	}
 
 	@Override
-	public void update(DatabaseHandler db) {
-		// TODO Auto-generated method stub
+	public int update(DatabaseHandler dbh) {
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, this.getId());
+    	values.put(KEY_IDEXERCISE_LOG, this.getExerciseLogId());
+    	values.put(KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME, this.getVideoTime());
+    	values.put(KEY_EXERCISE_LOG_ANNOTATION_ANNOTATION, this.getAnnotation());
+    	//CREATE_TIME does not get updated.
+
+        // updating row
+        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+                new String[] { String.valueOf(getId()) });
+        
+        
+        return rc;
 
 	}
 
 	@Override
-	public void add(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
+	public void add(DatabaseHandler dbh) throws Exception {
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        //values.put(KEY_ID, this.getId());
+    	values.put(KEY_IDEXERCISE_LOG, this.getExerciseLogId());
+    	values.put(KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME, this.getVideoTime());
+    	values.put(KEY_EXERCISE_LOG_ANNOTATION_ANNOTATION, this.getAnnotation());
+    	//CREATE_TIME does not get updated.
+        // Inserting Row
+        db.insertOrThrow(this.getTableName(), null, values);
 
 	}
 
-	@Override
-	public void delete(DatabaseHandler db) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
-	public DatabaseObject selectByID(DatabaseHandler db) throws Exception {
+	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

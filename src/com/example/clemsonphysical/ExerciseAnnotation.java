@@ -9,6 +9,9 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
 /**
  * @author jburton
  *
@@ -18,6 +21,13 @@ public class ExerciseAnnotation extends DatabaseObject {
 	/**
 	 * 
 	 */
+	
+	public static final String KEY_ID = "idexercise_annotation";
+	public static final String KEY_IDEXERCISE = "exercise_idexercise";
+	public static final String KEY_EXERCISE_ANNOTATION_VIDEO_TIME = "exercise_annotation_video_time";
+	public static final String KEY_EXERCISE_ANNOTATION_ANNOTATION = "exercise_annotation_annotation";
+	public static final String KEY_CREATE_TIME = "create_time";
+
 	
 //	"CREATE TABLE \"exercise_annotation\"(\n"+
 //	"  \"idexercise_annotation\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n"+
@@ -95,7 +105,7 @@ public class ExerciseAnnotation extends DatabaseObject {
 		return this.create_time;
 	}
 	
-	public void setCreateTime()
+	public void setCreateTime(String create_time)
 	{
 		this.create_time = create_time;
 	}
@@ -105,8 +115,7 @@ public class ExerciseAnnotation extends DatabaseObject {
 	 */
 	@Override
 	public String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "exercise_idexercise";
 	}
 
 	/* (non-Javadoc)
@@ -131,8 +140,22 @@ public class ExerciseAnnotation extends DatabaseObject {
 	 * @see com.example.clemsonphysical.DatabaseObject#update(com.example.clemsonphysical.DatabaseHandler)
 	 */
 	@Override
-	public void update(DatabaseHandler db) {
-		// TODO Auto-generated method stub
+	public int update(DatabaseHandler dbh) {
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, this.getId());
+    	values.put(KEY_IDEXERCISE, this.getExerciseId());
+    	values.put(KEY_EXERCISE_ANNOTATION_VIDEO_TIME, this.getVideoTime());
+    	values.put(KEY_EXERCISE_ANNOTATION_ANNOTATION, this.getAnnotation());
+    	//values.put(KEY_CREATE_TIME, this.getCreateTime());
+
+        // updating row
+        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+                new String[] { String.valueOf(getId()) });
+        
+        
+        return rc;
 
 	}
 
@@ -140,25 +163,31 @@ public class ExerciseAnnotation extends DatabaseObject {
 	 * @see com.example.clemsonphysical.DatabaseObject#add(com.example.clemsonphysical.DatabaseHandler)
 	 */
 	@Override
-	public void add(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
+	public void add(DatabaseHandler dbh) throws Exception 
+	
+	{
+		
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        //values.put(KEY_ID, this.getId());
+    	values.put(KEY_IDEXERCISE, this.getExerciseId());
+    	values.put(KEY_EXERCISE_ANNOTATION_VIDEO_TIME, this.getVideoTime());
+    	values.put(KEY_EXERCISE_ANNOTATION_ANNOTATION, this.getAnnotation());
+    	//values.put(KEY_CREATE_TIME, this.getCreateTime());
 
-	}
+        // Inserting Row
+        db.insertOrThrow(this.getTableName(), null, values);
+        
+    }
 
-	/* (non-Javadoc)
-	 * @see com.example.clemsonphysical.DatabaseObject#delete(com.example.clemsonphysical.DatabaseHandler)
-	 */
-	@Override
-	public void delete(DatabaseHandler db) {
-		// TODO Auto-generated method stub
 
-	}
 
 	/* (non-Javadoc)
 	 * @see com.example.clemsonphysical.DatabaseObject#selectByID(com.example.clemsonphysical.DatabaseHandler)
 	 */
 	@Override
-	public DatabaseObject selectByID(DatabaseHandler db) throws Exception {
+	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -9,6 +9,11 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
+
 /**
  * @author jburton
  *
@@ -24,17 +29,25 @@ public class Exercise extends DatabaseObject {
 	private String exercise_instruction_url;
 	private String exercise_file_location;
 	
+	public static final String KEY_ID = "idexercise";
+	public static final String KEY_EXERCISE_NAME = "exercise_name";
+	public static final String KEY_EXERCISE_VIDEO_URL = "exercise_video_url";
+	public static final String KEY_EXERCISE_INSTRUCTION_URL = "exercise_instruction_url";
+	public static final String KEY_EXERCISE_FILE_LOCATION = "exercise_file_location";
+	
 	/**
-	 * 		"CREATE TABLE \"exercise\"(\n" +
-		"  \"idexercise\" INTEGER PRIMARY KEY NOT NULL,\n"+
-		"  \"exercise_name\" VARCHAR(45) NOT NULL,\n"+
-		"  \"exercise_video_url\" VARCHAR(127),\n"+
-		"  \"exercise_instruction_url\" VARCHAR(127),\n"+
-		"  \"exercise_file_location\" VARCHAR(127),\n"+
-		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
-		"  \"update_time\" TIMESTAMP\n"+
-		");",
+	 *
 	 */
+//	"CREATE TABLE \"exercise\"(\n" +
+//		"  \"idexercise\" INTEGER PRIMARY KEY NOT NULL,\n"+
+//		"  \"exercise_name\" VARCHAR(45) NOT NULL,\n"+
+//		"  \"exercise_video_url\" VARCHAR(127),\n"+
+//		"  \"exercise_instruction_url\" VARCHAR(127),\n"+
+//		"  \"exercise_file_location\" VARCHAR(127),\n"+
+//		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
+//		"  \"update_time\" TIMESTAMP\n"+
+//		");",
+//	 
 	public Exercise() {
 		this(0,"","","","");
 	}
@@ -55,12 +68,12 @@ public class Exercise extends DatabaseObject {
 		this(id,"","","","");
 	}
 
-	public String getExerciseName()
+	public String getName()
 	{
 		return this.exercise_name;
 	}
 	
-	public void setExerciseName(String name)
+	public void setName(String name)
 	{
 		this.exercise_name = name;	
 	}
@@ -129,8 +142,23 @@ public class Exercise extends DatabaseObject {
 	 * @see com.example.clemsonphysical.DatabaseObject#update(com.example.clemsonphysical.DatabaseHandler)
 	 */
 	@Override
-	public void update(DatabaseHandler db) {
-		// TODO Auto-generated method stub
+	public int update(DatabaseHandler dbh) {
+		SQLiteDatabase db = dbh.getWritableDatabase();
+ 
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, this.getId());
+        values.put(KEY_EXERCISE_NAME, this.getName());
+        values.put(KEY_EXERCISE_VIDEO_URL, this.getVideoUrl());
+        values.put(KEY_EXERCISE_INSTRUCTION_URL, this.getInstructionUrl());
+        values.put(KEY_EXERCISE_FILE_LOCATION, this.getFileLocation());
+
+ 
+        // updating row
+        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+                new String[] { String.valueOf(getId()) });
+        
+        
+        return rc;
 
 	}
 
@@ -138,25 +166,46 @@ public class Exercise extends DatabaseObject {
 	 * @see com.example.clemsonphysical.DatabaseObject#add(com.example.clemsonphysical.DatabaseHandler)
 	 */
 	@Override
-	public void add(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
+	public void add(DatabaseHandler dbh) throws Exception {
+
+		SQLiteDatabase db = dbh.getWritableDatabase();
+		 
+        ContentValues values = new ContentValues();
+        //values.put(KEY_ID, this.getId());
+        values.put(KEY_EXERCISE_NAME, this.getName());
+        values.put(KEY_EXERCISE_VIDEO_URL, this.getVideoUrl());
+        values.put(KEY_EXERCISE_INSTRUCTION_URL, this.getInstructionUrl());
+        values.put(KEY_EXERCISE_FILE_LOCATION, this.getFileLocation());
+
+ 
+        // Inserting Row
+        db.insertOrThrow(this.getTableName(), null, values);
+         // Closing database connection
 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.example.clemsonphysical.DatabaseObject#delete(com.example.clemsonphysical.DatabaseHandler)
-	 */
 	@Override
-	public void delete(DatabaseHandler db) {
-		// TODO Auto-generated method stub
-
+	public void delete(DatabaseHandler dbh) {
+		//TODO Delete video when record is deleted.
+		//this.getVideoLocation();
+		super.delete(dbh);
+	
 	}
+	
+	@Override
+	public void deleteAll(DatabaseHandler dbh) 
+	{
+		//TODO Delete videos when records are is deleted.
+		super.deleteAll(dbh);
+	}
+
+
 
 	/* (non-Javadoc)
 	 * @see com.example.clemsonphysical.DatabaseObject#selectByID(com.example.clemsonphysical.DatabaseHandler)
 	 */
 	@Override
-	public DatabaseObject selectByID(DatabaseHandler db) throws Exception {
+	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
