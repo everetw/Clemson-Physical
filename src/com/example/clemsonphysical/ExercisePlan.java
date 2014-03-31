@@ -7,16 +7,53 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ExercisePlan extends DatabaseObject {
+	
+//	"CREATE TABLE \"exercise_plan\"(\n"+
+//	"  \"idexercise_plan\" INTEGER PRIMARY KEY NOT NULL,\n"+
+//	"  \"exercise_plan_name\" VARCHAR(45) NOT NULL,\n"+
+//	"  \"exercise_plan_description\" VARCHAR(255)\n"+
+//	");\n"
 
+	private String exercise_plan_name;
+	private String exercise_plan_description;
+	
+	
+	
 	public ExercisePlan() {
-		// TODO Auto-generated constructor stub
+		this(0);
 	}
 
 	public ExercisePlan(int id) {
-		super(id);
-		// TODO Auto-generated constructor stub
+		this(id,"","");
 	}
 
+	public ExercisePlan(int id, String plan_name, String plan_description)
+	{
+		super(id);
+		this.exercise_plan_name = plan_name;
+		this.exercise_plan_description = plan_description;
+	}
+	
+	public String getPlanName()
+	{
+		return this.exercise_plan_name;
+	}
+	
+	public void setPlanName(String plan_name)
+	{
+		this.exercise_plan_name = plan_name;
+	}
+	
+	public String getPlanDescription()
+	{
+		return this.exercise_plan_description;
+	}
+	
+	public void SetPlanDescription(String plan_description)
+	{
+		this.exercise_plan_description = plan_description;
+	}
+	
 	@Override
 	public String getTableName() {
 		return "exercise_plan";

@@ -74,6 +74,30 @@ public class Exercise extends DatabaseObject {
 	{
 		this.exercise_file_location = file_location;
 	}
+	
+	public String getVideoUrl()
+	{
+		return this.exercise_video_url;
+	}
+	
+	public void setVideoUrl(String video_url)
+	{
+		this.exercise_video_url = video_url;
+	}
+	
+	
+	public String getInstructionUrl()
+	{
+		return this.exercise_instruction_url;
+	}
+	
+	public void setInstructionUrl(String instruction_url)
+	{
+		this.exercise_instruction_url = instruction_url;
+	}
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see com.example.clemsonphysical.DatabaseObject#getTableName()
 	 */

@@ -18,16 +18,86 @@ public class ExerciseAnnotation extends DatabaseObject {
 	/**
 	 * 
 	 */
+	
+//	"CREATE TABLE \"exercise_annotation\"(\n"+
+//	"  \"idexercise_annotation\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n"+
+//	"  \"exercise_idexercise\" INTEGER NOT NULL,\n"+
+//	"  \"exercise_annotation_video_time\" INTEGER NOT NULL,\n"+
+//	"  \"exercise_annotation_annotation\" VARCHAR(255) NOT NULL,\n"+
+//	"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
+//	"  CONSTRAINT \"fk_exercise_annotation_exercise1\"\n"+
+//	"    FOREIGN KEY(\"exercise_idexercise\")\n"+
+//	"    REFERENCES \"exercise\"(\"idexercise\")\n"+
+//	");\n",
+	
+	private int exercise_idexercise;
+	private int exercise_annotation_video_time;
+	private String exercise_annotation_annotation;
+	private String create_time;
+
 	public ExerciseAnnotation() {
-		// TODO Auto-generated constructor stub
+		
+		this(0);
 	}
 
-	/**
-	 * @param id
-	 */
 	public ExerciseAnnotation(int id) {
+		this(0,0,0,"","");
+
+	}
+	public ExerciseAnnotation(int id, int exercise_id, int video_time, String annotation)
+	{
+		this(id, exercise_id, video_time, annotation, "");
+	}
+	
+	public ExerciseAnnotation(int id, int exercise_id, int video_time, String annotation, String create_time)
+	{
 		super(id);
-		// TODO Auto-generated constructor stub
+		this.exercise_idexercise = exercise_id;
+		this.exercise_annotation_video_time = video_time;
+		this.exercise_annotation_annotation = annotation;
+		this.create_time = create_time;
+	}
+	
+	
+	public int getExerciseId()
+	{
+		return this.exercise_idexercise;
+	}
+	
+	public void setExerciseId(int exercise_id)
+	{
+		this.exercise_idexercise = exercise_id;
+	}
+		
+
+	public int getVideoTime()
+	{
+		return this.exercise_annotation_video_time;
+	}
+	
+	public void setVideoTime(int video_time)
+	{
+		this.exercise_annotation_video_time = video_time;
+	}
+	
+	public String getAnnotation()
+	{
+		return this.exercise_annotation_annotation;
+	}
+	
+	public void setAnnotation(String annotation)
+	{
+		this.exercise_annotation_annotation = annotation;
+	}
+	
+	public String getCreateTime()
+	{
+		return this.create_time;
+	}
+	
+	public void setCreateTime()
+	{
+		this.create_time = create_time;
 	}
 
 	/* (non-Javadoc)
