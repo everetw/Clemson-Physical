@@ -1,12 +1,17 @@
 package com.example.clemsonphysical;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.clemsonphysical.Exercise.DbKeys;
+
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class ExerciseLog extends DatabaseObject {
@@ -22,11 +27,28 @@ public class ExerciseLog extends DatabaseObject {
 //	"    REFERENCES \"exercise\"(\"idexercise\")\n"+
 //	");\n",
 	
-	public static final String KEY_ID = "id_exercise_log";
-	public static final String KEY_EXERCISE_LOG_VIDEO_LOCATION = "exercise_log_video_location";
-	public static final String KEY_EXERCISE_LOG_VIDEO_NOTES = "exercise_log_video_notes";
-	public static final String KEY_CREATE_TIME = "create_time";
-	public static final String KEY_EXERCISE_IDEXERCISE = "exercise_idexercise";
+	public enum DbKeys
+	{
+	
+		// Order of columns must match order in SQL create statement. 
+		KEY_ID ("id_exercise_log"),
+		KEY_EXERCISE_LOG_VIDEO_LOCATION ("exercise_log_video_location"),
+		KEY_EXERCISE_LOG_VIDEO_NOTES ("exercise_log_video_notes"),
+		KEY_CREATE_TIME ("create_time"),
+		KEY_EXERCISE_IDEXERCISE ("exercise_idexercise");
+		
+		private String field_name;
+		DbKeys(String name)
+		{
+			field_name = name;
+		}
+		public String getKeyName()
+		{
+			return field_name;
+		}
+	};
+	
+	public static final String TABLE_NAME = "exercise_log";
 	
 	private String exercise_log_video_location;
 	private String exercise_log_video_notes;
@@ -119,14 +141,14 @@ public class ExerciseLog extends DatabaseObject {
 		SQLiteDatabase db = dbh.getWritableDatabase();
 		 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, this.getId());
-    	values.put(KEY_EXERCISE_LOG_VIDEO_LOCATION, this.getVideoLocation());
-    	values.put(KEY_EXERCISE_LOG_VIDEO_NOTES, this.getVideoNotes());
+        values.put(DbKeys.KEY_ID.getKeyName(), this.getId());
+    	values.put(DbKeys.KEY_EXERCISE_LOG_VIDEO_LOCATION.getKeyName(), this.getVideoLocation());
+    	values.put(DbKeys.KEY_EXERCISE_LOG_VIDEO_NOTES.getKeyName(), this.getVideoNotes());
     	// CREATE_TIME does not get updated.  	
-    	values.put(KEY_EXERCISE_IDEXERCISE, this.getExerciseId());
+    	values.put(DbKeys.KEY_EXERCISE_IDEXERCISE.getKeyName(), this.getExerciseId());
  
         // updating row
-        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+        int rc = db.update(getTableName(), values,getIdKeyName() + " = ?",
                 new String[] { String.valueOf(getId()) });
         
         
@@ -141,10 +163,10 @@ public class ExerciseLog extends DatabaseObject {
 		 
         ContentValues values = new ContentValues();
         //values.put(KEY_ID, this.getId());
-    	values.put(KEY_EXERCISE_LOG_VIDEO_LOCATION, this.getVideoLocation());
-    	values.put(KEY_EXERCISE_LOG_VIDEO_NOTES, this.getVideoNotes());
+    	values.put(DbKeys.KEY_EXERCISE_LOG_VIDEO_LOCATION.getKeyName(), this.getVideoLocation());
+    	values.put(DbKeys.KEY_EXERCISE_LOG_VIDEO_NOTES.getKeyName(), this.getVideoNotes());
     	// CREATE_TIME does not get updated.  	
-    	values.put(KEY_EXERCISE_IDEXERCISE, this.getExerciseId());
+    	values.put(DbKeys.KEY_EXERCISE_IDEXERCISE.getKeyName(), this.getExerciseId());
     	
         // Inserting Row
         db.insertOrThrow(this.getTableName(), null, values);
@@ -153,28 +175,110 @@ public class ExerciseLog extends DatabaseObject {
 
 	@Override
 	public void delete(DatabaseHandler dbh) {
-		//TODO Delete video when record is deleted.
-		//this.getVideoLocation();
+		
 		super.delete(dbh);
+		DatabaseHandler.deleteFile(this.getVideoLocation());
 	
 	}
 	
-	@Override
-	public void deleteAll(DatabaseHandler dbh) 
+
+	public static void deleteAll(DatabaseHandler dbh) 
 	{
-		super.deleteAll(dbh);
+
+		dbh.deleteAllRecordsFromTable(TABLE_NAME);
+    	List<DatabaseObject> exerciseList = getAll(dbh);
+    	for (int index = 0; index < exerciseList.size(); index++)
+    	{
+    		DatabaseHandler.deleteFile(((ExerciseLog)(exerciseList.get(index))).getVideoLocation());
+    	}
+		
+	}
+	
+	// Should be in superclass, but Java won't let you override static methods.
+	public static String [] getDbKeyNames()
+	{
+		String [] key_names = new String[DbKeys.values().length];
+	    
+	    for (int i = 0; i < DbKeys.values().length; i++)
+	    {
+	   	 key_names[i] = DbKeys.values()[i].getKeyName();
+	    }
+	    
+	    return key_names;
 	}
 
-	@Override
-	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+
+	// Should be in superclass, but Java won't let you override static methods. 
+	
+	public static DatabaseObject getById(DatabaseHandler dbh, int id) throws Exception {
+	    
+		SQLiteDatabase db = dbh.getReadableDatabase();
+	     
+	     			
+        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_ID.getKeyName() + "=?",
+                new String[] { Integer.toString(id) }, null, null, null, null);
+        if (cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            DatabaseObject object = createObjectFromCursor(cursor);
+	        cursor.close();
+	        
+            return object;
+        }
+        else
+        {
+	        cursor.close();
+	        
+        	throw new java.lang.Exception("Cannot find "+TABLE_NAME+" matching id "+ id);
+        }
+
 	}
 
+	// Should be in superclass, but Java won't let you override static methods.
+	
+	public static List<DatabaseObject> getAll(DatabaseHandler dbh) {
+        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME;
+ 
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+ 
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                
+            	DatabaseObject object = createObjectFromCursor(cursor);
+               
+                // Adding object to list
+                objectList.add(object);
+                
+            } while (cursor.moveToNext());
+        }
+ 
+        cursor.close();
+        
+        return objectList;
+	}
+	
+	
+	protected static ExerciseLog createObjectFromCursor(Cursor cursor)
+	{
+		ExerciseLog exercise_log = new ExerciseLog();
+        
+        exercise_log.setId(Integer.parseInt(cursor.getString(DbKeys.KEY_ID.ordinal())));
+        exercise_log.setExerciseId(Integer.parseInt(cursor.getString(DbKeys.KEY_EXERCISE_IDEXERCISE.ordinal())));
+        exercise_log.setVideoLocation(cursor.getString(DbKeys.KEY_EXERCISE_LOG_VIDEO_LOCATION.ordinal()));
+        exercise_log.setVideoNotes(cursor.getString(DbKeys.KEY_EXERCISE_LOG_VIDEO_NOTES.ordinal()));
+        exercise_log.setCreateTime(cursor.getString(DbKeys.KEY_CREATE_TIME.ordinal()));
+        
+        return exercise_log;
+	}
+	
 	@Override
-	public List<DatabaseObject> selectAll(DatabaseHandler db) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getIdKeyName() 
+	{
+		return DbKeys.KEY_ID.getKeyName();
 	}
 
 }

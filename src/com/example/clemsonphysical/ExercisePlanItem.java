@@ -1,22 +1,19 @@
 package com.example.clemsonphysical;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.clemsonphysical.Exercise.DbKeys;
+
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class ExercisePlanItem extends DatabaseObject {
-
-	public static final String KEY_ID = "exercise_plan_item_id";
-	public static final String KEY_EXERCISE_PLAN_IDEXERCISE_PLAN = "exercise_plan_idexercise_plan";
-	public static final String KEY_EXERCISE_IDEXERCISE = "exercise_idexercise";
-	public static final String KEY_EXERCISE_PLAN_ITEM_SEQUENCE = "exercise_plan_item_sequence";
-	public static final String KEY_EXERCISE_PLAN_ITEM_QUANTITY = "exercise_plan_item_quantity";
-	public static final String KEY_EXERCISE_PLAN_ITEM_DESCRIPTION = "exercise_plan_item_description";
 
 //	"CREATE TABLE \"exercise_plan_item\"(\n"+
 //	"  \"exercise_plan_item_id\" INTEGER PRIMARY KEY NOT NULL,\n"+
@@ -33,6 +30,28 @@ public class ExercisePlanItem extends DatabaseObject {
 //	"    REFERENCES \"exercise\"(\"idexercise\")\n"+
 //	");\n",
 	
+	public enum DbKeys
+	{
+		// order must match SQL create statement.
+		KEY_ID ("exercise_plan_item_id"),
+		KEY_EXERCISE_PLAN_IDEXERCISE_PLAN ("exercise_plan_idexercise_plan"),
+		KEY_EXERCISE_IDEXERCISE ("exercise_idexercise"),
+		KEY_EXERCISE_PLAN_ITEM_SEQUENCE ("exercise_plan_item_sequence"),
+		KEY_EXERCISE_PLAN_ITEM_QUANTITY ("exercise_plan_item_quantity"),
+		KEY_EXERCISE_PLAN_ITEM_DESCRIPTION ("exercise_plan_item_description");
+
+		private String field_name;
+		DbKeys(String name)
+		{
+			field_name = name;
+		}
+		private String getKeyName()
+		{
+			return field_name;
+		}
+	};
+	
+	public static final String TABLE_NAME = "exercise_plan_item";
 	
 	private int exercise_plan_idexercise_plan;
 	private int exercise_idexercise;
@@ -114,7 +133,7 @@ public class ExercisePlanItem extends DatabaseObject {
 
 	@Override
 	public String getTableName() {
-		return "exercise_plan_item";
+		return TABLE_NAME;
 	}
 
 	@Override
@@ -136,14 +155,14 @@ public class ExercisePlanItem extends DatabaseObject {
         ContentValues values = new ContentValues();
         
         //values.put(KEY_ID, this.getId());
-        values.put(KEY_EXERCISE_PLAN_IDEXERCISE_PLAN, this.getExercisePlanId());
-    	values.put(KEY_EXERCISE_IDEXERCISE, this.getExerciseId());
-    	values.put(KEY_EXERCISE_PLAN_ITEM_SEQUENCE, this.getSequence());
-    	values.put(KEY_EXERCISE_PLAN_ITEM_QUANTITY, this.getQuantity());
-    	values.put(KEY_EXERCISE_PLAN_ITEM_DESCRIPTION, this.getDescription());
+        values.put(DbKeys.KEY_EXERCISE_PLAN_IDEXERCISE_PLAN.getKeyName(), this.getExercisePlanId());
+    	values.put(DbKeys.KEY_EXERCISE_IDEXERCISE.getKeyName(), this.getExerciseId());
+    	values.put(DbKeys.KEY_EXERCISE_PLAN_ITEM_SEQUENCE.getKeyName(), this.getSequence());
+    	values.put(DbKeys.KEY_EXERCISE_PLAN_ITEM_QUANTITY.getKeyName(), this.getQuantity());
+    	values.put(DbKeys.KEY_EXERCISE_PLAN_ITEM_DESCRIPTION.getKeyName(), this.getDescription());
  
         // updating row
-        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+        int rc = db.update(getTableName(), values,getIdKeyName() + " = ?",
                 new String[] { String.valueOf(getId()) });
         
         
@@ -158,11 +177,11 @@ public class ExercisePlanItem extends DatabaseObject {
         ContentValues values = new ContentValues();
         
         //values.put(KEY_ID, this.getId());
-        values.put(KEY_EXERCISE_PLAN_IDEXERCISE_PLAN, this.getExercisePlanId());
-    	values.put(KEY_EXERCISE_IDEXERCISE, this.getExerciseId());
-    	values.put(KEY_EXERCISE_PLAN_ITEM_SEQUENCE, this.getSequence());
-    	values.put(KEY_EXERCISE_PLAN_ITEM_QUANTITY, this.getQuantity());
-    	values.put(KEY_EXERCISE_PLAN_ITEM_DESCRIPTION, this.getDescription());
+        values.put(DbKeys.KEY_EXERCISE_PLAN_IDEXERCISE_PLAN.getKeyName(), this.getExercisePlanId());
+    	values.put(DbKeys.KEY_EXERCISE_IDEXERCISE.getKeyName(), this.getExerciseId());
+    	values.put(DbKeys.KEY_EXERCISE_PLAN_ITEM_SEQUENCE.getKeyName(), this.getSequence());
+    	values.put(DbKeys.KEY_EXERCISE_PLAN_ITEM_QUANTITY.getKeyName(), this.getQuantity());
+    	values.put(DbKeys.KEY_EXERCISE_PLAN_ITEM_DESCRIPTION.getKeyName(), this.getDescription());
 		// Inserting Row
         db.insertOrThrow(this.getTableName(), null, values);
 
@@ -170,16 +189,95 @@ public class ExercisePlanItem extends DatabaseObject {
 
 
 
-	@Override
-	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	// Should be in superclass, but Java won't let you override static methods.
+	public static String [] getDbKeyNames()
+	{
+		String [] key_names = new String[DbKeys.values().length];
+	    
+	    for (int i = 0; i < DbKeys.values().length; i++)
+	    {
+	   	 key_names[i] = DbKeys.values()[i].getKeyName();
+	    }
+	    
+	    return key_names;
 	}
 
+
+	// Should be in superclass, but Java won't let you override static methods. 
+	
+	public static DatabaseObject getById(DatabaseHandler dbh, int id) throws Exception {
+	    
+		SQLiteDatabase db = dbh.getReadableDatabase();
+	     
+	     			
+        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_ID.getKeyName() + "=?",
+                new String[] { Integer.toString(id) }, null, null, null, null);
+        if (cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            DatabaseObject object = createObjectFromCursor(cursor);
+	        cursor.close();
+	        
+            return object;
+        }
+        else
+        {
+	        cursor.close();
+	        
+        	throw new java.lang.Exception("Cannot find "+TABLE_NAME+" matching id "+ id);
+        }
+
+	}
+
+	// Should be in superclass, but Java won't let you override static methods.
+	
+	public static List<DatabaseObject> getAll(DatabaseHandler dbh) {
+        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME;
+ 
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+ 
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                
+            	DatabaseObject object = createObjectFromCursor(cursor);
+               
+                // Adding object to list
+                objectList.add(object);
+                
+            } while (cursor.moveToNext());
+        }
+ 
+        cursor.close();
+        
+        return objectList;
+	}
+	
+	
+	protected static ExercisePlanItem createObjectFromCursor(Cursor cursor)
+	{
+		ExercisePlanItem exercise_plan_item = new ExercisePlanItem();
+        
+        exercise_plan_item.setId(Integer.parseInt(cursor.getString(DbKeys.KEY_ID.ordinal())));
+        exercise_plan_item.setDescription(cursor.getString(DbKeys.KEY_EXERCISE_PLAN_ITEM_DESCRIPTION.ordinal()));
+        exercise_plan_item.setExerciseId(Integer.parseInt(cursor.getString(DbKeys.KEY_EXERCISE_IDEXERCISE.ordinal())));
+        exercise_plan_item.setExercisePlanId(Integer.parseInt(cursor.getString(DbKeys.KEY_EXERCISE_PLAN_IDEXERCISE_PLAN.ordinal())));
+        exercise_plan_item.setSequence(Integer.parseInt(cursor.getString(DbKeys.KEY_EXERCISE_PLAN_ITEM_SEQUENCE.ordinal())));
+        exercise_plan_item.setQuantity(Integer.parseInt(cursor.getString(DbKeys.KEY_EXERCISE_PLAN_ITEM_QUANTITY.ordinal())));
+        
+        return exercise_plan_item;
+	}
 	@Override
-	public List<DatabaseObject> selectAll(DatabaseHandler db) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getIdKeyName() {
+		return DbKeys.KEY_ID.getKeyName();
+	}
+	
+	public static void deleteAll(DatabaseHandler dbh) 
+	{
+		dbh.deleteAllRecordsFromTable(TABLE_NAME);
 	}
 
 }

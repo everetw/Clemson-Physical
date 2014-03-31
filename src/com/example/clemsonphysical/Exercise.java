@@ -3,14 +3,16 @@
  */
 package com.example.clemsonphysical;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 
@@ -29,11 +31,34 @@ public class Exercise extends DatabaseObject {
 	private String exercise_instruction_url;
 	private String exercise_file_location;
 	
-	public static final String KEY_ID = "idexercise";
-	public static final String KEY_EXERCISE_NAME = "exercise_name";
-	public static final String KEY_EXERCISE_VIDEO_URL = "exercise_video_url";
-	public static final String KEY_EXERCISE_INSTRUCTION_URL = "exercise_instruction_url";
-	public static final String KEY_EXERCISE_FILE_LOCATION = "exercise_file_location";
+	public static enum DbKeys
+	{
+		KEY_ID ("idexercise"),
+		KEY_EXERCISE_NAME ("exercise_name"),
+		KEY_EXERCISE_VIDEO_URL ("exercise_video_url"),
+		KEY_EXERCISE_INSTRUCTION_URL ("exercise_instruction_url"),
+		KEY_EXERCISE_FILE_LOCATION ("exercise_file_location");
+		
+		private String field_name;
+		DbKeys(String name)
+		{
+			field_name = name;
+		}
+		public String getKeyName()
+		{
+			return field_name;
+		}
+
+		
+	};
+	
+	public static final String TABLE_NAME = "exercise";
+	
+//	public static final String KEY_ID = "idexercise";
+//	public static final String KEY_EXERCISE_NAME = "exercise_name";
+//	public static final String KEY_EXERCISE_VIDEO_URL = "exercise_video_url";
+//	public static final String KEY_EXERCISE_INSTRUCTION_URL = "exercise_instruction_url";
+//	public static final String KEY_EXERCISE_FILE_LOCATION = "exercise_file_location";
 	
 	/**
 	 *
@@ -117,7 +142,7 @@ public class Exercise extends DatabaseObject {
 	@Override
 	public String getTableName() {
 
-		return "exercise";
+		return TABLE_NAME;
 	}
 
 	/* (non-Javadoc)
@@ -137,6 +162,8 @@ public class Exercise extends DatabaseObject {
 		// TODO Auto-generated method stub
 
 	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see com.example.clemsonphysical.DatabaseObject#update(com.example.clemsonphysical.DatabaseHandler)
@@ -146,15 +173,14 @@ public class Exercise extends DatabaseObject {
 		SQLiteDatabase db = dbh.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, this.getId());
-        values.put(KEY_EXERCISE_NAME, this.getName());
-        values.put(KEY_EXERCISE_VIDEO_URL, this.getVideoUrl());
-        values.put(KEY_EXERCISE_INSTRUCTION_URL, this.getInstructionUrl());
-        values.put(KEY_EXERCISE_FILE_LOCATION, this.getFileLocation());
-
+        values.put(DbKeys.KEY_ID.getKeyName(), this.getId());
+        values.put(DbKeys.KEY_EXERCISE_NAME.getKeyName(), this.getName());
+        values.put(DbKeys.KEY_EXERCISE_VIDEO_URL.getKeyName(), this.getVideoUrl());
+        values.put(DbKeys.KEY_EXERCISE_INSTRUCTION_URL.getKeyName(), this.getInstructionUrl());
+        values.put(DbKeys.KEY_EXERCISE_FILE_LOCATION.getKeyName(), this.getFileLocation());
  
         // updating row
-        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+        int rc = db.update(getTableName(), values,DbKeys.KEY_ID.getKeyName() + " = ?",
                 new String[] { String.valueOf(getId()) });
         
         
@@ -172,51 +198,121 @@ public class Exercise extends DatabaseObject {
 		 
         ContentValues values = new ContentValues();
         //values.put(KEY_ID, this.getId());
-        values.put(KEY_EXERCISE_NAME, this.getName());
-        values.put(KEY_EXERCISE_VIDEO_URL, this.getVideoUrl());
-        values.put(KEY_EXERCISE_INSTRUCTION_URL, this.getInstructionUrl());
-        values.put(KEY_EXERCISE_FILE_LOCATION, this.getFileLocation());
+        values.put(DbKeys.KEY_EXERCISE_NAME.getKeyName(), this.getName());
+        values.put(DbKeys.KEY_EXERCISE_VIDEO_URL.getKeyName(), this.getVideoUrl());
+        values.put(DbKeys.KEY_EXERCISE_INSTRUCTION_URL.getKeyName(), this.getInstructionUrl());
+        values.put(DbKeys.KEY_EXERCISE_FILE_LOCATION.getKeyName(), this.getFileLocation());
 
  
         // Inserting Row
         db.insertOrThrow(this.getTableName(), null, values);
-         // Closing database connection
 
 	}
 
 	@Override
 	public void delete(DatabaseHandler dbh) {
-		//TODO Delete video when record is deleted.
-		//this.getVideoLocation();
+		
 		super.delete(dbh);
+		DatabaseHandler.deleteFile(this.getFileLocation());
 	
 	}
 	
-	@Override
-	public void deleteAll(DatabaseHandler dbh) 
+
+	public static void deleteAll(DatabaseHandler dbh) 
 	{
 		//TODO Delete videos when records are is deleted.
-		super.deleteAll(dbh);
+		dbh.deleteAllRecordsFromTable(TABLE_NAME);
+    	List<DatabaseObject> exerciseList = getAll(dbh);
+    	for (int index = 0; index < exerciseList.size(); index++)
+    	{
+    		DatabaseHandler.deleteFile(((Exercise)(exerciseList.get(index))).getFileLocation());
+    	}
+		
+	}
+
+	public static String [] getDbKeyNames()
+	{
+		String [] key_names = new String[DbKeys.values().length];
+	    
+	    for (int i = 0; i < DbKeys.values().length; i++)
+	    {
+	   	 key_names[i] = DbKeys.values()[i].getKeyName();
+	    }
+	    
+	    return key_names;
 	}
 
 
 
-	/* (non-Javadoc)
-	 * @see com.example.clemsonphysical.DatabaseObject#selectByID(com.example.clemsonphysical.DatabaseHandler)
-	 */
-	@Override
-	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	// Should be in superclass, but Java won't let you override static methods. 
+	
+	public static DatabaseObject getById(DatabaseHandler dbh, int id) throws Exception {
+	    
+		SQLiteDatabase db = dbh.getReadableDatabase();
+	     
+	     			
+        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_ID.getKeyName() + "=?",
+                new String[] { Integer.toString(id) }, null, null, null, null);
+        if (cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            DatabaseObject object = createObjectFromCursor(cursor);
+	        cursor.close();
+	        
+            return object;
+        }
+        else
+        {
+	        cursor.close();
+	        
+        	throw new java.lang.Exception("Cannot find "+TABLE_NAME+" matching id "+ id);
+        }
+
 	}
 
-	/* (non-Javadoc)
-	 * @see com.example.clemsonphysical.DatabaseObject#selectAll(com.example.clemsonphysical.DatabaseHandler)
-	 */
+
+	public static List<DatabaseObject> getAll(DatabaseHandler dbh) {
+        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME;
+ 
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+ 
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                
+            	DatabaseObject object = createObjectFromCursor(cursor);
+               
+                // Adding object to list
+                objectList.add(object);
+                
+            } while (cursor.moveToNext());
+        }
+ 
+        cursor.close();
+        
+        
+        return objectList;
+	}
+	
+	protected static Exercise createObjectFromCursor(Cursor cursor)
+	{
+		Exercise exercise = new Exercise();
+        
+        exercise.setId(Integer.parseInt(cursor.getString(DbKeys.KEY_ID.ordinal())));
+        exercise.setFileLocation(cursor.getString(DbKeys.KEY_EXERCISE_FILE_LOCATION.ordinal()));
+        exercise.setInstructionUrl(cursor.getString(DbKeys.KEY_EXERCISE_INSTRUCTION_URL.ordinal()));
+        exercise.setName(cursor.getString(DbKeys.KEY_EXERCISE_NAME.ordinal()));
+        exercise.setVideoUrl(cursor.getColumnName(DbKeys.KEY_EXERCISE_VIDEO_URL.ordinal()));
+        
+        return exercise;
+	}
+
 	@Override
-	public List<DatabaseObject> selectAll(DatabaseHandler db) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getIdKeyName() {
+		return DbKeys.KEY_ID.getKeyName();
 	}
 
 }

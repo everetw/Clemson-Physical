@@ -151,7 +151,7 @@ public abstract class DatabaseActivity extends DisplayActivity {
             try {
                 // Building Parameters
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair(myDatabaseObject.KEY_ID, Integer.toString(myDatabaseObject.getId())));
+                        params.add(new BasicNameValuePair(myDatabaseObject.getIdKeyName(), Integer.toString(myDatabaseObject.getId())));
                         
                         
  
@@ -298,7 +298,7 @@ public abstract class DatabaseActivity extends DisplayActivity {
             try {
                 // Building Parameters
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair(myDatabaseObject.KEY_ID, Integer.toString(myDatabaseObject.getId())));
+                params.add(new BasicNameValuePair(myDatabaseObject.getIdKeyName(), Integer.toString(myDatabaseObject.getId())));
  
                 // getting product details by making HTTP request
                 JSONObject json = jsonParser.makeHttpRequest(

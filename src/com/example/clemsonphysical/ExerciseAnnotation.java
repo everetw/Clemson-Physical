@@ -3,13 +3,17 @@
  */
 package com.example.clemsonphysical;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.clemsonphysical.Exercise.DbKeys;
+
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -22,13 +26,6 @@ public class ExerciseAnnotation extends DatabaseObject {
 	 * 
 	 */
 	
-	public static final String KEY_ID = "idexercise_annotation";
-	public static final String KEY_IDEXERCISE = "exercise_idexercise";
-	public static final String KEY_EXERCISE_ANNOTATION_VIDEO_TIME = "exercise_annotation_video_time";
-	public static final String KEY_EXERCISE_ANNOTATION_ANNOTATION = "exercise_annotation_annotation";
-	public static final String KEY_CREATE_TIME = "create_time";
-
-	
 //	"CREATE TABLE \"exercise_annotation\"(\n"+
 //	"  \"idexercise_annotation\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n"+
 //	"  \"exercise_idexercise\" INTEGER NOT NULL,\n"+
@@ -39,6 +36,28 @@ public class ExerciseAnnotation extends DatabaseObject {
 //	"    FOREIGN KEY(\"exercise_idexercise\")\n"+
 //	"    REFERENCES \"exercise\"(\"idexercise\")\n"+
 //	");\n",
+	
+	public enum DbKeys
+	{
+		// Order of columns must match order in SQL create statement.
+		KEY_ID ("idexercise_annotation"),
+		KEY_IDEXERCISE ("exercise_idexercise"),
+		KEY_EXERCISE_ANNOTATION_VIDEO_TIME ("exercise_annotation_video_time"),
+		KEY_EXERCISE_ANNOTATION_ANNOTATION ("exercise_annotation_annotation"),
+		KEY_CREATE_TIME ("create_time");
+		
+		private String field_name;
+		DbKeys(String name)
+		{
+			field_name = name;
+		}
+		public String getKeyName()
+		{
+			return field_name;
+		}
+	};
+	
+	public static final String TABLE_NAME = "exercise_annotation";
 	
 	private int exercise_idexercise;
 	private int exercise_annotation_video_time;
@@ -115,7 +134,7 @@ public class ExerciseAnnotation extends DatabaseObject {
 	 */
 	@Override
 	public String getTableName() {
-		return "exercise_idexercise";
+		return TABLE_NAME;
 	}
 
 	/* (non-Javadoc)
@@ -144,14 +163,14 @@ public class ExerciseAnnotation extends DatabaseObject {
 		SQLiteDatabase db = dbh.getWritableDatabase();
 		 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, this.getId());
-    	values.put(KEY_IDEXERCISE, this.getExerciseId());
-    	values.put(KEY_EXERCISE_ANNOTATION_VIDEO_TIME, this.getVideoTime());
-    	values.put(KEY_EXERCISE_ANNOTATION_ANNOTATION, this.getAnnotation());
+        values.put(DbKeys.KEY_ID.getKeyName(), this.getId());
+    	values.put(DbKeys.KEY_IDEXERCISE.getKeyName(), this.getExerciseId());
+    	values.put(DbKeys.KEY_EXERCISE_ANNOTATION_VIDEO_TIME.getKeyName(), this.getVideoTime());
+    	values.put(DbKeys.KEY_EXERCISE_ANNOTATION_ANNOTATION.getKeyName(), this.getAnnotation());
     	//values.put(KEY_CREATE_TIME, this.getCreateTime());
 
         // updating row
-        int rc = db.update(getTableName(), values,KEY_ID + " = ?",
+        int rc = db.update(getTableName(), values,DbKeys.KEY_ID.getKeyName() + " = ?",
                 new String[] { String.valueOf(getId()) });
         
         
@@ -171,9 +190,9 @@ public class ExerciseAnnotation extends DatabaseObject {
 		 
         ContentValues values = new ContentValues();
         //values.put(KEY_ID, this.getId());
-    	values.put(KEY_IDEXERCISE, this.getExerciseId());
-    	values.put(KEY_EXERCISE_ANNOTATION_VIDEO_TIME, this.getVideoTime());
-    	values.put(KEY_EXERCISE_ANNOTATION_ANNOTATION, this.getAnnotation());
+    	values.put(DbKeys.KEY_IDEXERCISE.getKeyName(), this.getExerciseId());
+    	values.put(DbKeys.KEY_EXERCISE_ANNOTATION_VIDEO_TIME.getKeyName(), this.getVideoTime());
+    	values.put(DbKeys.KEY_EXERCISE_ANNOTATION_ANNOTATION.getKeyName(), this.getAnnotation());
     	//values.put(KEY_CREATE_TIME, this.getCreateTime());
 
         // Inserting Row
@@ -182,23 +201,98 @@ public class ExerciseAnnotation extends DatabaseObject {
     }
 
 
-
-	/* (non-Javadoc)
-	 * @see com.example.clemsonphysical.DatabaseObject#selectByID(com.example.clemsonphysical.DatabaseHandler)
-	 */
-	@Override
-	public DatabaseObject selectById(DatabaseHandler db) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	// Should be in superclass, but Java won't let you override static methods.
+	
+	public static String [] getDbKeyNames()
+	{
+		String [] key_names = new String[DbKeys.values().length];
+	    
+	    for (int i = 0; i < DbKeys.values().length; i++)
+	    {
+	   	 key_names[i] = DbKeys.values()[i].getKeyName();
+	    }
+	    
+	    return key_names;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.example.clemsonphysical.DatabaseObject#selectAll(com.example.clemsonphysical.DatabaseHandler)
-	 */
+
+
+	// Should be in superclass, but Java won't let you override static methods. 
+	
+	public static DatabaseObject getById(DatabaseHandler dbh, int id) throws Exception {
+	    
+		SQLiteDatabase db = dbh.getReadableDatabase();
+	     
+	     			
+        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_ID.getKeyName() + "=?",
+                new String[] { Integer.toString(id) }, null, null, null, null);
+        if (cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            DatabaseObject object = createObjectFromCursor(cursor);
+	        cursor.close();
+	        
+            return object;
+        }
+        else
+        {
+	        cursor.close();
+	        
+        	throw new java.lang.Exception("Cannot find "+TABLE_NAME+" matching id "+ id);
+        }
+
+	}
+
+	// Should be in superclass, but Java won't let you override static methods.
+	
+	public static List<DatabaseObject> getAll(DatabaseHandler dbh) {
+        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME;
+ 
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+ 
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                
+            	DatabaseObject object = createObjectFromCursor(cursor);
+               
+                // Adding object to list
+                objectList.add(object);
+                
+            } while (cursor.moveToNext());
+        }
+ 
+        cursor.close();
+        
+        
+        return objectList;
+	}
+	
+	
+	protected static ExerciseAnnotation createObjectFromCursor(Cursor cursor)
+	{
+		ExerciseAnnotation exercise_annotation = new ExerciseAnnotation();
+        
+        exercise_annotation.setId(Integer.parseInt(cursor.getString(DbKeys.KEY_ID.ordinal())));
+        exercise_annotation.setAnnotation(cursor.getString(DbKeys.KEY_EXERCISE_ANNOTATION_ANNOTATION.ordinal()));
+        exercise_annotation.setVideoTime(Integer.parseInt(cursor.getString(DbKeys.KEY_EXERCISE_ANNOTATION_VIDEO_TIME.ordinal())));
+        exercise_annotation.setCreateTime(cursor.getString(DbKeys.KEY_CREATE_TIME.ordinal()));
+        exercise_annotation.setExerciseId(Integer.parseInt(cursor.getString(DbKeys.KEY_IDEXERCISE.ordinal())));
+        
+        return exercise_annotation;
+	}
+	
 	@Override
-	public List<DatabaseObject> selectAll(DatabaseHandler db) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getIdKeyName() {
+		return DbKeys.KEY_ID.getKeyName();
+	}
+	
+	public static void deleteAll(DatabaseHandler dbh) 
+	{
+		dbh.deleteAllRecordsFromTable(TABLE_NAME);
 	}
 
 }

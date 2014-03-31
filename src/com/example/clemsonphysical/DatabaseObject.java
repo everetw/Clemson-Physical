@@ -6,7 +6,6 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -20,9 +19,10 @@ import android.database.sqlite.SQLiteDatabase;
 public abstract class DatabaseObject implements java.io.Serializable
 {
 	
+
 	
 	public final String URL_INSERT = "";
-	public final String KEY_ID = "id";
+	//public final String KEY_ID = "id";
 	//public final String TABLE_NAME = "table";
 	
 	private static String baseUrl="http://people.cs.clemson.edu/~jburto2/CarMaintenance/";
@@ -91,10 +91,11 @@ public abstract class DatabaseObject implements java.io.Serializable
 	public abstract void setObjectFromJSON(JSONObject j) throws JSONException;
 	public abstract int update(DatabaseHandler dbh);
 	public abstract void add(DatabaseHandler dbh) throws Exception;
+	public abstract String getIdKeyName();
 
 	public void delete(DatabaseHandler dbh) {
         SQLiteDatabase db = dbh.getWritableDatabase();
-        db.delete(this.getTableName(), KEY_ID + " = ?",
+        db.delete(this.getTableName(), this.getIdKeyName() + " = ?",
                 new String[] { String.valueOf(this.getId()) });
 
 	}
@@ -113,13 +114,10 @@ public abstract class DatabaseObject implements java.io.Serializable
         return count;
 	}
 
-	public abstract DatabaseObject selectById(DatabaseHandler dbh) throws Exception;
-	public abstract List<DatabaseObject> selectAll(DatabaseHandler dbh);
+//	public abstract DatabaseObject getById(DatabaseHandler dbh) throws Exception;
+//	public abstract List<DatabaseObject> getAll(DatabaseHandler dbh);
+
 	
-	public void deleteAll(DatabaseHandler dbh) 
-	{
-		dbh.deleteAllRecordsFromTable(getTableName());
-	}
 		
 	
 	
