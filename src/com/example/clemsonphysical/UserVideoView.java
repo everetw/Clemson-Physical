@@ -35,7 +35,7 @@ public class UserVideoView extends VideoPlayerActivity {
 	@Override
 	protected String getVideoSubdirectory() {
 		
-		return "userlog";
+		return "user_videos";
 	}
 
 }

@@ -20,8 +20,9 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView1"
         android:layout_below="@+id/textView1"
-        android:onClick="showPractitionerVideo"
-        android:text="Practitioner Video Shortcut" />
+        android:onClick="showExercise"
+        android:text="ExerciseView Shortcut" />
+
 
     
     

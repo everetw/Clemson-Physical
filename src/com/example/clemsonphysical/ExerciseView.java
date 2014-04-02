@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class ExerciseView extends Activity {
+public class ExerciseView extends CameraActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,15 @@ public class ExerciseView extends Activity {
 	public void startRecording(View view){
 		
 		// ** to be filled in by James
+		dispatchTakeVideoIntent();
 		
+		
+	}
+
+	@Override
+	protected String getVideoSubdirectory() {
+		// TODO Auto-generated method stub
+		return "user_videos";
 	}
 
 }
