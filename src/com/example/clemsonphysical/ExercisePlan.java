@@ -18,18 +18,25 @@ public class ExercisePlan extends DatabaseObject {
 	public enum DbKeys
 	{
 	
-		KEY_ID ("idexercise_plan"),
-		KEY_EXERCISE_PLAN_NAME ( "exercise_plan_name"),
-		KEY_EXERCISE_PLAN_DESCRIPTION ("exercise_plan_description");
+		KEY_ID ("idexercise_plan","Exercise Plan ID"),
+		KEY_EXERCISE_PLAN_NAME ( "exercise_plan_name","Plan Name"),
+		KEY_EXERCISE_PLAN_DESCRIPTION ("exercise_plan_description","Description");
 		
-		private String field_name;
-		DbKeys(String name)
+		private String key_name;
+		private String key_label;
+		DbKeys(String name,String label)
 		{
-			field_name = name;
+			key_name = name;
+			key_label = label;
 		}
-		private String getKeyName()
+		public String getKeyName()
 		{
-			return field_name;
+			return key_name;
+		}
+
+		public String getKeyLabel()
+		{
+			return key_label;
 		}
 	};
 //	public static final String KEY_ID = "idexercise_plan";

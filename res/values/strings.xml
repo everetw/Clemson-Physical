@@ -22,5 +22,7 @@
     <string name="action_record">Record Video</string>
     <string name="action_about">Info</string>
     <string name="about_text">file:///android_asset/about.html</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_saveall">Save All</string>
 
 </resources>

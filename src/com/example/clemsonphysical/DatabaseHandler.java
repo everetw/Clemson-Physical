@@ -94,14 +94,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //    		deleteAllReceiptImages();
 //    	}
 //    	
-//    	try {
-//	        SQLiteDatabase db = this.getWritableDatabase();
-//	        db.delete(table_name, null, null);
-//	        
-//    	} catch (NullPointerException npe)
-//    	{
-//    		
-//    	}
+    	try {
+	        SQLiteDatabase db = this.getWritableDatabase();
+	        db.delete(table_name, null, null);
+	        
+    	} catch (NullPointerException npe)
+    	{
+    		
+    	}
     	
     }
     

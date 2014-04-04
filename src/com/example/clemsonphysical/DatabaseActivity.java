@@ -369,7 +369,7 @@ public abstract class DatabaseActivity extends DisplayActivity {
                 System.err.println("deleteAllUrl="+DatabaseObject.getDeleteAllUrl());
                 // getting product details by making HTTP request
                 JSONObject json = jsonParser.makeHttpRequest(
-                        myDatabaseObject.getDeleteAllUrl(), "POST", params);
+                        DatabaseObject.getDeleteAllUrl(), "POST", params);
  
                 // check your log for json response
                 Log.d("Delete All", json.toString());
@@ -542,16 +542,18 @@ public abstract class DatabaseActivity extends DisplayActivity {
     protected void addToDatabase(DatabaseObject dbo)
     {
 		myDatabaseObject = dbo;
-		AsyncTask<String,String,String> addTask = new AddDatabaseObject();
-		String output = null;
+//		AsyncTask<String,String,String> addTask = new AddDatabaseObject();
+//		String output = null;
 		try {
-			output = addTask.execute().get();
-			if (output != null && output.equals(TAG_SUCCESS))
-			{
-				// The global myDatabaseObject does not contain the newly index or any MySQL formatting adjustments. 
-				// The new object with the index is stored in the list.
-			    databaseObjectList.get(0).add(dbSQLite);
-			}
+			//External database add.
+//			output = addTask.execute().get();
+//			if (output != null && output.equals(TAG_SUCCESS))
+//			{
+//				// The global myDatabaseObject does not contain the newly index or any MySQL formatting adjustments. 
+//				// The new object with the index is stored in the list.
+//			    databaseObjectList.get(0).add(dbSQLite);
+//			}
+			dbo.add(dbSQLite);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -594,22 +596,22 @@ public abstract class DatabaseActivity extends DisplayActivity {
     protected void deleteAllRecordsFromTable(String tableName)
     {
 		
-		AsyncTask<String,String,String> deleteAllTask = new DeleteAllDatabaseObjects();
-		String output = null;
+//		AsyncTask<String,String,String> deleteAllTask = new DeleteAllDatabaseObjects();
+//		String output = null;
 		try {
-			output = deleteAllTask.execute(tableName).get();
-			if (output != null && output.equals(TAG_SUCCESS))
-			{
+//			output = deleteAllTask.execute(tableName).get();
+//			if (output != null && output.equals(TAG_SUCCESS))
+//			{
 			    dbSQLite.deleteAllRecordsFromTable(tableName);
-			}
+//			}
 
 				
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

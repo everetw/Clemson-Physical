@@ -31,20 +31,27 @@ public class ExerciseLog extends DatabaseObject {
 	{
 	
 		// Order of columns must match order in SQL create statement. 
-		KEY_ID ("id_exercise_log"),
-		KEY_EXERCISE_LOG_VIDEO_LOCATION ("exercise_log_video_location"),
-		KEY_EXERCISE_LOG_VIDEO_NOTES ("exercise_log_video_notes"),
-		KEY_CREATE_TIME ("create_time"),
-		KEY_EXERCISE_IDEXERCISE ("exercise_idexercise");
+		KEY_ID ("id_exercise_log","Exercise Log ID"),
+		KEY_EXERCISE_LOG_VIDEO_LOCATION ("exercise_log_video_location","Location of Video"),
+		KEY_EXERCISE_LOG_VIDEO_NOTES ("exercise_log_video_notes","Video Notes"),
+		KEY_CREATE_TIME ("create_time","Time Created"),
+		KEY_EXERCISE_IDEXERCISE ("exercise_idexercise","Exercise ID");
 		
-		private String field_name;
-		DbKeys(String name)
+		private String key_name;
+		private String key_label;
+		DbKeys(String name,String label)
 		{
-			field_name = name;
+			key_name = name;
+			key_label = label;
 		}
 		public String getKeyName()
 		{
-			return field_name;
+			return key_name;
+		}
+
+		public String getKeyLabel()
+		{
+			return key_label;
 		}
 	};
 	

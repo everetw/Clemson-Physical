@@ -35,20 +35,27 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 	public enum DbKeys
 	{
 	
-		KEY_ID ("idexercise_log_annotation"),
-		KEY_IDEXERCISE_LOG ("exercise_log_idexercise_log"),
-		KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME ("exercise_log_annotation_video_time"),
-		KEY_EXERCISE_LOG_ANNOTATION_ANNOTATION ("exercise_log_annotation_annotation"),
-		KEY_CREATE_TIME ("create_time");
+		KEY_ID ("idexercise_log_annotation","Exercise Log Annotation ID"),
+		KEY_IDEXERCISE_LOG ("exercise_log_idexercise_log","Exercise Log ID"),
+		KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME ("exercise_log_annotation_video_time","Video Time (ms)"),
+		KEY_EXERCISE_LOG_ANNOTATION_ANNOTATION ("exercise_log_annotation_annotation","Annotation"),
+		KEY_CREATE_TIME ("create_time","Time Created");
 		
-		private String field_name;
-		DbKeys(String name)
+		private String key_name;
+		private String key_label;
+		DbKeys(String name,String label)
 		{
-			field_name = name;
+			key_name = name;
+			key_label = label;
 		}
 		public String getKeyName()
 		{
-			return field_name;
+			return key_name;
+		}
+
+		public String getKeyLabel()
+		{
+			return key_label;
 		}
 	};
 	

@@ -33,21 +33,28 @@ public class ExercisePlanItem extends DatabaseObject {
 	public enum DbKeys
 	{
 		// order must match SQL create statement.
-		KEY_ID ("exercise_plan_item_id"),
-		KEY_EXERCISE_PLAN_IDEXERCISE_PLAN ("exercise_plan_idexercise_plan"),
-		KEY_EXERCISE_IDEXERCISE ("exercise_idexercise"),
-		KEY_EXERCISE_PLAN_ITEM_SEQUENCE ("exercise_plan_item_sequence"),
-		KEY_EXERCISE_PLAN_ITEM_QUANTITY ("exercise_plan_item_quantity"),
-		KEY_EXERCISE_PLAN_ITEM_DESCRIPTION ("exercise_plan_item_description");
+		KEY_ID ("exercise_plan_item_id","Exercise Plan Item ID"),
+		KEY_EXERCISE_PLAN_IDEXERCISE_PLAN ("exercise_plan_idexercise_plan","Exercise Plan ID"),
+		KEY_EXERCISE_IDEXERCISE ("exercise_idexercise","Exercise ID"),
+		KEY_EXERCISE_PLAN_ITEM_SEQUENCE ("exercise_plan_item_sequence","Sequence"),
+		KEY_EXERCISE_PLAN_ITEM_QUANTITY ("exercise_plan_item_quantity","Number Reps."),
+		KEY_EXERCISE_PLAN_ITEM_DESCRIPTION ("exercise_plan_item_description","Description");
 
-		private String field_name;
-		DbKeys(String name)
+		private String key_name;
+		private String key_label;
+		DbKeys(String name,String label)
 		{
-			field_name = name;
+			key_name = name;
+			key_label = label;
 		}
-		private String getKeyName()
+		public String getKeyName()
 		{
-			return field_name;
+			return key_name;
+		}
+
+		public String getKeyLabel()
+		{
+			return key_label;
 		}
 	};
 	

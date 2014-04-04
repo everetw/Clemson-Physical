@@ -34,6 +34,8 @@ public class DatabaseSQL {
 		"  \"exercise_file_location\" VARCHAR(127),\n"+
 		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
 		"  \"update_time\" TIMESTAMP\n"+
+		"  CONSTRAINT \"exercise_name_UNIQUE\"\n"+ 
+		"    UNIQUE(\"exercise_name\")"+ 
 		");",
 
 
@@ -54,6 +56,8 @@ public class DatabaseSQL {
 		"  \"idexercise_plan\" INTEGER PRIMARY KEY NOT NULL,\n"+
 		"  \"exercise_plan_name\" VARCHAR(45) NOT NULL,\n"+
 		"  \"exercise_plan_description\" VARCHAR(255)\n"+
+		"  CONSTRAINT \"exercise_plan_name_UNIQUE\"\n" +
+		"  UNIQUE(\"exercise_plan_name\")\n"+
 		");\n",
 
 		"CREATE TABLE \"exercise_plan_item\"(\n"+
@@ -74,6 +78,8 @@ public class DatabaseSQL {
 		"CREATE INDEX \"exercise_plan_item.fk_exercise_plan_item_exercise_plan1_idx\" ON \"exercise_plan_item\"(\"exercise_plan_idexercise_plan\");\n",
 		
 		"CREATE INDEX \"exercise_plan_item.fk_exercise_plan_item_exercise1_idx\" ON \"exercise_plan_item\"(\"exercise_idexercise\");\n",
+		
+		"CREATE INDEX \"exercise_plan_item.plan_exercise_sequence\" ON \"exercise_plan_item\"(\"exercise_plan_idexercise_plan\",\"exercise_idexercise\",\"exercise_plan_item_sequence\");",
 		
 		"CREATE TABLE \"exercise_log\"(\n"+
 		"  \"idexercise_log\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n"+

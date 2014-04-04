@@ -40,20 +40,27 @@ public class ExerciseAnnotation extends DatabaseObject {
 	public enum DbKeys
 	{
 		// Order of columns must match order in SQL create statement.
-		KEY_ID ("idexercise_annotation"),
-		KEY_IDEXERCISE ("exercise_idexercise"),
-		KEY_EXERCISE_ANNOTATION_VIDEO_TIME ("exercise_annotation_video_time"),
-		KEY_EXERCISE_ANNOTATION_ANNOTATION ("exercise_annotation_annotation"),
-		KEY_CREATE_TIME ("create_time");
+		KEY_ID ("idexercise_annotation","Excercise Annotation Id"),
+		KEY_IDEXERCISE ("exercise_idexercise","Exercise Id"),
+		KEY_EXERCISE_ANNOTATION_VIDEO_TIME ("exercise_annotation_video_time","Annotation Time (ms)"),
+		KEY_EXERCISE_ANNOTATION_ANNOTATION ("exercise_annotation_annotation", "Annotation"),
+		KEY_CREATE_TIME ("create_time","Time Created");
 		
-		private String field_name;
-		DbKeys(String name)
+		private String key_name;
+		private String key_label;
+		DbKeys(String name,String label)
 		{
-			field_name = name;
+			key_name = name;
+			key_label = label;
 		}
 		public String getKeyName()
 		{
-			return field_name;
+			return key_name;
+		}
+
+		public String getKeyLabel()
+		{
+			return key_label;
 		}
 	};
 	

@@ -33,20 +33,27 @@ public class Exercise extends DatabaseObject {
 	
 	public static enum DbKeys
 	{
-		KEY_ID ("idexercise"),
-		KEY_EXERCISE_NAME ("exercise_name"),
-		KEY_EXERCISE_VIDEO_URL ("exercise_video_url"),
-		KEY_EXERCISE_INSTRUCTION_URL ("exercise_instruction_url"),
-		KEY_EXERCISE_FILE_LOCATION ("exercise_file_location");
+		KEY_ID ("idexercise","Exercise ID"),
+		KEY_EXERCISE_NAME ("exercise_name","Exercise Name"),
+		KEY_EXERCISE_VIDEO_URL ("exercise_video_url","Video URL"),
+		KEY_EXERCISE_INSTRUCTION_URL ("exercise_instruction_url","Instruction URL"),
+		KEY_EXERCISE_FILE_LOCATION ("exercise_file_location","File Location");
 		
-		private String field_name;
-		DbKeys(String name)
+		private String key_name;
+		private String key_label;
+		DbKeys(String name,String label)
 		{
-			field_name = name;
+			key_name = name;
+			key_label = label;
 		}
 		public String getKeyName()
 		{
-			return field_name;
+			return key_name;
+		}
+
+		public String getKeyLabel()
+		{
+			return key_label;
 		}
 
 		

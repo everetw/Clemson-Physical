@@ -12,10 +12,10 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +68,9 @@ public class LayoutUtils
 	public static final int OPTION_YELLOW = 4;
 	public static final int OPTION_CYAN = 5;
 	
+	public static final int SMALL_FONT = 10;
+	public static final int MEDIUM_FONT = 15;
+	public static final int LARGE_FONT = 25;
 	
 	
 	/**
@@ -625,6 +628,10 @@ public class LayoutUtils
 
 	}
 	
+	public static int getPixels(final Context context, int dip)
+	{
+		return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, context.getResources().getDisplayMetrics());
+	}
 	
 	
 	
