@@ -2,14 +2,17 @@ package com.example.clemsonphysical;
 
 import java.util.List;
 
-
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
@@ -37,19 +40,23 @@ public class MainActivity extends DisplayTableActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().setDisplayHomeAsUpEnabled(false);
+		}
 	}
 	
 	
 	private void createData()
 	{
 		deleteAllRecordsFromTable(Exercise.TABLE_NAME);
+		deleteAllRecordsFromTable(ExerciseLog.TABLE_NAME);
 	    
 	    
 	    
 	    try
 	    {
-			addToDatabase(new Exercise(0,"Exercise 1","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 2","url","instructions","location"));
+			addToDatabase(new Exercise(0,"VideoView Demo","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/Video_View_Demo.htm",this.getExternalFilesDir("exercises").getCanonicalPath()+"/videoviewdemo.mp4"));
+			addToDatabase(new Exercise(0,"Exercise 2","url","instructions","/mnt/sdcard/Android/data/com.example.clemsonphysical/files/exercises/VID_20140402_190201_1120218855.mp4"));
 			addToDatabase(new Exercise(0,"Exercise 3","url","instructions","location"));
 			addToDatabase(new Exercise(0,"Exercise 4","url","instructions","location"));
 			addToDatabase(new Exercise(0,"Exercise 5","url","instructions","location"));
@@ -67,6 +74,7 @@ public class MainActivity extends DisplayTableActivity {
 			addToDatabase(new Exercise(0,"Exercise 17","url","instructions","location"));
 			addToDatabase(new Exercise(0,"Exercise 18","url","instructions","location"));
 			addToDatabase(new Exercise(0,"Exercise 19","url","instructions","location"));
+			addToDatabase(new ExerciseLog(0,1,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140405_185253_720749121.mp4","Exercise Log Notes"));
 
 	    }
 	    catch (Exception e)
@@ -100,6 +108,10 @@ public class MainActivity extends DisplayTableActivity {
         case R.id.create_data:
             createData();
             break;
+        
+        case R.id.action_custom_exercise:
+        	displayCustomExerciseDialog(null);
+        	break;
         
         }
         
@@ -162,7 +174,7 @@ public class MainActivity extends DisplayTableActivity {
         tableRow.addView(textView);
         textView.setVisibility(View.GONE);
         
-        textView = LayoutUtils.createTextView(this, Exercise.DbKeys.KEY_EXERCISE_INSTRUCTION_URL.getKeyLabel(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
+        textView = LayoutUtils.createTextView(this, Exercise.DbKeys.KEY_EXERCISE_INSTRUCTIONS.getKeyLabel(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
         tableRow.addView(textView);
         textView.setVisibility(View.GONE);
         
@@ -232,7 +244,7 @@ public class MainActivity extends DisplayTableActivity {
             tableRow.addView(textView);
             textView.setVisibility(View.GONE);
             
-            textView = LayoutUtils.createTextView(this, exercise.getInstructionUrl(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
+            textView = LayoutUtils.createTextView(this, exercise.getInstructions(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
             tableRow.addView(textView);
             textView.setVisibility(View.GONE);
             
@@ -293,6 +305,145 @@ public class MainActivity extends DisplayTableActivity {
     	
 		startActivity(intent);
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		super.onActivityResult(requestCode, resultCode, data);
+
+		
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) 
+		{
+			/// Fixed null pointer exceptions from - http://www.androidhive.info/2013/09/android-working-with-camera-api/
+	        try {
+	        	
+	        	// Capture the log values.
+	        	
+	        	
+	        	displayCustomExerciseResultsDialog();
+
+	        } catch (NullPointerException e) {
+	            e.printStackTrace();
+	        }
+	        
+	    }
+
+	}
+
+/// http://www.mkyong.com/android/android-prompt-user-input-dialog-example/
+	
+	private void displayCustomExerciseResultsDialog() {
+		
+    	String title = "Custom Exercise Details";
+    	
+
+		
+		// get prompts.xml view
+		LayoutInflater li = LayoutInflater.from(this);
+		View promptsView = li.inflate(R.layout.custom_exercise_dialog, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				this);
+
+		alertDialogBuilder.setTitle(title);
+		// set prompts.xml to alertdialog builder
+		alertDialogBuilder.setView(promptsView);
+
+		final EditText exerciseNameInput = (EditText) promptsView
+				.findViewById(R.id.exerciseNameEditText);
+		
+		final EditText exerciseInstructionsInput = (EditText) promptsView
+				.findViewById(R.id.exerciseInstructionsEditText);
+
+		// set dialog message
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("OK",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+					// get user input and set it to result
+					// edit text
+					String exercise_name = exerciseNameInput.getText().toString();
+					String exercise_instructions = exerciseInstructionsInput.getText().toString();
+					Exercise exercise = new Exercise(0,exercise_name,"",exercise_instructions,mediaUri.getPath());
+					try {
+						exercise.add(dbSQLite);
+						drawTable();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						// Ask overwrite.
+						// askOverwriteCustomExerciseDialog(exercise);
+						
+					}
+			
+				
+			    }
+			  })
+			.setNegativeButton("Cancel",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			    }
+			  });
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+	}
+	
+    public void displayCustomExerciseDialog(View v)
+    {
+    	
+    	String title = "Record Custom Exercise";
+    	String message = "Would you like to record a custom exercise?";
+    			
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		// set title
+
+		alertDialogBuilder.setTitle(title);
+ 
+		// set dialog message
+		alertDialogBuilder
+				.setMessage(message)
+				.setCancelable(false)
+				.setNegativeButton("No",new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int id) {
+						// if this button is clicked, just close
+						// the dialog box and do nothing
+						dialog.cancel();
+						
+						
+					}
+				  })
+				;
+		alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dispatchTakeVideoIntent();
+				
+			}
+					
+				});
+ 
+				// create alert dialog
+				AlertDialog alertDialog = alertDialogBuilder.create();
+ 
+				// show it
+				alertDialog.show();
+    }
+    
+    @Override
+	protected String getVideoSubdirectory()
+	{
+		return "custom_exercises";
+	}
+    
+
 
 
 

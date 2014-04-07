@@ -13,6 +13,7 @@
  
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -21,40 +22,73 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.clemsonphysical.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Solved up navigation problems from http://stackoverflow.com/questions/14462456/returning-from-an-activity-using-navigateupfromsametask -->
         <activity
             android:name="com.example.clemsonphysical.ExerciseView"
-            android:label="@string/title_activity_exercise_view" >
+            android:label="@string/title_activity_exercise_view" 
+            android:parentActivityName="com.example.clemsonphysical.MainActivity"
+            android:launchMode="singleTop"
+             >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.MainActivity" />
         </activity>
         <activity
             android:name="com.example.clemsonphysical.LogView"
-            android:label="@string/title_activity_log_view" >
+            android:label="@string/title_activity_log_view" 
+            android:parentActivityName="com.example.clemsonphysical.ExerciseView" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.ExerciseView" />
+
         </activity>
         <activity
             android:name="com.example.clemsonphysical.CompareView"
-            android:label="@string/title_activity_compare_view" >
+            android:label="@string/title_activity_compare_view" 
+            android:parentActivityName="com.example.clemsonphysical.LogView" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.LogView" />
         </activity>
         <activity
             android:name="com.example.clemsonphysical.UserVideoView"
-            android:label="@string/title_activity_user_video_view" >
+            android:label="@string/title_activity_user_video_view" 
+            android:parentActivityName="com.example.clemsonphysical.LogView" > 
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.LogView" />
         </activity>
         <activity
             android:name="com.example.clemsonphysical.PractitionerVideoView"
-            android:label="@string/title_activity_practitioner_video_view" >
+            android:label="@string/title_activity_practitioner_video_view" 
+            android:parentActivityName="com.example.clemsonphysical.ExerciseView" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.ExerciseView" />
+            
         </activity>
         <activity
             android:name="com.example.clemsonphysical.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings" 
+            android:parentActivityName="com.example.clemsonphysical.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.MainActivity" />
         </activity>
         <activity
             android:name="com.example.clemsonphysical.InfoView"
-            android:label="@string/title_activity_info_view" >
+            android:label="@string/title_activity_info_view" 
+            android:parentActivityName="com.example.clemsonphysical.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.MainActivity" />
         </activity>
     </application>
 

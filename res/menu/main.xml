@@ -13,8 +13,13 @@
         android:title="Settings"/>
     
     <item
-        android:id="@+id/create_data"
+        android:id="@+id/action_custom_exercise"
         android:orderInCategory="3"
+        android:showAsAction="never"
+        android:title="Create Custom Exercise"/>
+    <item
+        android:id="@+id/create_data"
+        android:orderInCategory="4"
         android:showAsAction="never"
         android:title="Create Data"/>
 

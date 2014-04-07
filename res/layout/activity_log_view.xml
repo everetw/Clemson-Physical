@@ -1,62 +1,96 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".LogView" >
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".LogView" >
+	<ScrollView 
+	    android:id="@+id/layout" 
+	    android:layout_height="match_parent"         
+	    android:scrollbars="horizontal|vertical" 
+	    android:layout_width="match_parent"     
+	    android:layout_margin="5dip" 
+	        
+	    android:scrollbarStyle="outsideInset"
+	    android:fillViewport="true"> 
+	
+	    <HorizontalScrollView 
+	        android:id="@+id/horizontalView" 
+	        android:layout_height="wrap_content"     
+	        android:scrollbars="horizontal|vertical" 
+	        android:layout_width="wrap_content"     
+	        android:layout_margin="5dip">
+	
 
-    <TextView
-        android:id="@+id/textView1"
-        android:gravity="center"
-        android:layout_width="wrap_content"
+	        <RelativeLayout
+	            android:id="@+id/worklayout"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:layout_marginBottom="0dip"
+	            android:layout_marginLeft="0dip"
+	            android:layout_marginRight="0dip"
+	            android:layout_marginTop="0dip" >
+
+    <Spinner
+        android:id="@+id/exerciseSpinner"
+        android:layout_width="200dip"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="Log"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_alignParentTop="true" />
 
-        <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
-        android:onClick="showUserVideo"
-        android:text="User video shortcut" />
-    <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView1" >
+     <TextView
+         android:id="@+id/exerciseIdTextView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_toRightOf="@+id/exerciseSpinner"
+         android:visibility="gone"
+         android:text="Exercise ID"
+          />
+     <TextView
+         android:id="@+id/exerciseLabelTextView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/exerciseSpinner"
+         android:text="Exercise"
+          />
+     <!--  
+     <Button
+         android:id="@+id/locationGoButton1"
+         android:layout_width="50dip"
+         android:layout_height="50dip"
+         android:layout_toRightOf="@+id/locationSpinner"
+         android:layout_alignParentRight="true"
+         android:layout_alignBottom="@+id/locationSpinner"
+         android:onClick="onLocationButtonClick"
+         
+         android:background="@drawable/ic_table_go" />
+         -->
 
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </TableRow>
+	        <!-- http://eclipseandroid.blogspot.com/2012/02/how-to-display-borders-in-tablelayouts.html -->
+	        <TableLayout
+	            
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:id="@+id/tlGridTable"
+	            android:layout_marginTop="2dip"
+	            android:layout_marginBottom="2dip"
+	            android:layout_marginLeft="2dip"
+	            android:layout_marginRight="2dip"
+	            android:layout_below="@+id/exerciseLabelTextView"
+	            android:background="#333333" >   
+	        </TableLayout>
 
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </TableRow>
 
-        <TableRow
-            android:id="@+id/tableRow3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </TableRow>
 
-        <TableRow
-            android:id="@+id/tableRow4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </TableRow>
-    </TableLayout>
-    
-    
+	        </RelativeLayout>
 
-</RelativeLayout>
+
+
+
+	        	      
+	    </HorizontalScrollView>
+	</ScrollView>
+
+
+
+</LinearLayout>

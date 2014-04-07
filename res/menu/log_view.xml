@@ -2,14 +2,21 @@
 
     <item
         android:id="@layout/activity_info_view"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:showAsAction="never"
         android:title="Info"/>
     
     <item
         android:id="@xml/settings"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:showAsAction="never"
         android:title="Settings"/>
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="@string/action_share"/>
+    
 
 </menu>

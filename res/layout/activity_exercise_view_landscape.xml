@@ -4,7 +4,7 @@
 	    android:id="@+id/exerciseViewMasterLayout"
 	    android:layout_width="wrap_content"
 	    android:layout_height="match_parent"
-	    android:orientation="vertical"
+	    android:orientation="horizontal"
 	    android:weightSum="2"
 	    tools:context=".LogView" >
     
@@ -15,8 +15,8 @@
 	<!-- Preview of video -->
     <FrameLayout
 	    android:id="@+id/frameLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="192dip"
+        android:layout_width="256dip"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_weight="1" >
 
@@ -26,7 +26,7 @@
 	        android:layout_height="192dip"
 	        android:adjustViewBounds="true"
 	        android:gravity="center"
-	        android:layout_gravity="center_horizontal"
+	        android:layout_gravity="center_vertical"
 	        android:onClick="showPractitionerVideo"
 	        android:scaleType="center"
 	        android:src="@android:drawable/ic_media_play" />
@@ -38,7 +38,7 @@
          android:layout_height="wrap_content"
          android:layout_weight="1"
          android:gravity="center"
-         android:layout_below="@+id/frameLayout1"
+         android:layout_toRightOf="@+id/frameLayout1"
          android:text="Exercise description" />
     
 	<!-- Exercise Instructions -->
@@ -111,7 +111,7 @@
         android:id="@+id/exerciseFileLocationTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:gravity="center"
         android:text="ExerciseFileLocation"
         android:visibility="gone"

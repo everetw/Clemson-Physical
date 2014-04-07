@@ -30,10 +30,10 @@ public class DatabaseSQL {
 		"  \"idexercise\" INTEGER PRIMARY KEY NOT NULL,\n"+
 		"  \"exercise_name\" VARCHAR(45) NOT NULL,\n"+
 		"  \"exercise_video_url\" VARCHAR(127),\n"+
-		"  \"exercise_instruction_url\" VARCHAR(127),\n"+
+		"  \"exercise_instructions\" VARCHAR(1023),\n"+
 		"  \"exercise_file_location\" VARCHAR(127),\n"+
 		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
-		"  \"update_time\" TIMESTAMP\n"+
+		"  \"update_time\" TIMESTAMP,\n"+
 		"  CONSTRAINT \"exercise_name_UNIQUE\"\n"+ 
 		"    UNIQUE(\"exercise_name\")"+ 
 		");",
@@ -55,7 +55,7 @@ public class DatabaseSQL {
 		"CREATE TABLE \"exercise_plan\"(\n"+
 		"  \"idexercise_plan\" INTEGER PRIMARY KEY NOT NULL,\n"+
 		"  \"exercise_plan_name\" VARCHAR(45) NOT NULL,\n"+
-		"  \"exercise_plan_description\" VARCHAR(255)\n"+
+		"  \"exercise_plan_description\" VARCHAR(255),\n"+
 		"  CONSTRAINT \"exercise_plan_name_UNIQUE\"\n" +
 		"  UNIQUE(\"exercise_plan_name\")\n"+
 		");\n",
@@ -89,7 +89,9 @@ public class DatabaseSQL {
 		"  \"exercise_idexercise\" INTEGER NOT NULL,\n"+
 		"  CONSTRAINT \"fk_exercise_log_exercise1\"\n"+
 		"    FOREIGN KEY(\"exercise_idexercise\")\n"+
-		"    REFERENCES \"exercise\"(\"idexercise\")\n"+
+		"    REFERENCES \"exercise\"(\"idexercise\"),\n"+
+		"  CONSTRAINT \"exercise_log_video_location_UNIQUE\"\n" +
+		"  UNIQUE(\"exercise_log_video_location\")\n"+
 		");\n",
 		
 		"CREATE INDEX \"exercise_log.fk_exercise_log_exercise1_idx\" ON \"exercise_log\"(\"exercise_idexercise\");\n",

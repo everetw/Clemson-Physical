@@ -28,7 +28,7 @@ public class Exercise extends DatabaseObject {
 	private static final long serialVersionUID = 3626262735123169717L;
 	private String exercise_name;
 	private String exercise_video_url;
-	private String exercise_instruction_url;
+	private String exercise_instructions;
 	private String exercise_file_location;
 	
 	public static enum DbKeys
@@ -36,8 +36,9 @@ public class Exercise extends DatabaseObject {
 		KEY_ID ("idexercise","Exercise ID"),
 		KEY_EXERCISE_NAME ("exercise_name","Exercise Name"),
 		KEY_EXERCISE_VIDEO_URL ("exercise_video_url","Video URL"),
-		KEY_EXERCISE_INSTRUCTION_URL ("exercise_instruction_url","Instruction URL"),
+		KEY_EXERCISE_INSTRUCTIONS ("exercise_instructions","Instructions"),
 		KEY_EXERCISE_FILE_LOCATION ("exercise_file_location","File Location");
+		
 		
 		private String key_name;
 		private String key_label;
@@ -64,7 +65,7 @@ public class Exercise extends DatabaseObject {
 //	public static final String KEY_ID = "idexercise";
 //	public static final String KEY_EXERCISE_NAME = "exercise_name";
 //	public static final String KEY_EXERCISE_VIDEO_URL = "exercise_video_url";
-//	public static final String KEY_EXERCISE_INSTRUCTION_URL = "exercise_instruction_url";
+//	public static final String KEY_EXERCISE_INSTRUCTIONS = "exercise_instructions";
 //	public static final String KEY_EXERCISE_FILE_LOCATION = "exercise_file_location";
 	
 	/**
@@ -74,7 +75,7 @@ public class Exercise extends DatabaseObject {
 //		"  \"idexercise\" INTEGER PRIMARY KEY NOT NULL,\n"+
 //		"  \"exercise_name\" VARCHAR(45) NOT NULL,\n"+
 //		"  \"exercise_video_url\" VARCHAR(127),\n"+
-//		"  \"exercise_instruction_url\" VARCHAR(127),\n"+
+//		"  \"exercise_instructions\" VARCHAR(127),\n"+
 //		"  \"exercise_file_location\" VARCHAR(127),\n"+
 //		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
 //		"  \"update_time\" TIMESTAMP\n"+
@@ -84,12 +85,12 @@ public class Exercise extends DatabaseObject {
 		this(0,"","","","");
 	}
 	
-	public Exercise(int id, String name, String video_url, String instruction_url, String file_location)
+	public Exercise(int id, String name, String video_url, String instructions, String file_location)
 	{
 		this.id = id;
 		this.exercise_name = name;
 		this.exercise_file_location = file_location; 
-		this.exercise_instruction_url = instruction_url;
+		this.exercise_instructions = instructions;
 		this.exercise_video_url = video_url;
 	}
 
@@ -131,14 +132,14 @@ public class Exercise extends DatabaseObject {
 	}
 	
 	
-	public String getInstructionUrl()
+	public String getInstructions()
 	{
-		return this.exercise_instruction_url;
+		return this.exercise_instructions;
 	}
 	
-	public void setInstructionUrl(String instruction_url)
+	public void setInstructions(String instructions)
 	{
-		this.exercise_instruction_url = instruction_url;
+		this.exercise_instructions = instructions;
 	}
 	
 	
@@ -183,7 +184,7 @@ public class Exercise extends DatabaseObject {
         values.put(DbKeys.KEY_ID.getKeyName(), this.getId());
         values.put(DbKeys.KEY_EXERCISE_NAME.getKeyName(), this.getName());
         values.put(DbKeys.KEY_EXERCISE_VIDEO_URL.getKeyName(), this.getVideoUrl());
-        values.put(DbKeys.KEY_EXERCISE_INSTRUCTION_URL.getKeyName(), this.getInstructionUrl());
+        values.put(DbKeys.KEY_EXERCISE_INSTRUCTIONS.getKeyName(), this.getInstructions());
         values.put(DbKeys.KEY_EXERCISE_FILE_LOCATION.getKeyName(), this.getFileLocation());
  
         // updating row
@@ -207,7 +208,7 @@ public class Exercise extends DatabaseObject {
         //values.put(KEY_ID, this.getId());
         values.put(DbKeys.KEY_EXERCISE_NAME.getKeyName(), this.getName());
         values.put(DbKeys.KEY_EXERCISE_VIDEO_URL.getKeyName(), this.getVideoUrl());
-        values.put(DbKeys.KEY_EXERCISE_INSTRUCTION_URL.getKeyName(), this.getInstructionUrl());
+        values.put(DbKeys.KEY_EXERCISE_INSTRUCTIONS.getKeyName(), this.getInstructions());
         values.put(DbKeys.KEY_EXERCISE_FILE_LOCATION.getKeyName(), this.getFileLocation());
 
  
@@ -310,7 +311,7 @@ public class Exercise extends DatabaseObject {
         
         exercise.setId(Integer.parseInt(cursor.getString(DbKeys.KEY_ID.ordinal())));
         exercise.setFileLocation(cursor.getString(DbKeys.KEY_EXERCISE_FILE_LOCATION.ordinal()));
-        exercise.setInstructionUrl(cursor.getString(DbKeys.KEY_EXERCISE_INSTRUCTION_URL.ordinal()));
+        exercise.setInstructions(cursor.getString(DbKeys.KEY_EXERCISE_INSTRUCTIONS.ordinal()));
         exercise.setName(cursor.getString(DbKeys.KEY_EXERCISE_NAME.ordinal()));
         exercise.setVideoUrl(cursor.getColumnName(DbKeys.KEY_EXERCISE_VIDEO_URL.ordinal()));
         
@@ -320,6 +321,28 @@ public class Exercise extends DatabaseObject {
 	@Override
 	public String getIdKeyName() {
 		return DbKeys.KEY_ID.getKeyName();
+	}
+
+	public static Exercise getByName(DatabaseHandler dbh, String exercise_name) throws Exception {
+		SQLiteDatabase db = dbh.getReadableDatabase();
+	     
+			
+        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_EXERCISE_NAME.getKeyName() + "=?",
+                new String[] { exercise_name }, null, null, null, null);
+        if (cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            Exercise object = createObjectFromCursor(cursor);
+	        cursor.close();
+	        
+            return object;
+        }
+        else
+        {
+	        cursor.close();
+	        
+        	throw new java.lang.Exception("Cannot find "+TABLE_NAME+" matching name "+exercise_name);
+        }
 	}
 
 }

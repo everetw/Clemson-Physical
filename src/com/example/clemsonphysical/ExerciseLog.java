@@ -31,7 +31,7 @@ public class ExerciseLog extends DatabaseObject {
 	{
 	
 		// Order of columns must match order in SQL create statement. 
-		KEY_ID ("id_exercise_log","Exercise Log ID"),
+		KEY_ID ("idexercise_log","Exercise Log ID"),
 		KEY_EXERCISE_LOG_VIDEO_LOCATION ("exercise_log_video_location","Location of Video"),
 		KEY_EXERCISE_LOG_VIDEO_NOTES ("exercise_log_video_notes","Video Notes"),
 		KEY_CREATE_TIME ("create_time","Time Created"),
@@ -126,8 +126,8 @@ public class ExerciseLog extends DatabaseObject {
 
 	@Override
 	public String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
+
+		return "exercise_log";
 	}
 
 	@Override
@@ -217,7 +217,7 @@ public class ExerciseLog extends DatabaseObject {
 
 	// Should be in superclass, but Java won't let you override static methods. 
 	
-	public static DatabaseObject getById(DatabaseHandler dbh, int id) throws Exception {
+	public static ExerciseLog getById(DatabaseHandler dbh, int id) throws Exception {
 	    
 		SQLiteDatabase db = dbh.getReadableDatabase();
 	     
@@ -227,7 +227,7 @@ public class ExerciseLog extends DatabaseObject {
         if (cursor.getCount() > 0)
         {
             cursor.moveToFirst();
-            DatabaseObject object = createObjectFromCursor(cursor);
+            ExerciseLog object = createObjectFromCursor(cursor);
 	        cursor.close();
 	        
             return object;
@@ -237,6 +237,31 @@ public class ExerciseLog extends DatabaseObject {
 	        cursor.close();
 	        
         	throw new java.lang.Exception("Cannot find "+TABLE_NAME+" matching id "+ id);
+        }
+
+	}
+	
+	
+	public static ExerciseLog getByVideoLocation(DatabaseHandler dbh, String video_location) throws Exception {
+	    
+		SQLiteDatabase db = dbh.getReadableDatabase();
+	     
+	     			
+        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_EXERCISE_LOG_VIDEO_LOCATION.getKeyName() + "=?",
+                new String[] { video_location }, null, null, null, null);
+        if (cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            ExerciseLog object = createObjectFromCursor(cursor);
+	        cursor.close();
+	        
+            return object;
+        }
+        else
+        {
+	        cursor.close();
+	        
+        	throw new java.lang.Exception("Cannot find "+TABLE_NAME+" matching name "+video_location);
         }
 
 	}
@@ -286,6 +311,32 @@ public class ExerciseLog extends DatabaseObject {
 	public String getIdKeyName() 
 	{
 		return DbKeys.KEY_ID.getKeyName();
+	}
+
+	public static List<DatabaseObject> getAllByExerciseId(
+			DatabaseHandler dbh, int exercise_id) {
+        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME + " WHERE "+DbKeys.KEY_EXERCISE_IDEXERCISE.getKeyName()+"="+Integer.toString(exercise_id);
+ 
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+ 
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                
+            	DatabaseObject object = createObjectFromCursor(cursor);
+               
+                // Adding object to list
+                objectList.add(object);
+                
+            } while (cursor.moveToNext());
+        }
+ 
+        cursor.close();
+        
+        return objectList;	
 	}
 
 }

@@ -1,136 +1,1410 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>AndroidLookup</title>
-</head>
-<body>
-<h1>Car Maintenance</h1>
-<h2>Version: 0.2</h2>
-<h2>By: James Burton</h2>
-This program implements a database that keeps track of maintenance for your various vehicles. It can be used by an individual, a family, or a fleet/motor pool.
-<p>
-Add information into the tables on the screen. Each screen corresponds to a table in the schema.
-<p>
-<h2>Database Schema</h2>
-<a href="Schema.png"><img alt="Schema" src="Schema.png?w=303" width="303" height="202" /></a>
-<p>
-<strong>Vehicle</strong>: Vehicle (e.g. Batmobile)
-<p>
-<strong>Item</strong>: Maintenance Item (e.g. Change the oil every 5000 miles or 6 months.)
-<p>
-<strong>Location</strong>: Service shop. (e.g. Jiffy Lube)
-<p>
-<strong>Receipt</strong>: All work done at a location, and date (e.g. Service at Jiffy Lube on 2/22/2014)
-<p>
-<strong>Work</strong>: Work performed (e.g. Change the oil as part of service done at Jiffy Lube on 2/22/2014 for Batmobile).
-<p>
-<strong><em>Changes for 0.2:
-<p>
-</em></strong><em>Timestamps were added, but not used. Also mileage was moved from Receipt table to Work table because of it's association with a Vehicle.</em>
-<p>
-<em>This schema applies to both the internal and the external database. Data is stored on the external database and mirrored on the internal database for caching purposes. The only difference between the schemas is that are indices are only automatically generated on the external database.</em>
-<p>
-<em>Currently, the app assumes the external data is always right and the internal data is expendable. Data integrity is maintained by the internal SQLite database not being updated unless the external MySQL database has been successfully updated. A menu option on the main screen will force a refresh of the internal database from the external database.
-</em>
-<p>
-<h2>Preferences</h2>
-<p>
-<b>Autosave</b>
-<ul>
-<li>Should App automatically save changes or require you to press save button?</li>
-</ul>
-<p>
-<b>Color Theme</b>
-<ul>
-<li>Color for table selection highlighting. Default is Blue.</li>
-</ul>
-<p>
-<b>BaseURL</b>
-<ul>
-<li>URL location of scripts to access external database. Be sure to include trailing /</li>
-</ul>
-<p>
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns:mv="http://macVmlSchemaUri" xmlns="http://www.w3.org/TR/REC-html40">
 
-<h1>Cool Stuff</h1>
-<p>
-<b>Version 0.2</b>
-<ul>
-<li>Multiple color select on table screens.</li>
-<li>Detail screens for Work and Receipt tables.</li>
-<li>Image capture.</li>
-<li>File I/O. Receipt images are saved in Application directory on the external SD card.</li>
-<li>Database synchronization.</li>
-</ul>
-<p>
-<b>Version 0.1</b>
-<ul>
-<li>Date Picker Dialog</li>
-<li>Image Selection from Android gallery</li>
-<li>Dynamically generated spinners</li>
-<li>Dynamic table generation</li>
-<li>HTML about page</li>
-<li>Multiple action bars</li>
-</ul>
-<h1>Acknowlegements</h1>
-<h2>Version 0.2</h2>
-<h3>Images</h3>
-Started with this <a href="//developer.android.com/training/camera/photobasics.html">http://developer.android.com/training/camera/photobasics.html</a> <strong>BUT</strong>, the tutorial has an error. See <a href="http://stackoverflow.com/questions/13912095/java-lang-nullpointerexception-on-bundle-extras-data-getextras">http://stackoverflow.com/questions/13912095/java-lang-nullpointerexception-on-bundle-extras-data-getextras</a>
-<p>
-Android Hive working with Camera API: <a href="http://www.androidhive.info/2013/09/android-working-with-camera-api/">http://www.androidhive.info/2013/09/android-working-with-camera-api/</a>
-<p>
-Rotating images from <a href="http://www.higherpass.com/Android/Tutorials/Working-With-Images-In-Android/3/">http://www.higherpass.com/Android/Tutorials/Working-With-Images-In-Android/3/</a>
-<p>
-Dialog to pick image from camera: <a href="http://stackoverflow.com/questions/10165302/dialog-to-pick-image-from-gallery-or-from-camera">http://stackoverflow.com/questions/10165302/dialog-to-pick-image-from-gallery-or-from-camera</a>
-<p>
-How to delete a file:<a href="http://www.mkyong.com/java/how-to-delete-file-in-java/"> http://www.mkyong.com/java/how-to-delete-file-in-java/</a>
-<p>
-<h3>Detail Screens</h3>
-<p>
-Passing an object in an intent: <a href="http://www.tutorialspoint.com/java/java_serialization.htm">http://www.tutorialspoint.com/java/java_serialization.htm</a>
-<p>
-<h3>Preferences</h3>
-<p>
-Preferences from <a href="http://developer.android.com/guide/topics/data/data-storage.html">http://developer.android.com/guide/topics/data/data-storage.html</a>
-<p>
-Settings dialog derived from information at <a href="http://developer.android.com/guide/topics/ui/settings.html">http://developer.android.com/guide/topics/ui/settings.html</a>
-<p>
-Radio button in preferences: <a href="http://stackoverflow.com/questions/6148952/how-to-get-selected-text-and-value-android-listpreference">http://stackoverflow.com/questions/6148952/how-to-get-selected-text-and-value-android-listpreference</a> and <a href="//stackoverflow.com/questions/4966816/how-to-create-radiobutton-group-in-preference-xml-window">http://stackoverflow.com/questions/4966816/how-to-create-radiobutton-group-in-preference-xml-window</a>
-<p>
-<h3>Database</h3>
-<p>
-Everything you need to know about connecting an Android application to a MySQL database via PHP. <strong>BEST. TUTORIAL. EVER.</strong> <a href="http://www.androidhive.info/2012/05/how-to-connect-android-with-php-mysql/">http://www.androidhive.info/2012/05/how-to-connect-android-with-php-mysql/</a>
-<p>
-Testing http POST/GET with curl <a href="http://stackoverflow.com/questions/1087185/http-testing-tool-easily-send-post-get-put">http://stackoverflow.com/questions/1087185/http-testing-tool-easily-send-post-get-put</a>
-<p>
-Workaround for truncating table that is a foreign key in MySQL: <a href="http://stackoverflow.com/questions/5452760/truncate-foreign-key-constrained-table">http://stackoverflow.com/questions/5452760/truncate-foreign-key-constrained-table</a>
-<p>
-<h3>Other</h3>
-<p>
-Eclipse PTI-PHP Tool integration plugin. Available in the Eclipse Marketplace. Update site is at http://www.phpsrc.org/eclipse/pti/
-<p>
-MacOS Mavericks built-in Apache server. Great for development testing.
-<p>
-<h2>Version 0.1</h2>
-Richard Kelly for pointing me to FluidUi for user interface design <a href="https://www.fluidui.com/">https://www.fluidui.com/</a>
-<p>
-MySqlWorkbench for table generation. <a href="http://www.mysql.com/products/workbench/">http://www.mysql.com/products/workbench/</a>
-<p>
-Thomas Henlich's SQLite plugin for MySQLWorkBench <a href="http://www.henlich.de/software/sqlite-export-plugin-for-mysql-workbench/">http://www.henlich.de/software/sqlite-export-plugin-for-mysql-workbench/</a>
-<p>
-Vogella Tutorials for the Image Picker <a href="http://blog.vogella.com/2011/09/13/android-how-to-get-an-image-via-an-intent/">http://blog.vogella.com/2011/09/13/android-how-to-get-an-image-via-an-intent/</a>
-<p>
-Database handler from <a href="http://www.androidhive.info/2011/11/android-sqlite-database-tutorial/">http://www.androidhive.info/2011/11/android-sqlite-database-tutorial/</a>
-<p>
-Create spinner from array <a href="http://stackoverflow.com/questions/2784081/android-create-spinner-programmatically-from-array">http://stackoverflow.com/questions/2784081/android-create-spinner-programmatically-from-array</a>
-<p>
-Date picker dialog from <a href="http://www.learn-android-easily.com/2013/06/datepicker-and-timepicker-dialog-in.html">http://www.learn-android-easily.com/2013/06/datepicker-and-timepicker-dialog-in.html</a>
-<p>
-And TONS more from <a href="http://stackoverflow.com">http://stackoverflow.com</a> and <a href="http://developer.android.com/">http://developer.android.com/</a>
-<p>
-All icons (besides those that come with Android) were downloaded from <a href="http://findicons.com/">http://findicons.com/</a>
-<p>
-Plus, Eclipse is just awesome, in case you didn't know that by now.
-<p>
+<head>
+<meta name=Title content="">
+<meta name=Keywords content="">
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 14">
+<meta name=Originator content="Microsoft Word 14">
+<link rel=File-List href="about_files/filelist.xml">
+<link rel=Edit-Time-Data href="about_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>James Burton</o:Author>
+  <o:LastAuthor>James Burton</o:LastAuthor>
+  <o:Revision>3</o:Revision>
+  <o:TotalTime>4</o:TotalTime>
+  <o:Created>2014-04-06T23:03:00Z</o:Created>
+  <o:LastSaved>2014-04-06T23:04:00Z</o:LastSaved>
+  <o:Pages>3</o:Pages>
+  <o:Words>1019</o:Words>
+  <o:Characters>5810</o:Characters>
+  <o:Company>The Law Offices of James D. Burton, PLLC</o:Company>
+  <o:Lines>48</o:Lines>
+  <o:Paragraphs>13</o:Paragraphs>
+  <o:CharactersWithSpaces>6816</o:CharactersWithSpaces>
+  <o:Version>14.0</o:Version>
+ </o:DocumentProperties>
+ <o:OfficeDocumentSettings>
+  <o:AllowPNG/>
+  <o:TargetScreenSize>544x376</o:TargetScreenSize>
+ </o:OfficeDocumentSettings>
+</xml><![endif]-->
+<link rel=themeData href="about_files/themedata.xml">
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>77</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:TrackMoves>false</w:TrackMoves>
+  <w:TrackFormatting/>
+  <w:DisplayHorizontalDrawingGridEvery>0</w:DisplayHorizontalDrawingGridEvery>
+  <w:DisplayVerticalDrawingGridEvery>0</w:DisplayVerticalDrawingGridEvery>
+  <w:UseMarginsForDrawingGridOrigin/>
+  <w:ValidateAgainstSchemas>false</w:ValidateAgainstSchemas>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:DoNotUnderlineInvalidXML/>
+  <w:DoNotPromoteQF/>
+  <w:LidThemeOther>EN-US</w:LidThemeOther>
+  <w:LidThemeAsian>JA</w:LidThemeAsian>
+  <w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+   <w:SplitPgBreakAndParaMark/>
+   <w:EnableOpenTypeKerning/>
+   <w:DontFlipMirrorIndents/>
+   <w:OverrideTableStyleHps/>
+   <w:UseFELayout/>
+  </w:Compatibility>
+  <m:mathPr>
+   <m:mathFont m:val="Cambria Math"/>
+   <m:brkBin m:val="before"/>
+   <m:brkBinSub m:val="&#45;-"/>
+   <m:smallFrac m:val="off"/>
+   <m:dispDef m:val="off"/>
+   <m:lMargin m:val="0"/>
+   <m:rMargin m:val="0"/>
+   <m:defJc m:val="centerGroup"/>
+   <m:wrapRight/>
+   <m:intLim m:val="subSup"/>
+   <m:naryLim m:val="subSup"/>
+  </m:mathPr></w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="true"
+  DefSemiHidden="true" DefQFormat="false" DefPriority="99"
+  LatentStyleCount="276">
+  <w:LsdException Locked="false" Priority="0" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Normal"/>
+  <w:LsdException Locked="false" Priority="9" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="heading 1"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 2"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 3"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 4"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 5"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 6"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 7"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 8"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 9"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 1"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 2"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 3"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 4"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 5"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 6"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 7"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 8"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 9"/>
+  <w:LsdException Locked="false" Priority="35" QFormat="true" Name="caption"/>
+  <w:LsdException Locked="false" Priority="10" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Title"/>
+  <w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/>
+  <w:LsdException Locked="false" Priority="11" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Subtitle"/>
+  <w:LsdException Locked="false" Priority="22" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Strong"/>
+  <w:LsdException Locked="false" Priority="20" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Emphasis"/>
+  <w:LsdException Locked="false" Priority="59" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Table Grid"/>
+  <w:LsdException Locked="false" UnhideWhenUsed="false" Name="Placeholder Text"/>
+  <w:LsdException Locked="false" Priority="1" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="No Spacing"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 1"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 1"/>
+  <w:LsdException Locked="false" UnhideWhenUsed="false" Name="Revision"/>
+  <w:LsdException Locked="false" Priority="34" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="List Paragraph"/>
+  <w:LsdException Locked="false" Priority="29" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Quote"/>
+  <w:LsdException Locked="false" Priority="30" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Intense Quote"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 1"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 1"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 1"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 2"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 2"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 2"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 2"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 3"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 3"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 3"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 3"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 4"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 4"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 4"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 4"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 5"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 5"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 5"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 5"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 6"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 6"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 6"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 6"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="19" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Subtle Emphasis"/>
+  <w:LsdException Locked="false" Priority="21" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Intense Emphasis"/>
+  <w:LsdException Locked="false" Priority="31" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Subtle Reference"/>
+  <w:LsdException Locked="false" Priority="32" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Intense Reference"/>
+  <w:LsdException Locked="false" Priority="33" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Book Title"/>
+  <w:LsdException Locked="false" Priority="37" Name="Bibliography"/>
+  <w:LsdException Locked="false" Priority="39" QFormat="true" Name="TOC Heading"/>
+ </w:LatentStyles>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Arial;
+	panose-1:2 11 6 4 2 2 2 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:-536859905 -1073711037 9 0 511 0;}
+@font-face
+	{font-family:"MS Mincho";
+	mso-font-charset:78;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:1 134676480 16 0 131072 0;}
+@font-face
+	{font-family:"MS Gothic";
+	mso-font-charset:78;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:1 134676480 16 0 131072 0;}
+@font-face
+	{font-family:"MS Gothic";
+	mso-font-charset:78;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:1 134676480 16 0 131072 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:-520092929 1073786111 9 0 415 0;}
+@font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:-536870145 1073743103 0 0 415 0;}
+@font-face
+	{font-family:"Avenir Light";
+	panose-1:2 11 4 2 2 2 3 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:-2147483473 1342185546 0 0 155 0;}
+@font-face
+	{font-family:"Lucida Grande";
+	panose-1:2 11 6 0 4 5 2 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:-520090897 1342218751 0 0 447 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:Cambria;
+	mso-fareast-language:JA;}
+h1
+	{mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 1 Char";
+	mso-style-next:Normal;
+	margin-top:24.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Calibri;
+	mso-ascii-font-family:Calibri;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"MS Gothic";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Calibri;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#345A8A;
+	mso-themecolor:accent1;
+	mso-themeshade:181;
+	mso-font-kerning:0pt;
+	mso-fareast-language:JA;}
+h2
+	{mso-style-priority:9;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 2 Char";
+	mso-style-next:Normal;
+	margin-top:10.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:13.0pt;
+	font-family:Calibri;
+	mso-ascii-font-family:Calibri;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"MS Gothic";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Calibri;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	mso-fareast-language:JA;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-next:Normal;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Calibri;
+	mso-ascii-font-family:Calibri;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:Cambria;
+	mso-hansi-font-family:Calibri;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	color:#548DD4;
+	mso-fareast-language:JA;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:11.0pt;
+	font-family:Cambria;
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:minor-latin;
+	mso-fareast-font-family:Cambria;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:minor-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-fareast-language:JA;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{mso-style-priority:99;
+	mso-style-link:"Header Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:Cambria;
+	mso-fareast-language:JA;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{mso-style-priority:99;
+	mso-style-link:"Footer Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:Cambria;
+	mso-fareast-language:JA;}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-link:"Balloon Text Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Lucida Grande";
+	mso-fareast-font-family:Cambria;
+	mso-fareast-language:JA;}
+p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
+	{mso-style-priority:39;
+	mso-style-qformat:yes;
+	mso-style-parent:"Heading 1";
+	mso-style-next:Normal;
+	margin-top:24.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	line-height:115%;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:Calibri;
+	mso-ascii-font-family:Calibri;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"MS Gothic";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Calibri;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	font-weight:bold;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 1";
+	mso-ansi-font-size:16.0pt;
+	mso-bidi-font-size:16.0pt;
+	font-family:Calibri;
+	mso-ascii-font-family:Calibri;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"MS Gothic";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Calibri;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#345A8A;
+	mso-themecolor:accent1;
+	mso-themeshade:181;
+	font-weight:bold;}
+span.Heading2Char
+	{mso-style-name:"Heading 2 Char";
+	mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 2";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:Calibri;
+	mso-ascii-font-family:Calibri;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"MS Gothic";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Calibri;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.FooterChar
+	{mso-style-name:"Footer Char";
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Footer;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-fareast-font-family:Cambria;
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+span.HeaderChar
+	{mso-style-name:"Header Char";
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Header;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-fareast-font-family:Cambria;
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.normal, li.normal, div.normal
+	{mso-style-name:normal;
+	mso-style-unhide:no;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	line-height:115%;
+	mso-pagination:widow-orphan;
+	font-size:11.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:Arial;
+	color:black;
+	mso-fareast-language:JA;}
+span.BalloonTextChar
+	{mso-style-name:"Balloon Text Char";
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Balloon Text";
+	mso-ansi-font-size:9.0pt;
+	mso-bidi-font-size:9.0pt;
+	font-family:"Lucida Grande";
+	mso-ascii-font-family:"Lucida Grande";
+	mso-fareast-font-family:Cambria;
+	mso-hansi-font-family:"Lucida Grande";
+	mso-bidi-font-family:"Lucida Grande";}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-default-props:yes;
+	font-size:10.0pt;
+	mso-ansi-font-size:10.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Cambria;
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:minor-latin;
+	mso-fareast-font-family:"MS Mincho";
+	mso-fareast-theme-font:minor-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:minor-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:minor-bidi;
+	mso-fareast-language:JA;}
+.MsoPapDefault
+	{mso-style-type:export-only;
+	margin-bottom:10.0pt;}
+ /* Page Definitions */
+@page
+	{mso-footnote-separator:url(":about_files:header.htm") fs;
+	mso-footnote-continuation-separator:url(":about_files:header.htm") fcs;
+	mso-endnote-separator:url(":about_files:header.htm") es;
+	mso-endnote-continuation-separator:url(":about_files:header.htm") ecs;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-page-numbers:roman-lower;
+	mso-even-footer:url(":about_files:header.htm") ef1;
+	mso-footer:url(":about_files:header.htm") f1;
+	mso-paper-source:0;}
+div.WordSection1
+	{page:WordSection1;}
+@page WordSection2
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-page-numbers:roman-lower 1;
+	mso-header:url(":about_files:header.htm") h2;
+	mso-even-footer:url(":about_files:header.htm") ef1;
+	mso-footer:url(":about_files:header.htm") f2;
+	mso-paper-source:0;}
+div.WordSection2
+	{page:WordSection2;}
+@page WordSection3
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-page-numbers:1;
+	mso-header:url(":about_files:header.htm") h2;
+	mso-even-footer:url(":about_files:header.htm") ef1;
+	mso-footer:url(":about_files:header.htm") f3;
+	mso-paper-source:0;}
+div.WordSection3
+	{page:WordSection3;}
+@page WordSection4
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-header:url(":about_files:header.htm") h2;
+	mso-even-footer:url(":about_files:header.htm") ef1;
+	mso-footer:url(":about_files:header.htm") f3;
+	mso-paper-source:0;}
+div.WordSection4
+	{page:WordSection4;}
+@page WordSection5
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-header:url(":about_files:header.htm") h2;
+	mso-even-footer:url(":about_files:header.htm") ef1;
+	mso-footer:url(":about_files:header.htm") f3;
+	mso-paper-source:0;}
+div.WordSection5
+	{page:WordSection5;}
+@page WordSection6
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-header:url(":about_files:header.htm") h2;
+	mso-even-footer:url(":about_files:header.htm") ef1;
+	mso-footer:url(":about_files:header.htm") f3;
+	mso-paper-source:0;}
+div.WordSection6
+	{page:WordSection6;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin-top:0in;
+	mso-para-margin-right:0in;
+	mso-para-margin-bottom:10.0pt;
+	mso-para-margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Cambria;
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:minor-latin;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:minor-latin;
+	mso-fareast-language:JA;}
+</style>
+<![endif]-->
+</head>
+
+<body bgcolor=white lang=EN-US style='tab-interval:.5in'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal><span style='mso-fareast-language:EN-US;mso-no-proof:yes'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="Picture_x0020_5" o:spid="_x0000_i1025" type="#_x0000_t75"
+ alt="Description: Macintosh HD:Users:jburton:Downloads:csmr-full.png" style='width:6in;
+ height:176pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="about_files/image001.png" o:title="csmr-full.png"/>
+</v:shape><![endif]--><![if !vml]><img width=434 height=178
+src="about_files/image002.png"
+alt="Description: Macintosh HD:Users:jburton:Downloads:csmr-full.png" v:shapes="Picture_x0020_5"><![endif]></span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='font-size:26.0pt;font-family:"Avenir Light";mso-bidi-font-family:Arial'>Physical
+Therapy App<o:p></o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='font-size:14.0pt;font-family:"Avenir Light";mso-bidi-font-family:Arial'>User
+Manual<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><b style='mso-bidi-font-weight:
+normal'><span style='font-size:14.0pt;font-family:"Avenir Light";mso-bidi-font-family:
+Arial'>Team Members:</span></b><span style='font-size:14.0pt;font-family:"Avenir Light";
+mso-bidi-font-family:Arial'> James Burton &amp; Everett Williams<o:p></o:p></span></p>
+
+</div>
+
+<span style='font-size:14.0pt;font-family:"Avenir Light";mso-fareast-font-family:
+Cambria;mso-bidi-font-family:Arial;mso-ansi-language:EN-US;mso-fareast-language:
+JA;mso-bidi-language:AR-SA'><br clear=all style='page-break-before:always;
+mso-break-type:section-break'>
+</span>
+
+<div class=WordSection2><w:Sdt SdtDocPart="t" DocPartType="Table of Contents"
+ DocPartUnique="t" ID="361481230">
+ <p class=MsoTocHeading>Table of Contents<span style='font-size:11.0pt;
+ line-height:115%;mso-ascii-font-family:Cambria;mso-ascii-theme-font:minor-latin;
+ mso-fareast-font-family:Cambria;mso-hansi-font-family:Cambria;mso-hansi-theme-font:
+ minor-latin;mso-bidi-font-family:"Times New Roman";color:windowtext;
+ mso-fareast-language:JA;font-weight:normal'><w:sdtPr></w:sdtPr></span></p>
+ <p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><!--[if supportFields]><span
+ style='font-weight:normal'><span style='mso-element:field-begin'></span></span><span
+ style="mso-spacerun:yes"> </span>TOC \o &quot;1-3&quot; \h \z \u <span
+ style='font-weight:normal'><span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>Abstract<span style='mso-tab-count:1 dotted'>............................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430406 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>1<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400300036000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-family:Cambria;mso-ascii-theme-font:minor-latin;mso-fareast-font-family:
+ "MS Mincho";mso-fareast-theme-font:minor-fareast;mso-hansi-theme-font:minor-latin;
+ mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ color:windowtext;font-weight:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Introduction<span style='mso-tab-count:1 dotted'>......................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430407 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400300037000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-family:Cambria;mso-ascii-theme-font:minor-latin;mso-fareast-font-family:
+ "MS Mincho";mso-fareast-theme-font:minor-fareast;mso-hansi-theme-font:minor-latin;
+ mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ color:windowtext;font-weight:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Summary of App Functionality<span style='mso-tab-count:
+ 1 dotted'>............................................................................................................................................. </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430408 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400300038000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Target Audience<span style='mso-tab-count:1 dotted'>.............................................................................................................................................................................. </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430409 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400300039000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Target Devices<span style='mso-tab-count:1 dotted'>.................................................................................................................................................................................. </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430410 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310030000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Benefits<span style='mso-tab-count:1 dotted'>................................................................................................................................................................................................. </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430411 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310031000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Android App<span style='mso-tab-count:1 dotted'>......................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430412 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>4<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310032000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-family:Cambria;mso-ascii-theme-font:minor-latin;mso-fareast-font-family:
+ "MS Mincho";mso-fareast-theme-font:minor-fareast;mso-hansi-theme-font:minor-latin;
+ mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ color:windowtext;font-weight:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Home screen functions<span style='mso-tab-count:1 dotted'>............................................................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430413 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>4<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310033000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Submenu Bar<span style='mso-tab-count:1 dotted'>..................................................................................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430414 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>4<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310034000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Exercise List Screen<span style='mso-tab-count:1 dotted'>...................................................................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430415 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>4<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310035000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Settings screen functions<span style='mso-tab-count:
+ 1 dotted'>.......................................................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430416 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>4<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310036000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Exercise screen functions<span style='mso-tab-count:
+ 1 dotted'>......................................................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430417 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>5<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310037000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Log view screen functions<span style='mso-tab-count:
+ 1 dotted'>........................................................................................................................................................ </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430418 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>5<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310038000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Comparing video view functions<span style='mso-tab-count:
+ 1 dotted'>......................................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430419 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>5<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400310039000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Web Authoring Tool<span style='mso-tab-count:1 dotted'>............................................................................................................ </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430420 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>7<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400320030000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-family:Cambria;mso-ascii-theme-font:minor-latin;mso-fareast-font-family:
+ "MS Mincho";mso-fareast-theme-font:minor-fareast;mso-hansi-theme-font:minor-latin;
+ mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ color:windowtext;font-weight:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Exercise Videos and Annotations<span
+ style='mso-tab-count:1 dotted'>........................................................................................................................................ </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430421 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>7<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400320031000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+ style='mso-no-proof:yes'>Exercise Plans<span style='mso-tab-count:1 dotted'>................................................................................................................................................................................... </span></span><!--[if supportFields]><span
+ style='mso-no-proof:yes'><span style='mso-element:field-begin'></span> PAGEREF
+ _Toc258430422 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='mso-no-proof:yes'>7<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200350038003400330030003400320032000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='mso-no-proof:
+ yes'><span style='mso-element:field-end'></span></span><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><!--[if supportFields]><b><span
+ style='mso-no-proof:yes'><span style='mso-element:field-end'></span></span></b><![endif]--><span
+ style='font-size:12.0pt;mso-fareast-font-family:"MS Mincho";mso-fareast-theme-font:
+ minor-fareast;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ mso-no-proof:yes'><o:p>&nbsp;</o:p></span></p>
+</w:Sdt><span style='font-size:14.0pt;font-family:"Avenir Light";mso-fareast-font-family:
+Cambria;mso-bidi-font-family:Arial;mso-ansi-language:EN-US;mso-fareast-language:
+JA;mso-bidi-language:AR-SA'><br clear=all style='mso-special-character:line-break;
+page-break-before:always'>
+</span></div>
+
+<span style='font-size:14.0pt;font-family:"Avenir Light";mso-fareast-font-family:
+Cambria;mso-bidi-font-family:Arial;mso-ansi-language:EN-US;mso-fareast-language:
+JA;mso-bidi-language:AR-SA'><br clear=all style='page-break-before:always;
+mso-break-type:section-break'>
+</span>
+
+<div class=WordSection3>
+
+<h1><a name="_Toc258430406"></a><a name="_Toc257300271"><span style='mso-bookmark:
+_Toc258430406'>Abstract</span></a></h1>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='font-family:"Avenir Light"'>This app is
+intended to help physical therapists and their patients. Patients will use the
+app to view instructional videos on how to correctly perform the rehabilitation
+exercises and to record themselves doing the exercises. This app will allow
+patients to either record themselves via the front-facing camera or have a
+caregiver record them through the rear-facing camera. Practitioners will be able
+to upload exercises and create training plans for patients via an online
+interface. Practitioners will be able to review the recorded exercises on the
+patient’s handheld device and provide feedback during appointments.<o:p></o:p></span></p>
+
+</div>
+
+<span style='font-size:12.0pt;font-family:"Avenir Light";mso-fareast-font-family:
+Cambria;mso-bidi-font-family:"Times New Roman";mso-ansi-language:EN-US;
+mso-fareast-language:JA;mso-bidi-language:AR-SA'><br clear=all
+style='page-break-before:always;mso-break-type:section-break'>
+</span>
+
+<div class=WordSection4>
+
+<h1><a name="_Toc258430407"></a><a name="_Toc257300272"><span style='mso-bookmark:
+_Toc258430407'>Introduction</span></a></h1>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h2><a name="_Toc258430408"></a><a name="_Toc257300273"><span style='mso-bookmark:
+_Toc258430408'>Summary of App Functionality</span></a></h2>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='font-family:"Avenir Light"'>This App allows
+physical therapy patients to view annotated instructional videos of physical
+therapy exercises provided by their physical therapy practitioner (doctor,
+physical therapist, etc.). Patients can then use the App to record themselves
+doing the exercises on the handheld device. The exercise will be logged and the
+video saved on the handheld device. App users (either the patient or the
+practitioner during an appointment) will be able to add custom annotations to
+both the instructional videos and the user-generated videos.<o:p></o:p></span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h2><a name="_Toc258430409"></a><a name="_Toc257300274"><span style='mso-bookmark:
+_Toc258430409'>Target Audience</span></a></h2>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=normal style='mso-pagination:none'><span style='font-size:12.0pt;
+line-height:115%;font-family:"Avenir Light"'>The target audience of the app is
+physical therapy patients and caregivers. Physical therapy practitioners will
+use the Web Authoring Tool to provide patients with the information they will
+need to do their therapy; such as exercises and “off the shelf” pre-made
+exercise plans. <o:p></o:p></span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h2><a name="_Toc258430410"></a><a name="_Toc257300275"><span style='mso-bookmark:
+_Toc258430410'>Target Devices</span></a></h2>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='font-family:"Avenir Light"'>This app is for
+smartphones and tablets. The device must be running Android 4.0 (Ice Cream
+Sandwich) or later. A camera will be required to use this app. A front facing
+camera is required for self-recorded videos. A tablet is strongly recommended
+for self-recorded videos, but they will work on smartphones. User recordings
+will be stored on external SD Card storage.<o:p></o:p></span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h2><a name="_Toc258430411"></a><a name="_Toc257300276"><span style='mso-bookmark:
+_Toc258430411'>Benefits</span></a></h2>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='font-family:"Avenir Light"'>The purpose of this
+app is to make therapy more convenient, accessible and effective. Patients
+sometimes lose paper handouts given to them by practitioners. They may be
+unaware how to properly do exercises, reducing the effectiveness of the
+therapy. Caregivers may not understand the exercise protocols. Practitioners
+are rarely able to give feedback on proper form except for during appointments.
+This project aspires to bring therapy instruction, exercise, and feedback from
+practitioners into a single convenient application, improving communication
+between practitioners and caregivers and patients and compliance by patients.
+The will result in more satisfactory physical therapy outcomes and lower health
+care costs.<o:p></o:p></span></p>
+
+</div>
+
+<span style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+Cambria;mso-ansi-language:EN-US;mso-fareast-language:JA;mso-bidi-language:AR-SA'><br
+clear=all style='page-break-before:always;mso-break-type:section-break'>
+</span>
+
+<div class=WordSection5>
+
+<h1><a name="_Toc258430412"></a><a name="_Toc257300277"><span style='mso-bookmark:
+_Toc258430412'>Android App</span></a></h1>
+
+<h2><a name="_Toc258430413"></a><a name="_Toc257300279"><span style='mso-bookmark:
+_Toc258430413'>Home screen functions</span></a></h2>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>The home screen shows a list of exercises already downloaded
+to the app from the external database. If the patient has selected an exercise
+plan in the preferences, then the plan items will be displayed on the home
+screen.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<h2><a name="_Toc258430414"></a><a name="_Toc257300280"><span style='mso-bookmark:
+_Toc258430414'>Submenu Bar</span></a></h2>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>The submenu bar (accessed by touching the options
+button on the device) allows the user to navigate to the application settings
+and the info screen. This is generic throughout the app.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>Touching the update button will download any videos
+that are not held in the app <o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<h2><a name="_Toc258430415"></a><a name="_Toc257300281"><span style='mso-bookmark:
+_Toc258430415'>Exercise List Screen</span></a></h2>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>Touching any of the exercises on the list will
+allow the patient to access that exercise.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<h2><a name="_Toc258430416"></a><a name="_Toc257300282"><span style='mso-bookmark:
+_Toc258430416'>Settings screen functions</span></a></h2>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>The settings screen allows users to setup the
+background information of the app such as their current exercise plan and
+whether or not they would like annotations in their videos.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>Touching any of the fields in the list will grant
+the user the ability to modify the field<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<h2><a name="_Toc258430417"></a><a name="_Toc257300283"><span style='mso-bookmark:
+_Toc258430417'>Exercise screen functions</span></a></h2>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>Touching the “view exercise” button will begin the
+practitioner video uploaded for the exercise.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>Touching the “log view” button will navigate the
+patient to their saved video history.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>Touching the “do exercise” button brings up the
+camera for the user to record <span class=GramE>themselves</span> doing the
+exercise. After the recording the patient is pushed to the comparing video
+view.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>App user will be able to add customer user
+annotations to the exercise video. These will be stored in the internal
+database.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<h2><a name="_Toc258430418"></a><a name="_Toc257300284"><span style='mso-bookmark:
+_Toc258430418'>Log view screen functions</span></a></h2>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>Touching an entry in the log will allow the user
+the opportunity to view or delete a record.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>When viewing a log video the user may add an
+annotation for the current time in the video.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-size:14.0pt;
+font-family:"Avenir Light";mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<h2><a name="_Toc258430419"></a><a name="_Toc257300285"><span style='mso-bookmark:
+_Toc258430419'>Comparing video view functions</span></a></h2>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>The comparing video view shows the user their
+recent recording side-by-side with the video downloaded from their
+practitioner.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>By touching the back button the patient can return
+to the exercise screen.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-bottom:10.0pt'><span style='font-family:"Avenir Light";
+mso-bidi-font-family:Arial'>By touching the “save log” button the patient can
+save the video to their video log for later viewing.<o:p></o:p></span></p>
+
+</div>
+
+<span style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+Cambria;mso-ansi-language:EN-US;mso-fareast-language:JA;mso-bidi-language:AR-SA'><br
+clear=all style='page-break-before:always;mso-break-type:section-break'>
+</span>
+
+<div class=WordSection6>
+
+<h1><a name="_Toc258430420"></a><a name="_Toc257300286"></a><a
+name="_Toc257300238"><span style='mso-bookmark:_Toc257300286'><span
+style='mso-bookmark:_Toc258430420'>Web Authoring Tool</span></span></a></h1>
+
+<p class=normal style='mso-pagination:none'><span style='font-size:12.0pt;
+line-height:115%;font-family:"Avenir Light"'><o:p>&nbsp;</o:p></span></p>
+
+<p class=normal style='mso-pagination:none'><span style='font-size:12.0pt;
+line-height:115%;font-family:"Avenir Light"'>A physical therapy practitioner
+will log into the system via the web interface. <o:p></o:p></span></p>
+
+<p class=normal style='mso-pagination:none'><span style='font-size:12.0pt;
+line-height:115%;font-family:"Avenir Light"'><o:p>&nbsp;</o:p></span></p>
+
+<h2><a name="_Toc258430421"></a><a name="_Toc257300287"></a><a
+name="_Toc257300239"><span style='mso-bookmark:_Toc257300287'><span
+style='mso-bookmark:_Toc258430421'>Exercise Videos and Annotations</span></span></a></h2>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=normal style='mso-pagination:none'><span style='font-size:12.0pt;
+line-height:115%;font-family:"Avenir Light"'>The practitioner will also be able
+to add various exercise videos to the system. This project assumes that the
+practitioner will be using their own professional quality video equipment to
+create videos and not a handheld device. There will be an upload tool on the
+website to upload the videos. The practitioner can add general comments to the
+videos as well as annotations at selected time marks using either the web tool
+or the app. The videos will be stored as files on the webserver. The website
+will store the location of the videos as well as any additional comments in the
+external database.<o:p></o:p></span></p>
+
+<p class=normal style='mso-pagination:none'><span style='font-size:12.0pt;
+line-height:115%;font-family:"Avenir Light"'><o:p>&nbsp;</o:p></span></p>
+
+<h2><a name="_Toc258430422"></a><a name="_Toc257300288"></a><a
+name="_Toc257300240"><span style='mso-bookmark:_Toc257300288'><span
+style='mso-bookmark:_Toc258430422'>Exercise Plans</span></span></a></h2>
+
+<p class=normal style='mso-pagination:none'><span style='font-size:12.0pt;
+line-height:115%;font-family:"Avenir Light"'>The<s> </s>practitioner will be
+able to go to another web page to creat<s>e</s> exercise plans. The exercise
+plan will consist of various exercises to be performed in a certain sequence.
+The practitioner will also be able to add instructions such as number of
+repetitions (e.g. do 10 repetitions) or time (e.g. hold position for 30
+seconds) as well as additional notes. This will be stored in the external
+database.<o:p></o:p></span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+</div>
+
 </body>
+
 </html>

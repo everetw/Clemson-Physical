@@ -58,6 +58,8 @@ public class LayoutUtils
 	public static final int CYAN = Color.rgb(0, 255, 255);
 	public static final int LIGHT_CYAN = Color.rgb(200, 255, 255);
 	
+	public static int TEXT_COLOR=DARK_GRAY;
+	public static int BACKGROUND_COLOR=LIGHT_GRAY;
 	public static int HIGHLIGHT_COLOR = BLUE;
 	public static int SPINNER_COLOR = LIGHT_BLUE;
 	public static final int OPTION_BLUE = 0;
@@ -451,51 +453,54 @@ public class LayoutUtils
 	public static boolean getDialogResult() {
 		return dialogResult;
 	}
-	
-    public static void displayYesNoDialog(Context context, String message, String title)
-    {
-    	
 
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-		// set title
-		if (title == null)
-		{
-			title = "Message";
-		}
-		alertDialogBuilder.setTitle(title);
- 
-		// set dialog message
-		alertDialogBuilder
-				.setMessage(message)
-				.setCancelable(false)
-				.setNegativeButton("No",new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						// if this button is clicked, just close
-						// the dialog box and do nothing
-						dialog.cancel();
-						LayoutUtils.setDialogResult(false);
-						
-					}
-				  })
-				;
-		alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				LayoutUtils.setDialogResult(true);
-				
-			}
-					
-				});
- 
-				// create alert dialog
-				AlertDialog alertDialog = alertDialogBuilder.create();
- 
-				// show it
-				alertDialog.show();
-    }
-    
+//
+//		Don't use this. Copy, then add a callback function in the result.
+//
+//    public static void displayYesNoDialog(Context context, String message, String title)
+//    {
+//    	
+//
+//		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+//		// set title
+//		if (title == null)
+//		{
+//			title = "Message";
+//		}
+//		alertDialogBuilder.setTitle(title);
+// 
+//		// set dialog message
+//		alertDialogBuilder
+//				.setMessage(message)
+//				.setCancelable(false)
+//				.setNegativeButton("No",new DialogInterface.OnClickListener() {
+//					public void onClick(DialogInterface dialog,int id) {
+//						// if this button is clicked, just close
+//						// the dialog box and do nothing
+//						dialog.cancel();
+//						LayoutUtils.setDialogResult(false);
+//						
+//					}
+//				  })
+//				;
+//		alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+//
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				// TODO Auto-generated method stub
+//				LayoutUtils.setDialogResult(true);
+//				
+//			}
+//					
+//				});
+// 
+//				// create alert dialog
+//				AlertDialog alertDialog = alertDialogBuilder.create();
+// 
+//				// show it
+//				alertDialog.show();
+//    }
+//    
     public static void displayDatePickerDialog(final Context context, final View v, int year, int month, int day)
     {
     	
@@ -632,6 +637,66 @@ public class LayoutUtils
 	{
 		return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, context.getResources().getDisplayMetrics());
 	}
+	
+/// http://stackoverflow.com/questions/1224996/java-convert-string-to-html-string
+
+	public static String stringToHTMLString(String string) {
+	    StringBuffer sb = new StringBuffer(string.length());
+	    // true if last char was blank
+	    boolean lastWasBlankChar = false;
+	    int len = string.length();
+	    char c;
+	
+	    for (int i = 0; i < len; i++)
+	        {
+	        c = string.charAt(i);
+	        if (c == ' ') {
+	            // blank gets extra work,
+	            // this solves the problem you get if you replace all
+	            // blanks with &nbsp;, if you do that you loss 
+	            // word breaking
+	            if (lastWasBlankChar) {
+	                lastWasBlankChar = false;
+	                sb.append("&nbsp;");
+	                }
+	            else {
+	                lastWasBlankChar = true;
+	                sb.append(' ');
+	                }
+	            }
+	        else {
+	            lastWasBlankChar = false;
+	            //
+	            // HTML Special Chars
+	            if (c == '"')
+	                sb.append("&quot;");
+	            else if (c == '&')
+	                sb.append("&amp;");
+	            else if (c == '<')
+	                sb.append("&lt;");
+	            else if (c == '>')
+	                sb.append("&gt;");
+	            else if (c == '\n')
+	                // Handle Newline
+	                sb.append("&lt;br/&gt;");
+	            else {
+	                int ci = 0xffff & c;
+	                if (ci < 160 )
+	                    // nothing special only 7 Bit
+	                    sb.append(c);
+	                else {
+	                    // Not 7 Bit use the unicode system
+	                    sb.append("&#");
+	                    sb.append(new Integer(ci).toString());
+	                    sb.append(';');
+	                    }
+	                }
+	            }
+	        }
+	    return sb.toString();
+	}
+
+
 	
 	
 	

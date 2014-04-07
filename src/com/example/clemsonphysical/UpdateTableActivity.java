@@ -1,8 +1,8 @@
 package com.example.clemsonphysical;
 
-import android.content.Intent;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -12,15 +12,49 @@ import android.widget.TextView;
 public abstract class UpdateTableActivity extends DisplayTableActivity {
 	
 	protected void deleteAllRows()
-	{
-		LayoutUtils.displayYesNoDialog(this, "Delete All", "Delete All Rows in "+getTableName()+" Table?");
-		if(LayoutUtils.getDialogResult())
-		{
-			displayToast("Deleted all rows!");
-			dbSQLite.deleteAllRecordsFromTable(getTableName());
-			drawTable();
-		}
-	}
+
+	  {
+	  		String title = "Delete All";
+	  		String message = "Delete All Rows in "+getTableName()+" Table?";
+	
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+			// set title
+
+			alertDialogBuilder.setTitle(title);
+	
+			// set dialog message
+			alertDialogBuilder
+					.setMessage(message)
+					.setCancelable(false)
+					.setNegativeButton("No",new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,int id) {
+							// if this button is clicked, just close
+							// the dialog box and do nothing
+							dialog.cancel();
+	
+							
+						}
+					  })
+					;
+			alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					displayToast("Deleted all rows!");
+					dbSQLite.deleteAllRecordsFromTable(getTableName());
+					drawTable();
+					
+				}
+						
+					});
+	
+					// create alert dialog
+					AlertDialog alertDialog = alertDialogBuilder.create();
+	
+					// show it
+					alertDialog.show();
+	  }
 	
     
     protected abstract void saveAllRows();
@@ -177,50 +211,7 @@ public abstract class UpdateTableActivity extends DisplayTableActivity {
 
     }
     
-	@Override
-	/**
-	 * @fn public boolean onOptionsItemSelected(MenuItem item)
-	 * @brief Handles menu item selection. 
-	 * Only menu item here is the "action_about" for the info activity.
-	 * @param item MenuItem that was selected
-	 * @return true  
-	 */
-	public boolean onOptionsItemSelected(MenuItem item) {
-	
-		 Intent intent = null;
-		/// Menu from http://developer.android.com/guide/topics/ui/menus.html#options-menu
-	    switch (item.getItemId()) {
-	   
-		case android.R.id.home:
 
-			NavUtils.navigateUpFromSameTask(this);
-			return true; 
-			
-	    case R.id.action_about:
-	    	intent = new Intent(this, InfoView.class);
-	    	startActivity(intent);
-	    	break;
-
-	    case R.id.action_add:
-	    	addNewRow();
-	    	break;
-	    	
-	    case R.id.action_delete:
-	    	deleteAllRows();
-	    	break;
-	    	
-	    case R.id.action_save:
-	    	displayToast("Saving all rows...");
-	    	saveAllRows();
-	    	break;
-	    	
-	    case R.id.action_settings:
-	    	intent = new Intent(this, SettingsActivity.class);
-	    	startActivity(intent);
-	    	break;
-	    }
-	    return true;
-	}
 
     
     protected abstract void addNewRow();

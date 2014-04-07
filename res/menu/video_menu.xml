@@ -36,11 +36,12 @@
         android:icon="@android:drawable/ic_menu_preferences"
         android:title="@string/action_settings"/>
      
+     <!--  Camcorder icon from http://findicons.com/icon/70736/video_camera?id=330029 -->
      <item
         android:id="@+id/action_record"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_camera"
+        android:icon="@drawable/ic_action_record"
         android:title="@string/action_record"/>
      
  
