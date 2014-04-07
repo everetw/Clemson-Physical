@@ -370,10 +370,22 @@ public class MainActivity extends DisplayTableActivity {
 						exercise.add(dbSQLite);
 						drawTable();
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
-						// Ask overwrite.
-						// askOverwriteCustomExerciseDialog(exercise);
+						try {
+							// If add doesn't work, try update.
+							// TODO Need a better way of doing this.
+							exercise = Exercise.getByName(dbSQLite, exercise_name);
+							exercise.setInstructions(exercise_instructions);
+							exercise.setFileLocation(mediaUri.getPath());
+							exercise.update(dbSQLite);
+							//drawTable();
+						} catch (Exception e1) {
+							
+							e1.printStackTrace();
+							displayMessageDialog("SQLError","Could not save "+exercise_name);
+						}
+						
 						
 					}
 			
