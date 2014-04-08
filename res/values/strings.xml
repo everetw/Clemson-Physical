@@ -20,6 +20,8 @@
     <string name="action_add_annotation">New Annotation</string>
     <string name="action_annotation_list">View All Annotations</string>
     <string name="action_video_list">View All User Videos</string>
+    <string name="action_show_log">Show Exercise Log</string>
+    <string name="action_compare">Compare to Exercise Video</string>
     <string name="action_record">Record Video</string>
     <string name="action_about">Info</string>
     <string name="about_text">file:///android_asset/about.html</string>

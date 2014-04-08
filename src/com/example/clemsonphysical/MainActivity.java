@@ -67,7 +67,7 @@ public class MainActivity extends DisplayTableActivity {
 	    try
 	    {
 			addToDatabase(new Exercise(0,"VideoView Demo","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/Video_View_Demo.htm",this.getExternalFilesDir("exercises").getCanonicalPath()+"/videoviewdemo.mp4"));
-			addToDatabase(new Exercise(0,"Bicep Curls","url","http://m.dummies.com/how-to/content/how-to-do-the-dumbbell-biceps-curl.seriesId-101966.html","/mnt/sdcard/Android/data/com.example.clemsonphysical/files/exercises/How to Do Standing Dumbbell Curls - YouTube.mp4"));
+			addToDatabase(new Exercise(0,"Bicep Curls","url","http://m.dummies.com/how-to/content/how-to-do-the-dumbbell-biceps-curl.seriesId-101966.html",this.getExternalFilesDir("exercises").getCanonicalPath()+"/How to Do Standing Dumbbell Curls - YouTube.mp4"));
 //			addToDatabase(new Exercise(0,"Exercise 3","url","instructions","location"));
 //			addToDatabase(new Exercise(0,"Exercise 4","url","instructions","location"));
 //			addToDatabase(new Exercise(0,"Exercise 5","url","instructions","location"));
@@ -87,7 +87,7 @@ public class MainActivity extends DisplayTableActivity {
 //			addToDatabase(new Exercise(0,"Exercise 19","url","instructions","location"));
 			addToDatabase(new ExerciseLog(0,1,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140405_185253_720749121.mp4","Exercise Log Notes"));
 			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls"));
-			
+			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls."));
 
 	    }
 	    catch (Exception e)
@@ -242,7 +242,7 @@ public class MainActivity extends DisplayTableActivity {
     				
     				ViewGroup vp = (ViewGroup) v.getParent();
 					vp.performClick();
-    				displayToast(((TextView)v).getText().toString() + " clicked!");
+    				//displayToast(((TextView)v).getText().toString() + " clicked!");
     				onExerciseFieldClick(v);
     				// Start the intent.
     				// Send to the exercise screen.

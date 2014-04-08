@@ -52,7 +52,7 @@ public class UserVideoView extends DatabaseActivity {
         getActionBar().setTitle(exercise.getName()+" @ " + exerciseLog.getCreateTime());
         
 		videoView.setVideoPath(exerciseLog.getVideoLocation());
-		displayToast(exerciseLog.getVideoLocation());
+		//displayToast(exerciseLog.getVideoLocation());
 		videoView.start();
 		
 	}
