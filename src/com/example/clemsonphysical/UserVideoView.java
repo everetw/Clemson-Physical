@@ -82,7 +82,7 @@ public class UserVideoView extends DatabaseActivity {
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
-		getMenuInflater().inflate(R.menu.video_menu, menu);
+		getMenuInflater().inflate(R.menu.user_video_menu, menu);
 		return true;
 	}
 	
@@ -121,9 +121,9 @@ public class UserVideoView extends DatabaseActivity {
 	    	intent = new Intent(this, SettingsActivity.class);
 	    	startActivity(intent);
 	    	break;
-	    case R.id.action_record:
-	    	dispatchTakeVideoIntent();
-	    	break;
+//	    case R.id.action_record:
+//	    	dispatchTakeVideoIntent();
+//	    	break;
 	    	
 	    }
 	    return true;

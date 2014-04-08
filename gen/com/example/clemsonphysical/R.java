@@ -40,7 +40,6 @@ public final class R {
         public static final int action_compare=0x7f0a0024;
         public static final int action_custom_exercise=0x7f0a001d;
         public static final int action_delete=0x7f0a0020;
-        public static final int action_record=0x7f0a0025;
         public static final int action_save=0x7f0a001f;
         public static final int action_settings=0x7f0a001b;
         public static final int action_share=0x7f0a001c;

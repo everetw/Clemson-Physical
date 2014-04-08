@@ -124,10 +124,10 @@ public class PractitionerVideoView extends DatabaseActivity {
 	    	intent = new Intent(this, SettingsActivity.class);
 	    	startActivity(intent);
 	    	break;
-	    case R.id.action_record:
-	    	dispatchTakeVideoIntent();
-	    	break;
-	    	
+//	    case R.id.action_record:
+//	    	dispatchTakeVideoIntent();
+//	    	break;
+//	    	
 	    }
 	    return true;
 	}
