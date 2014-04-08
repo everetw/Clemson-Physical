@@ -5,6 +5,15 @@
 	android:layout_height="match_parent"
 	android:layout_margin="0dip" 
 	tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/dummyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:visibility="gone"/>
+
 	<ScrollView 
 	    android:id="@+id/layout" 
 	    android:layout_height="wrap_content"         

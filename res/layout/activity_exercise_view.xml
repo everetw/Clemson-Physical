@@ -1,12 +1,11 @@
-	<RelativeLayout
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:tools="http://schemas.android.com/tools"
-	    android:id="@+id/exerciseViewMasterLayout"
-	    android:layout_width="wrap_content"
-	    android:layout_height="match_parent"
-	    android:orientation="vertical"
-	    android:weightSum="2"
-	    tools:context=".LogView" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+	android:weightSum="2"
+	tools:context=".LogView" >
     
     <!-- http://stackoverflow.com/questions/2698817/linear-layout-and-weight-in-android -->
 
@@ -15,32 +14,48 @@
 	<!-- Preview of video -->
     <FrameLayout
 	    android:id="@+id/frameLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="192dip"
-        android:layout_gravity="center"
-        android:layout_weight="1" >
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	     >
 
-	    <ImageButton
-	        android:id="@+id/exercisePlayImageButton"
-	        android:layout_width="256dip"
-	        android:layout_height="192dip"
+         <ImageView
+	        android:id="@+id/exercisePlayImageView"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
 	        android:adjustViewBounds="true"
 	        android:gravity="center"
-	        android:layout_gravity="center_horizontal"
+	        android:layout_gravity="center"
+	        android:scaleType="fitCenter"
+	        />
+	    <ImageButton
+	        android:id="@+id/exercisePlayImageButton"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:adjustViewBounds="true"
+	        android:gravity="center"
+	        android:layout_gravity="center"
 	        android:onClick="showPractitionerVideo"
-	        android:scaleType="center"
+	        android:scaleType="centerInside"
+	        android:background="@android:color/transparent"
 	        android:src="@android:drawable/ic_media_play" />
 
     </FrameLayout>
+        <FrameLayout
+	    android:id="@+id/frameLayout2"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	     >
     <WebView
          android:id="@+id/exerciseInstructionWebView"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_weight="1"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+        
          android:gravity="center"
-         android:layout_below="@+id/frameLayout1"
+         
          android:text="Exercise description" />
-    
+    </FrameLayout>
 	<!-- Exercise Instructions -->
     
 	<!-- Button Row 
@@ -119,5 +134,5 @@
 
 
 
-</RelativeLayout>
+</LinearLayout>
 

@@ -30,7 +30,7 @@ public class DatabaseSQL {
 		"  \"idexercise\" INTEGER PRIMARY KEY NOT NULL,\n"+
 		"  \"exercise_name\" VARCHAR(45) NOT NULL,\n"+
 		"  \"exercise_video_url\" VARCHAR(127),\n"+
-		"  \"exercise_instructions\" VARCHAR(1023),\n"+
+		"  \"exercise_instruction_url\" VARCHAR(1023),\n"+
 		"  \"exercise_file_location\" VARCHAR(127),\n"+
 		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
 		"  \"update_time\" TIMESTAMP,\n"+

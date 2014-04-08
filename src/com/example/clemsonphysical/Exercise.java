@@ -36,7 +36,7 @@ public class Exercise extends DatabaseObject {
 		KEY_ID ("idexercise","Exercise ID"),
 		KEY_EXERCISE_NAME ("exercise_name","Exercise Name"),
 		KEY_EXERCISE_VIDEO_URL ("exercise_video_url","Video URL"),
-		KEY_EXERCISE_INSTRUCTIONS ("exercise_instructions","Instructions"),
+		KEY_EXERCISE_INSTRUCTIONS ("exercise_instruction_url","Instructions"),
 		KEY_EXERCISE_FILE_LOCATION ("exercise_file_location","File Location");
 		
 		

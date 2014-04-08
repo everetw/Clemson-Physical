@@ -9,8 +9,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +21,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -36,6 +35,7 @@ public class ExerciseView extends DatabaseActivity {
 	private TextView exercise_file_location;
 	private WebView exercise_instruction_webview;
 	private ImageButton exercise_play_button;
+	private ImageView exercise_play_view;
 	public Exercise exercise;
 	public ExerciseLog exerciseLog;
 
@@ -75,6 +75,7 @@ public class ExerciseView extends DatabaseActivity {
         exercise_instruction_webview = (WebView) findViewById(R.id.exerciseInstructionWebView);
         exercise_file_location = (TextView) findViewById(R.id.exerciseFileLocationTextView);
         exercise_play_button = (ImageButton) findViewById(R.id.exercisePlayImageButton);
+        exercise_play_view = (ImageView) findViewById(R.id.exercisePlayImageView);
         
 
         
@@ -113,11 +114,10 @@ public class ExerciseView extends DatabaseActivity {
         
         /// http://android-er.blogspot.com/2011/05/create-thumbnail-for-video-using.html
         // MINI_KIND: 512 x 384 thumbnail 
-        Bitmap bmThumbnail = ThumbnailUtils.createVideoThumbnail(exercise.getFileLocation(), 
-        Thumbnails.MICRO_KIND);
+        exercise_play_view.setImageBitmap(ThumbnailUtils.createVideoThumbnail(exercise.getFileLocation(), Thumbnails.MINI_KIND));
         
         /// http://stackoverflow.com/questions/2415619/how-to-convert-a-bitmap-to-drawable-in-android
-        exercise_play_button.setBackgroundDrawable(new BitmapDrawable(getResources(),bmThumbnail));
+        //exercise_play_button.setBackgroundDrawable(new BitmapDrawable(getResources(),bmThumbnail));
         
         //Set the title of the Action Bar to the Exercise Name
         getActionBar().setTitle(exercise.getName());
@@ -355,6 +355,21 @@ public class ExerciseView extends DatabaseActivity {
 		alertDialog.show();
 
 	}
+	
+
+	@Override
+	protected void onNewIntent(Intent intent)
+	{
+	    super.onNewIntent(intent);
+	    System.err.println("onNewIntent");
+		Exercise exercise_intent = (Exercise)intent.getSerializableExtra("ExerciseClass");
+		
+		if (exercise_intent != null)
+			exercise = exercise_intent;
+
+	
+	
+	}  
 
 	
 

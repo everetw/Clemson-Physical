@@ -181,7 +181,8 @@ public class LayoutUtils
         textView.setLayoutParams(tvlp);
         tvlp.setMargins(2, 2, 2, 2);
         textView.setText(message);
-        textView.setTextSize(size);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
         textView.setBackgroundColor(backgroundColor);
         textView.setTextColor(textColor);
         /// http://stackoverflow.com/questions/432037/how-do-i-center-text-horizontally-and-vertical-in-a-textview-in-android
@@ -212,7 +213,7 @@ public class LayoutUtils
         textView.setLayoutParams(tvlp);
         tvlp.setMargins(2, 2, 2, 2);
         textView.setText(message);
-        textView.setTextSize(size);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
         textView.setBackgroundColor(backgroundColor);
         textView.setTextColor(textColor);
         /// http://stackoverflow.com/questions/432037/how-do-i-center-text-horizontally-and-vertical-in-a-textview-in-android
@@ -259,7 +260,7 @@ public class LayoutUtils
         editText.setLayoutParams(tvlp);
         tvlp.setMargins(2, 2, 2, 2);
         editText.setText(message);
-        editText.setTextSize(size);
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
         editText.setBackgroundColor(backgroundColor);
         editText.setTextColor(textColor);
         /// http://stackoverflow.com/questions/432037/how-do-i-center-text-horizontally-and-vertical-in-a-textview-in-android
@@ -332,7 +333,7 @@ public class LayoutUtils
         tvlp.setMargins(2, 2, 2, 2);
         spinner.setPadding(0, 0, 0, 0);
         //spinner.setText(message);
-        //spinner.setTextSize(size);
+        //spinner.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
         spinner.setBackgroundColor(backgroundColor);
         
 
@@ -364,7 +365,7 @@ public class LayoutUtils
 	{
 	    WebView webview = new WebView(context);
 	    webview.loadData(html, "text/html", null);
-	    webview.setPadding(5, 0, 5, 0);
+	    webview.setPadding(2,2,2,2);
 	    return webview;
 	}
 	
@@ -698,7 +699,11 @@ public class LayoutUtils
 
 
 	
-	
+	public static int pixelsToSp(Context context, float px) 
+	{
+	    float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+	    return (int)(px/scaledDensity);
+	}
 	
 	
 }

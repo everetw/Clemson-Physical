@@ -30,7 +30,7 @@ public class MainActivity extends DisplayTableActivity {
 			NEW_ROW;
 		};
 
-	private static final int FONT_SIZE = 30;
+	private static int FONT_SIZE = 30;
 	
 	
 	
@@ -43,8 +43,19 @@ public class MainActivity extends DisplayTableActivity {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().setDisplayHomeAsUpEnabled(false);
 		}
+		
+		// get the default font size
+		//http://stackoverflow.com/questions/6263250/convert-pixels-to-sp
+			
+		TextView testTextView = (TextView) findViewById(R.id.dummyTextView);
+		float textSize = testTextView.getTextSize();
+		FONT_SIZE = LayoutUtils.pixelsToSp(this, textSize);
+
+	
 	}
 	
+	
+
 	
 	private void createData()
 	{
@@ -56,25 +67,27 @@ public class MainActivity extends DisplayTableActivity {
 	    try
 	    {
 			addToDatabase(new Exercise(0,"VideoView Demo","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/Video_View_Demo.htm",this.getExternalFilesDir("exercises").getCanonicalPath()+"/videoviewdemo.mp4"));
-			addToDatabase(new Exercise(0,"Exercise 2","url","instructions","/mnt/sdcard/Android/data/com.example.clemsonphysical/files/exercises/VID_20140402_190201_1120218855.mp4"));
-			addToDatabase(new Exercise(0,"Exercise 3","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 4","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 5","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 6","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 7","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 8","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 9","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 10","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 11","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 12","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 13","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 14","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 15","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 16","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 17","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 18","url","instructions","location"));
-			addToDatabase(new Exercise(0,"Exercise 19","url","instructions","location"));
+			addToDatabase(new Exercise(0,"Bicep Curls","url","http://m.dummies.com/how-to/content/how-to-do-the-dumbbell-biceps-curl.seriesId-101966.html","/mnt/sdcard/Android/data/com.example.clemsonphysical/files/exercises/How to Do Standing Dumbbell Curls - YouTube.mp4"));
+//			addToDatabase(new Exercise(0,"Exercise 3","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 4","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 5","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 6","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 7","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 8","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 9","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 10","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 11","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 12","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 13","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 14","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 15","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 16","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 17","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 18","url","instructions","location"));
+//			addToDatabase(new Exercise(0,"Exercise 19","url","instructions","location"));
 			addToDatabase(new ExerciseLog(0,1,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140405_185253_720749121.mp4","Exercise Log Notes"));
+			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls"));
+			
 
 	    }
 	    catch (Exception e)
@@ -331,8 +344,12 @@ public class MainActivity extends DisplayTableActivity {
 	}
 
 /// http://www.mkyong.com/android/android-prompt-user-input-dialog-example/
-	
 	private void displayCustomExerciseResultsDialog() {
+		displayCustomExerciseResultsDialog("","");
+	}
+	
+	
+	private void displayCustomExerciseResultsDialog(String exercise_name, String exercise_instructions) {
 		
     	String title = "Custom Exercise Details";
     	
@@ -354,6 +371,10 @@ public class MainActivity extends DisplayTableActivity {
 		
 		final EditText exerciseInstructionsInput = (EditText) promptsView
 				.findViewById(R.id.exerciseInstructionsEditText);
+		
+		exerciseNameInput.setText(exercise_name);
+		exerciseInstructionsInput.setText(exercise_instructions);
+		
 
 		// set dialog message
 		alertDialogBuilder
@@ -371,21 +392,8 @@ public class MainActivity extends DisplayTableActivity {
 						drawTable();
 					} catch (Exception e) {
 						
-						e.printStackTrace();
-						try {
-							// If add doesn't work, try update.
-							// TODO Need a better way of doing this.
-							exercise = Exercise.getByName(dbSQLite, exercise_name);
-							exercise.setInstructions(exercise_instructions);
-							exercise.setFileLocation(mediaUri.getPath());
-							exercise.update(dbSQLite);
-							//drawTable();
-						} catch (Exception e1) {
-							
-							e1.printStackTrace();
-							displayMessageDialog("SQLError","Could not save "+exercise_name);
-						}
-						
+						//e.printStackTrace();
+						displayOverwriteExerciseDialog(exercise_name,exercise_instructions,mediaUri.getPath());
 						
 					}
 			
@@ -407,7 +415,73 @@ public class MainActivity extends DisplayTableActivity {
 
 	}
 	
-    public void displayCustomExerciseDialog(View v)
+    protected void displayOverwriteExerciseDialog(final String exercise_name, final String exercise_instructions, final String exercise_path) {
+    	
+     	String title = "Overwrite Exercise?";
+    	
+
+		
+    		// get prompts.xml view
+    		LayoutInflater li = LayoutInflater.from(this);
+    		
+    		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+    				this);
+
+    		alertDialogBuilder.setTitle(title);
+    		
+
+    		// set dialog message
+    		alertDialogBuilder
+    			.setMessage("Exercise "+exercise_name+" already exists in the database. Do you want to overwrite it?")
+    			.setCancelable(false)
+    			.setPositiveButton("OK",
+    			  new DialogInterface.OnClickListener() {
+    			    public void onClick(DialogInterface dialog,int id) {
+    					// get user input and set it to result
+    					// edit text
+    					try {
+    						// If add doesn't work, try update.
+    						
+    						Exercise exercise = Exercise.getByName(dbSQLite, exercise_name);
+    						exercise.setInstructions(exercise_instructions);
+    						exercise.setFileLocation(mediaUri.getPath());
+    						exercise.update(dbSQLite);
+    						// Force redraw to get updated values.
+    						drawTable();
+    					} catch (Exception e1) {
+    						
+    						e1.printStackTrace();
+    						displayMessageDialog("SQLError","Could not save "+exercise_name);
+    					}
+    					
+    			
+    				
+    			    }
+    			  })
+    			.setNegativeButton("Cancel",
+    			  new DialogInterface.OnClickListener() {
+    			    public void onClick(DialogInterface dialog,int id) {
+    			    	dialog.cancel();
+    			    	displayCustomExerciseResultsDialog(exercise_name, exercise_instructions);
+    			    	
+    				
+    			    }
+    			  });
+
+    		// create alert dialog
+    		AlertDialog alertDialog = alertDialogBuilder.create();
+
+    		// show it
+    		alertDialog.show();
+
+		
+		
+	}
+
+
+
+
+	public void displayCustomExerciseDialog(View v)
     {
     	
     	String title = "Record Custom Exercise";

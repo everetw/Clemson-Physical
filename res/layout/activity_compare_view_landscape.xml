@@ -1,9 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="horizontal"
     android:baselineAligned="false"
+    android:weightSum="2"
+    
     tools:context=".CompareView" >
 	<!-- Move to Action Bar
     <RelativeLayout
@@ -28,14 +30,16 @@
 	    android:id="@+id/frameLayout1"
 	    android:layout_width="0dp"
 	    android:layout_height="match_parent"
-	    android:layout_weight=".5"
+	    android:layout_weight="1"
 	     >
      
     <VideoView
         android:id="@+id/videoView1"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_width="match_parent"
         android:layout_gravity="center"
+        android:gravity="center"
+        
          />
     
 	<TextView
@@ -52,14 +56,16 @@
 	    android:id="@+id/frameLayout2"
 	    android:layout_width="0dp"
 	    android:layout_height="match_parent"
-	    android:layout_weight=".5"
+	    android:layout_weight="1"
 	     >
 
     <VideoView
         android:id="@+id/videoView2"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_width="match_parent"
         android:layout_gravity="center"
+        android:gravity="center"
+
          />
     
 	<TextView

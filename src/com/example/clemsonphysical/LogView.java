@@ -7,6 +7,7 @@ import java.util.List;
 
 
 
+
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -26,7 +27,7 @@ import android.widget.TextView;
 
 public class LogView extends UpdateTableActivity implements AdapterView.OnItemSelectedListener {
 	
-	private static final int FONT_SIZE = 15;
+	private static int FONT_SIZE = 15;
 	
 	private enum field_order  
 	{
@@ -55,6 +56,14 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
+		
+		
+		// get the default font size
+		/// http://stackoverflow.com/questions/6263250/convert-pixels-to-sp
+		
+		TextView testTextView = (TextView) findViewById(R.id.dummyTextView);
+		float textSize = testTextView.getTextSize();
+		FONT_SIZE = LayoutUtils.pixelsToSp(this, textSize);
 		
 		// This screen is a table view with a spinner to select the exercise. 
 		
