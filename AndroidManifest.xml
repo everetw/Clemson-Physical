@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="14" />
+        android:targetSdkVersion="19" />
     
         <!-- Accessing camera hardware -->
     <uses-feature android:name="android.hardware.camera" />
@@ -21,7 +21,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.clemsonphysical.MainActivity"
+            android:name="edu.clemson.physicaltherapy.app.MainActivity"
             android:label="@string/app_name"
              >
             <intent-filter>
@@ -31,64 +31,64 @@
         </activity>
         <!-- Solved up navigation problems from http://stackoverflow.com/questions/14462456/returning-from-an-activity-using-navigateupfromsametask -->
         <activity
-            android:name="com.example.clemsonphysical.ExerciseView"
+            android:name="edu.clemson.physicaltherapy.app.ExerciseView"
             android:label="@string/title_activity_exercise_view" 
-            android:parentActivityName="com.example.clemsonphysical.MainActivity"
+            android:parentActivityName="edu.clemson.physicaltherapy.app.MainActivity"
             android:launchMode="singleTop"
              >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.clemsonphysical.MainActivity" />
+                android:value="com.example.clemsonphysical.app.MainActivity" />
         </activity>
         <activity
-            android:name="com.example.clemsonphysical.LogView"
+            android:name="edu.clemson.physicaltherapy.app.LogView"
             android:label="@string/title_activity_log_view" 
-            android:parentActivityName="com.example.clemsonphysical.ExerciseView" >
+            android:parentActivityName="edu.clemson.physicaltherapy.app.ExerciseView" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.clemsonphysical.ExerciseView" />
+                android:value="com.example.clemsonphysical.app.ExerciseView" />
 
         </activity>
         <activity
-            android:name="com.example.clemsonphysical.CompareView"
+            android:name="edu.clemson.physicaltherapy.app.CompareView"
             android:label="@string/title_activity_compare_view" 
-            android:parentActivityName="com.example.clemsonphysical.LogView" >
+            android:parentActivityName="edu.clemson.physicaltherapy.app.LogView" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.clemsonphysical.LogView" />
+                android:value="com.example.clemsonphysical.app.LogView" />
         </activity>
         <activity
-            android:name="com.example.clemsonphysical.UserVideoView"
+            android:name="edu.clemson.physicaltherapy.app.UserVideoView"
             android:label="@string/title_activity_user_video_view" 
-            android:parentActivityName="com.example.clemsonphysical.LogView" > 
+            android:parentActivityName="edu.clemson.physicaltherapy.app.LogView" > 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.clemsonphysical.LogView" />
+                android:value="com.example.clemsonphysical.app.LogView" />
         </activity>
         <activity
-            android:name="com.example.clemsonphysical.PractitionerVideoView"
+            android:name="edu.clemson.physicaltherapy.app.PractitionerVideoView"
             android:label="@string/title_activity_practitioner_video_view" 
-            android:parentActivityName="com.example.clemsonphysical.ExerciseView" >
+            android:parentActivityName="edu.clemson.physicaltherapy.app.ExerciseView" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.clemsonphysical.ExerciseView" />
+                android:value="com.example.clemsonphysical.app.ExerciseView" />
             
         </activity>
         <activity
-            android:name="com.example.clemsonphysical.SettingsActivity"
+            android:name="edu.clemson.physicaltherapy.app.SettingsActivity"
             android:label="@string/title_activity_settings" 
-            android:parentActivityName="com.example.clemsonphysical.MainActivity" >
+            android:parentActivityName="edu.clemson.physicaltherapy.app.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.clemsonphysical.MainActivity" />
+                android:value="com.example.clemsonphysical.app.MainActivity" />
         </activity>
         <activity
-            android:name="com.example.clemsonphysical.InfoView"
+            android:name="edu.clemson.physicaltherapy.app.InfoView"
             android:label="@string/title_activity_info_view" 
-            android:parentActivityName="com.example.clemsonphysical.MainActivity" >
+            android:parentActivityName="edu.clemson.physicaltherapy.app.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.clemsonphysical.MainActivity" />
+                android:value="com.example.clemsonphysical.app.MainActivity" />
         </activity>
     </application>
 
