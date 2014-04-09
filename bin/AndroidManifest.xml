@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.clemsonphysical"
+    package="edu.clemson.physicaltherapy"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -38,7 +38,7 @@
              >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.clemson.physicaltherapy.app.MainActivity" />
+                android:value="com.example.clemsonphysical.app.MainActivity" />
         </activity>
         <activity
             android:name="edu.clemson.physicaltherapy.app.LogView"
@@ -46,7 +46,7 @@
             android:parentActivityName="edu.clemson.physicaltherapy.app.ExerciseView" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.clemson.physicaltherapy.app.ExerciseView" />
+                android:value="com.example.clemsonphysical.app.ExerciseView" />
 
         </activity>
         <activity
@@ -55,7 +55,7 @@
             android:parentActivityName="edu.clemson.physicaltherapy.app.LogView" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.clemson.physicaltherapy.app.LogView" />
+                android:value="com.example.clemsonphysical.app.LogView" />
         </activity>
         <activity
             android:name="edu.clemson.physicaltherapy.app.UserVideoView"
@@ -63,7 +63,7 @@
             android:parentActivityName="edu.clemson.physicaltherapy.app.LogView" > 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.clemson.physicaltherapy.app.LogView" />
+                android:value="com.example.clemsonphysical.app.LogView" />
         </activity>
         <activity
             android:name="edu.clemson.physicaltherapy.app.PractitionerVideoView"
@@ -71,7 +71,7 @@
             android:parentActivityName="edu.clemson.physicaltherapy.app.ExerciseView" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.clemson.physicaltherapy.app.ExerciseView" />
+                android:value="com.example.clemsonphysical.app.ExerciseView" />
             
         </activity>
         <activity
@@ -80,7 +80,7 @@
             android:parentActivityName="edu.clemson.physicaltherapy.app.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.clemson.physicaltherapy.app.MainActivity" />
+                android:value="com.example.clemsonphysical.app.MainActivity" />
         </activity>
         <activity
             android:name="edu.clemson.physicaltherapy.app.InfoView"
@@ -88,7 +88,7 @@
             android:parentActivityName="edu.clemson.physicaltherapy.app.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.clemson.physicaltherapy.app.MainActivity" />
+                android:value="com.example.clemsonphysical.app.MainActivity" />
         </activity>
     </application>
 

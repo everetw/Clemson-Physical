@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.clemson.physicaltherapy.database.DatabaseHandler;
-import edu.clemson.physicaltherapy.database.DatabaseObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

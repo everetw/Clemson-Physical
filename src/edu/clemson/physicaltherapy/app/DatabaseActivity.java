@@ -10,12 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.clemson.physicaltherapy.database.DatabaseHandler;
-import edu.clemson.physicaltherapy.database.DatabaseObject;
-import edu.clemson.physicaltherapy.web.JSONParser;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
+import edu.clemson.physicaltherapy.database.DatabaseHandler;
+import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
+import edu.clemson.physicaltherapy.web.JSONParser;
 
 
 

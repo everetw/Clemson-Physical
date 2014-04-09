@@ -5,14 +5,6 @@ package edu.clemson.physicaltherapy.app;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.example.clemsonphysical.R;
-import com.example.clemsonphysical.R.id;
-import com.example.clemsonphysical.R.layout;
-import com.example.clemsonphysical.R.menu;
-import com.example.clemsonphysical.R.xml;
-
-import edu.clemson.physicaltherapy.datamodel.Exercise;
-import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +23,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import edu.clemson.physicaltherapy.R;
+import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
 
 
 

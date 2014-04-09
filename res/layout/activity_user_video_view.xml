@@ -18,7 +18,11 @@
         
         android:layout_gravity="center_horizontal"
         android:text="TextView"
+        android:textColor="#FFFFFF"
+        android:background="#44000000"
+        android:textAppearance="?android:attr/textAppearanceMedium" 
         android:visibility="invisible"
+        
          />
 
 </FrameLayout>

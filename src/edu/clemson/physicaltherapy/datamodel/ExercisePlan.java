@@ -7,15 +7,18 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.clemson.physicaltherapy.database.DatabaseHandler;
-import edu.clemson.physicaltherapy.database.DatabaseObject;
-import edu.clemson.physicaltherapy.datamodel.Exercise.DbKeys;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import edu.clemson.physicaltherapy.database.DatabaseHandler;
 
 public class ExercisePlan extends DatabaseObject {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5806522798915995517L;
+
 	public enum DbKeys
 	{
 	

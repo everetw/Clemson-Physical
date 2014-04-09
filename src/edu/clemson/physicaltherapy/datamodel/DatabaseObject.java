@@ -1,4 +1,4 @@
-package edu.clemson.physicaltherapy.database;
+package edu.clemson.physicaltherapy.datamodel;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import edu.clemson.physicaltherapy.database.DatabaseHandler;
 
 
 
@@ -21,6 +22,10 @@ public abstract class DatabaseObject implements java.io.Serializable
 	
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4847728748712633666L;
 	public final String URL_INSERT = "";
 	//public final String KEY_ID = "id";
 	//public final String TABLE_NAME = "table";

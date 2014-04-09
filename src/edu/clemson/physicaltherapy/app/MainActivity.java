@@ -2,16 +2,6 @@ package edu.clemson.physicaltherapy.app;
 
 import java.util.List;
 
-import com.example.clemsonphysical.R;
-import com.example.clemsonphysical.R.id;
-import com.example.clemsonphysical.R.layout;
-import com.example.clemsonphysical.R.menu;
-import com.example.clemsonphysical.R.xml;
-
-import edu.clemson.physicaltherapy.database.DatabaseObject;
-import edu.clemson.physicaltherapy.datamodel.Exercise;
-import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
-import edu.clemson.physicaltherapy.datamodel.Exercise.DbKeys;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +17,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
+import edu.clemson.physicaltherapy.R;
+import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
+import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
 
 public class MainActivity extends DisplayTableActivity {
 	
@@ -468,7 +462,7 @@ public class MainActivity extends DisplayTableActivity {
     				
     			    }
     			  })
-    			.setNegativeButton("Cancel",
+    			.setNegativeButton("No",
     			  new DialogInterface.OnClickListener() {
     			    public void onClick(DialogInterface dialog,int id) {
     			    	dialog.cancel();

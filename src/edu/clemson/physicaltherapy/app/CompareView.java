@@ -1,22 +1,16 @@
 package edu.clemson.physicaltherapy.app;
 
-import com.example.clemsonphysical.R;
-import com.example.clemsonphysical.R.id;
-import com.example.clemsonphysical.R.layout;
-import com.example.clemsonphysical.R.menu;
-import com.example.clemsonphysical.R.xml;
-
-import edu.clemson.physicaltherapy.datamodel.Exercise;
-import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
+import edu.clemson.physicaltherapy.R;
+import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
 
 public class CompareView extends DatabaseActivity {
 	

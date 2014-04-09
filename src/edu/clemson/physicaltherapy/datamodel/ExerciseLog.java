@@ -1,6 +1,5 @@
 package edu.clemson.physicaltherapy.datamodel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,12 +7,10 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.clemson.physicaltherapy.database.DatabaseHandler;
-import edu.clemson.physicaltherapy.database.DatabaseObject;
-import edu.clemson.physicaltherapy.datamodel.Exercise.DbKeys;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import edu.clemson.physicaltherapy.database.DatabaseHandler;
 
 public class ExerciseLog extends DatabaseObject {
 	
@@ -28,6 +25,11 @@ public class ExerciseLog extends DatabaseObject {
 //	"    REFERENCES \"exercise\"(\"idexercise\")\n"+
 //	");\n",
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6497905965355954481L;
+
 	public enum DbKeys
 	{
 	

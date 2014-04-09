@@ -1,14 +1,12 @@
 package edu.clemson.physicaltherapy.app;
 
-import com.example.clemsonphysical.R;
-import com.example.clemsonphysical.R.xml;
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import edu.clemson.physicaltherapy.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

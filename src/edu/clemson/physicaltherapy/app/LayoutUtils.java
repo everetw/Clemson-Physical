@@ -7,9 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Calendar;
 
-import com.example.clemsonphysical.R;
-import com.example.clemsonphysical.R.drawable;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -31,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.clemson.physicaltherapy.R;
 
 /**
  * @author jburton

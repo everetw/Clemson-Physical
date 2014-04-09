@@ -8,13 +8,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.clemson.physicaltherapy.database.DatabaseHandler;
-import edu.clemson.physicaltherapy.database.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise.DbKeys;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class ExercisePlanItem extends DatabaseObject {
+
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3529213364078057703L;
 
 //	"CREATE TABLE \"exercise_plan_item\"(\n"+
 //	"  \"exercise_plan_item_id\" INTEGER PRIMARY KEY NOT NULL,\n"+

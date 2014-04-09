@@ -1,79 +1,64 @@
 package edu.clemson.physicaltherapy.app;
 
-import com.example.clemsonphysical.R;
-import com.example.clemsonphysical.R.id;
-import com.example.clemsonphysical.R.layout;
-import com.example.clemsonphysical.R.menu;
+import java.util.List;
 
-import edu.clemson.physicaltherapy.datamodel.Exercise;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.MediaController;
-import android.widget.TextView;
-import android.widget.VideoView;
+import edu.clemson.physicaltherapy.R;
+import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
+import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
+import edu.clemson.physicaltherapy.datamodel.ExerciseLogAnnotation;
 
-public class PractitionerVideoView extends DatabaseActivity {
+public class PractitionerVideoView extends VideoViewActivity {
 
 	
 	private Exercise exercise;
-	protected VideoView videoView;
-	protected TextView annotationTextView;
+	private ExerciseAnnotation current_annotation;
+	private List<DatabaseObject> annotationList;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		//setContentView(R.layout.activity_practitioner_video_view);
-		// Get the exercise from the intent.
-		
-		setContentView(R.layout.activity_video_view);
-		// Setup the Action Bar
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
-		
-		
-		// All player buttons
-
-		videoView = (VideoView) findViewById(R.id.videoView1);	
-		//Add the media controller.
-		videoView.setMediaController(new MediaController(this));
-
-		annotationTextView = (TextView)findViewById(R.id.textView1);
 		Intent intent = getIntent();
 		exercise = (Exercise)intent.getSerializableExtra("ExerciseClass");
 		
         //Set the title of the Action Bar to the Exercise Name
         getActionBar().setTitle(exercise.getName());
         
-		videoView.setVideoPath(exercise.getFileLocation());
+		setVideoPath(exercise.getFileLocation());
 		
-		videoView.start();
+		start();
 		
 	
 	}
 	
-	//@Override
-	public void Annotate()
+	@Override
+	protected void setContentView()
 	{
-		if (videoView.isPlaying())
+		setContentView(R.layout.activity_video_view);
+	}
+	
+	@Override
+	public void addAnnotation(int time, String annotation)
+	{
+		// Add the annotation to the database
+		//displayAnnotation(time+": "+annotation);
+		ExerciseAnnotation ea = new ExerciseAnnotation(0,exercise.getId(),time,annotation);
+		try
 		{
-			videoView.pause();
-			int currentTime = videoView.getCurrentPosition();
-			annotationTextView.setText(Integer.toString(currentTime));
-			annotationTextView.setTextColor(Color.rgb(255, 255, 255));
-			annotationTextView.setVisibility(View.VISIBLE);
+			ea.add(dbSQLite);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
-			
 	}
 
-	//@Override
+	@Override
 	protected String getVideoSubdirectory() {
 		
 		return "exercises";
@@ -120,7 +105,7 @@ public class PractitionerVideoView extends DatabaseActivity {
 	    	break;
 
 	    case R.id.action_add_annotation:
-	    	Annotate();
+	    	displayAnnotationDialog();
 	    	break;
 	    	
 	    case R.id.action_annotation_list:
@@ -138,6 +123,16 @@ public class PractitionerVideoView extends DatabaseActivity {
 	    return true;
 	}
 
+	@Override
+	public String readAnnotation(int time, int interval) {
+		// TODO Auto-generated method stub
+		ExerciseAnnotation ela =  ExerciseAnnotation.getNextAnnotationByTime(dbSQLite, exercise.getId(), time, interval);
+		if (ela == null)
+		{
+			return null;
+		}
+		return ela.getAnnotation();
+	}
 
 
 

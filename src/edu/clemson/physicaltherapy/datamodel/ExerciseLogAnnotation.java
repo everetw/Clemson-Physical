@@ -7,12 +7,10 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.clemson.physicaltherapy.database.DatabaseHandler;
-import edu.clemson.physicaltherapy.database.DatabaseObject;
-import edu.clemson.physicaltherapy.datamodel.Exercise.DbKeys;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import edu.clemson.physicaltherapy.database.DatabaseHandler;
 
 public class ExerciseLogAnnotation extends DatabaseObject {
 	
@@ -33,6 +31,11 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 //	"    REFERENCES \"exercise_log\"(\"idexercise_log\")\n"+
 //	");\n",
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 697758881842627158L;
+
 	public enum DbKeys
 	{
 	
@@ -227,13 +230,14 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 
 	}
 	
-	public static ExerciseLogAnnotation getNextAnnotationByLogAndTime(DatabaseHandler dbh, int log_id, int time)  {
+	public static ExerciseLogAnnotation getNextAnnotationByTime(DatabaseHandler dbh, int log_id, int time, int interval)  {
 	    
 		SQLiteDatabase db = dbh.getReadableDatabase();
+	    int max_time = time + interval;
 	     
 	     			
-        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_IDEXERCISE_LOG.getKeyName() + "=? and "+DbKeys.KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME.getKeyName()+ ">=?",
-                new String[] { Integer.toString(log_id),Integer.toString(time) }, null, null, DbKeys.KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME.getKeyName() +" ASC", null);
+        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_IDEXERCISE_LOG.getKeyName() + "=? and "+DbKeys.KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME.getKeyName()+ " between ? and ?",
+                new String[] { Integer.toString(log_id),Integer.toString(time), Integer.toString(max_time) }, null, null, DbKeys.KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME.getKeyName() +" ASC", null);
         
         if (cursor.getCount() > 0)
         {
