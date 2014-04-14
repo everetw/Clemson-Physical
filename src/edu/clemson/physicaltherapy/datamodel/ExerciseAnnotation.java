@@ -14,6 +14,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import edu.clemson.physicaltherapy.database.DatabaseHandler;
+import edu.clemson.physicaltherapy.datamodel.ExerciseLog.DbKeys;
 
 /**
  * @author jburton
@@ -280,11 +281,38 @@ public class ExerciseAnnotation extends DatabaseObject {
         return null;
 
 	}
+	
+	public static ExerciseAnnotation getPreviousAnnotationByTime(DatabaseHandler dbh, int log_id, int time, int interval)  {
+	    
+		SQLiteDatabase db = dbh.getReadableDatabase();
+	    int min_time = time - interval;
+	     			
+        Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_IDEXERCISE.getKeyName() + "=? and "+DbKeys.KEY_EXERCISE_ANNOTATION_VIDEO_TIME.getKeyName()+ " between ? and ?",
+        		
+                new String[] { Integer.toString(log_id),Integer.toString(min_time),Integer.toString(time) }, null, null, DbKeys.KEY_EXERCISE_ANNOTATION_VIDEO_TIME.getKeyName() +" DESC", null);
+        
+        if (cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            ExerciseAnnotation object = createObjectFromCursor(cursor);
+	        cursor.close();
+	        
+            return object;
+        }
+        else
+        {
+	        cursor.close();
+	        
+        	//throw new java.lang.Exception("Cannot find "+TABLE_NAME+" matching id "+ );
+        }
+        return null;
+
+	}
 
 	// Should be in superclass, but Java won't let you override static methods.
 	
-	public static List<DatabaseObject> getAll(DatabaseHandler dbh) {
-        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+	public static List<ExerciseAnnotation> getAll(DatabaseHandler dbh) {
+        List<ExerciseAnnotation> objectList = new ArrayList<ExerciseAnnotation>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_NAME;
  
@@ -295,7 +323,7 @@ public class ExerciseAnnotation extends DatabaseObject {
         if (cursor.moveToFirst()) {
             do {
                 
-            	DatabaseObject object = createObjectFromCursor(cursor);
+            	ExerciseAnnotation object = createObjectFromCursor(cursor);
                
                 // Adding object to list
                 objectList.add(object);
@@ -309,6 +337,31 @@ public class ExerciseAnnotation extends DatabaseObject {
         return objectList;
 	}
 	
+	public static List<ExerciseAnnotation> getAllByExerciseId(
+			DatabaseHandler dbh, int exercise_id) {
+        List<ExerciseAnnotation> objectList = new ArrayList<ExerciseAnnotation>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME + " WHERE "+DbKeys.KEY_IDEXERCISE.getKeyName()+"="+Integer.toString(exercise_id);
+ 
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+ 
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                
+            	ExerciseAnnotation object = createObjectFromCursor(cursor);
+               
+                // Adding object to list
+                objectList.add(object);
+                
+            } while (cursor.moveToNext());
+        }
+ 
+        cursor.close();
+        
+        return objectList;	
+	}
 	
 	protected static ExerciseAnnotation createObjectFromCursor(Cursor cursor)
 	{
@@ -326,6 +379,17 @@ public class ExerciseAnnotation extends DatabaseObject {
 	@Override
 	public String getIdKeyName() {
 		return DbKeys.KEY_ID.getKeyName();
+	}
+	
+	public static void deleteAllByExerciseId(DatabaseHandler dbh, int exerciseId) {
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        List<ExerciseAnnotation> exerciseAnnotationList = ExerciseAnnotation.getAllByExerciseId(dbh,exerciseId);
+        
+        for (int i = 0; i < exerciseAnnotationList.size(); i++)
+        {
+        	exerciseAnnotationList.get(i).delete(dbh);
+        }
+
 	}
 	
 	public static void deleteAll(DatabaseHandler dbh) 

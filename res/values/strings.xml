@@ -10,6 +10,7 @@
     <string name="title_activity_compare_view">CompareView</string>
     <string name="title_activity_user_video_view">UserVideoView</string>
     <string name="title_activity_practitioner_video_view">PractitionerVideoView</string>
+    <string name="title_activity_audio_record">Record Audio</string>
     <string name="pref_username">User</string>
     <string name="pref_username_desc">Patient\'s name</string>
     <string name="pref_practitioner">Practitioner</string>
@@ -27,5 +28,7 @@
     <string name="about_text">file:///android_asset/about.html</string>
     <string name="action_delete">Delete</string>
     <string name="action_saveall">Save All</string>
+    <string name="action_delete_all_annotations">Delete All Annotations</string>
+    <string name="title_audio_player_view">Audio Notes</string>
 
 </resources>

@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import edu.clemson.soundrecorder.SoundRecorder;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -43,6 +44,8 @@ public abstract class DisplayActivity extends Activity  {
 	public static final int IMAGE_REQUEST_CODE = 1;
 	public static final int REQUEST_IMAGE_CAPTURE = 2;
 	public static final int REQUEST_VIDEO_CAPTURE = 3;
+
+	public static final int REQUEST_SOUND_CAPTURE = 4;
 	
 	private Bitmap bitmap;
 	protected Uri mediaUri;
@@ -58,6 +61,7 @@ public abstract class DisplayActivity extends Activity  {
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 	    /// Preferences from http://developer.android.com/guide/topics/data/data-storage.html#pref
 	    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 //	    autoSave = settings.getBoolean(SettingsActivity.KEY_AUTOSAVE, false);
@@ -73,10 +77,16 @@ public abstract class DisplayActivity extends Activity  {
 //	    {
 //	    	DatabaseObject.setBaseUrl(urlBase);
 //	    }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            // Show the Up button in the action bar.
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+	    try
+	    {
+	        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+	            // Show the Up button in the action bar.
+	            getActionBar().setDisplayHomeAsUpEnabled(true);
+	        }
+	    } catch (java.lang.NullPointerException npe)
+	    {
+	    	
+	    }
 
 
 
@@ -195,18 +205,24 @@ public abstract class DisplayActivity extends Activity  {
 
 	
 	private File createImageFile() throws IOException {
-	    // Create an image file name
+		return createFile("JPEG",".jpg","images");
+	}
+	
+	private File createFile(String prefix, String suffix, String directory) throws IOException
+	{	    
+		// Create an image file name
 	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	    String imageFileName = "JPEG_" + timeStamp + "_";
-	    File storageDir = this.getExternalFilesDir("receipts");
-	    File image = File.createTempFile(
+	    String imageFileName = prefix+ "_" + timeStamp + "_";
+	    File storageDir = this.getExternalFilesDir(directory);
+	    File output = File.createTempFile(
 	        imageFileName,  /* prefix */
-	        ".jpg",         /* suffix */
+	        suffix,         /* suffix */
 	        storageDir      /* directory */
 	    );
 
 	    // Save a file: path for use with ACTION_VIEW intent
-	    return image;
+	    return output;
+		
 	}
 	
     public void dispatchTakeVideoIntent() {
@@ -224,7 +240,7 @@ public abstract class DisplayActivity extends Activity  {
             File videoFile = null;
             try 
             {
-                videoFile = createVideoFile();
+                videoFile = createHDVideoFile();
             } catch (IOException ex) 
             {
                 // Error occurred while creating the File
@@ -243,22 +259,54 @@ public abstract class DisplayActivity extends Activity  {
         }
     }
 
+    
+    public void dispatchTakeAudioIntent() {
+
+    	// Record audio using the built-in voice recorder.
+
+        //Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+        Intent intent = new Intent(this,SoundRecorder.class);
+        
+        // Ensure that there's a sound recording activity to handle the intent
+        if (intent.resolveActivity(getPackageManager()) != null) 
+        {
+        
+            // Create the File where the photo should go
+            File audioFile = null;
+            try 
+            {
+                audioFile = createAudioFile();
+            } catch (IOException ex) 
+            {
+                // Error occurred while creating the File
+                
+            }
+            // Continue only if the File was successfully created
+            if (audioFile != null)
+            {
+            	mediaUri = Uri.fromFile(audioFile);
+	        	intent.setAction(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+	        	intent.setType("audio/mp4");
+	        	intent.putExtra(MediaStore.EXTRA_OUTPUT,  mediaUri );
+	        	startActivityForResult(intent, REQUEST_SOUND_CAPTURE);
+            }
+
+        }
+    }
+	
+
+	private File createHDVideoFile() throws IOException {
+		return createFile("VID",".mp4",getVideoSubdirectory());
+	}
 	
 	private File createVideoFile() throws IOException {
-	    // Create an video file name
-	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	    String videoFileName = "VID_" + timeStamp + "_";
-	    File storageDir = this.getExternalFilesDir(getVideoSubdirectory());
-	    File video = File.createTempFile(
-	        videoFileName,  /* prefix */
-	        ".mp4",         /* suffix */
-	        //".3gp",         /* suffix */
-	        storageDir      /* directory */
-	    );
-
-	    // Save a file: path for use with ACTION_VIEW intent
-	    return video;
+		return createFile("VID",".3gp",getVideoSubdirectory());
 	}
+	
+	private File createAudioFile() throws IOException {
+		return createFile("AUD",".m4a",getAudioSubdirectory());
+	}
+
 	
 	
 	/**
@@ -331,6 +379,12 @@ public abstract class DisplayActivity extends Activity  {
 	protected String getVideoSubdirectory()
 	{
 		return "user_videos";
+	}
+	
+	
+	protected String getAudioSubdirectory()
+	{
+		return "audio_notes";
 	}
 	
 }

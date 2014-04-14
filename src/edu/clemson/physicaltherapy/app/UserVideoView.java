@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import edu.clemson.physicaltherapy.R;
 import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLogAnnotation;
 
@@ -53,10 +54,9 @@ public class UserVideoView extends VideoViewActivity  {
 	}
 	
 	@Override
-	public void addAnnotation(int time, String annotation)
+	protected void addAnnotation(int time, String annotation)
 	{
 		// Add the annotation to the database
-		//displayAnnotation(time+": "+annotation);
 		ExerciseLogAnnotation ela = new ExerciseLogAnnotation(0,exerciseLog.getId(),time,annotation);
 		try
 		{
@@ -74,7 +74,7 @@ public class UserVideoView extends VideoViewActivity  {
 	 * @param menu Meny to be created.
 	 * @return true
 	 */
-	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
 		getMenuInflater().inflate(R.menu.user_video_menu, menu);
@@ -82,6 +82,7 @@ public class UserVideoView extends VideoViewActivity  {
 	}
 	
 	@Override
+	
 	/**
 	 * @fn public boolean onOptionsItemSelected(MenuItem item)
 	 * @brief Handles menu item selection. 
@@ -106,19 +107,24 @@ public class UserVideoView extends VideoViewActivity  {
 	    	break;
 
 	    case R.id.action_add_annotation:
-	    	displayAnnotationDialog();
+	    	onActionAddAnnotation();
 	    	break;
 	    	
-	    case R.id.action_annotation_list:
-	    	break;	
+	    case R.id.action_compare:
+			intent = new Intent(this, CompareView.class);
+			intent.putExtra("ExerciseLogClass", exerciseLog);
+			
+			startActivity(intent);
+
 	    	
 	    case R.id.action_settings:
 	    	intent = new Intent(this, SettingsActivity.class);
 	    	startActivity(intent);
 	    	break;
-//	    case R.id.action_record:
-//	    	dispatchTakeVideoIntent();
-//	    	break;
+
+	    case R.id.action_delete_all_annotations:
+	    	displayDeleteAllDialog();
+	    	break;
 	    	
 	    }
 	    return true;
@@ -132,8 +138,9 @@ public class UserVideoView extends VideoViewActivity  {
 	}
 
 
+
 	@Override
-	public String readAnnotation(int time, int interval) {
+	protected String readAnnotation(int time, int interval) {
 		// TODO Auto-generated method stub
 		ExerciseLogAnnotation ela =  ExerciseLogAnnotation.getNextAnnotationByTime(dbSQLite, exerciseLog.getId(), time, interval);
 		if (ela == null)
@@ -143,12 +150,38 @@ public class UserVideoView extends VideoViewActivity  {
 		return ela.getAnnotation();
 	}
 
+	@Override
+	public void updateAnnotation(int time, String annotation, int interval) {
+		// TODO Auto-generated method stub
+		ExerciseLogAnnotation exerciseLogAnnotation = ExerciseLogAnnotation.getPreviousAnnotationByTime(dbSQLite, exerciseLog.getId(), time-interval, interval);
+		if (exerciseLogAnnotation == null)
+		{
+			addAnnotation(time,annotation);
+		}
+		else
+		{
+			exerciseLogAnnotation.setAnnotation(annotation);
+			exerciseLogAnnotation.setVideoTime(time);
+			exerciseLogAnnotation.update(dbSQLite);
+		}
+		System.err.println("updateAnnotation "+annotation);
+		
+	}
 
+	@Override
+	public void deleteAnnotation(int time, String annotation, int interval) {
+		// TODO Auto-generated method stub
+		System.err.println("deleteAnnotation "+annotation);
+		ExerciseLogAnnotation.getPreviousAnnotationByTime(dbSQLite, exerciseLog.getId(), time, interval);
+		removeAnnotation();
+		
+	}
 
-	
-	
+	@Override
+	protected void deleteAllAnnotations() {
+		ExerciseAnnotation.deleteAllByExerciseId(dbSQLite,exerciseLog.getId());
+	}
 
-		  
 
 
 }

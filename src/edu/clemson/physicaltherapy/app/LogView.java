@@ -1,10 +1,18 @@
 package edu.clemson.physicaltherapy.app;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore.Video.Thumbnails;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +45,9 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 		
 		KEY_EXERCISE_LOG_VIDEO_LOCATION,
 		KEY_EXERCISE_LOG_VIDEO_NOTES,
+		KEY_EXERCISE_LOG_AUDIO_LOCATION,
+		RECORD_AUDIO,
+		PLAY_AUDIO,
 		SAVE,
 		DELETE,
 		
@@ -44,6 +55,8 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 	};
 
 	private static final int NONE_SELECTED = -1;
+	// required for audio notes.
+	private ExerciseLog currentExerciseLog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +100,7 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
         {
         	spinnerList[i+1] = ((Exercise)exerciseList.get(i)).getName();
         	try {
-	        	if (((Exercise)exerciseList.get(i)).getName().equals(exercise.getName()))
+	        	if (exercise != null && ((Exercise)exerciseList.get(i)).getName().equals(exercise.getName()))
 	        	{
 	        		selected = i+1;
 	        		selected_id = exercise.getId();
@@ -180,12 +193,103 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
             break;
         
         case R.id.action_share:
-        	displayToast("Send logs to external service.");
+        	
+			exportLogsToEmail();
+
         	break;
         }
  
         return super.onOptionsItemSelected(item);
     }
+
+	private void exportLogsToEmail() 
+	{
+
+		try {
+			File exercise_log_csv = new File(this.getExternalFilesDir("export").getCanonicalPath(), "Exercise Log.csv");
+			createCSV(exercise_log_csv);
+			Uri export_uri = Uri.fromFile(exercise_log_csv);
+			
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			
+			intent.putExtra(Intent.EXTRA_SUBJECT, "Clemson Physical Therapy Exercise Log");
+			intent.putExtra(Intent.EXTRA_STREAM,export_uri);
+			startActivity(intent);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+		
+		
+	}
+
+
+	private void createCSV(File outputFile) {
+		//TODO Read everything that is displayed on screen or hidden
+		// Get the Table Layout 
+	    TableLayout tableLayout = (TableLayout) findViewById(R.id.tlGridTable);
+	    
+	    
+	    // Writing to CSV from http://www.mkyong.com/java/how-to-export-data-to-csv-file-java/
+	    FileWriter writer;
+		try {
+			writer = new FileWriter(outputFile);
+		 
+		    for (int i = 0; i < tableLayout.getChildCount(); i++) {
+		        View parentRow = tableLayout.getChildAt(i);
+		        if(parentRow instanceof TableRow)
+		        {
+		        	// Check the "new row" item.
+		        	String rowIndicator = getStringFromTableRow((TableRow)parentRow,1);
+		        	// Do not export unsaved new rows.
+		        	if (!rowIndicator.equals("true"))
+		        	{
+		        		writer.append("\"");
+		        		writer.append(getStringFromTableRow((TableRow)parentRow,field_order.KEY_CREATE_TIME.ordinal()));
+		        		writer.append("\",\"");
+		        		writer.append(getStringFromTableRow((TableRow)parentRow,field_order.KEY_EXERCISE_NAME.ordinal()));
+		        		writer.append("\",\"");
+		        		writer.append(getStringFromTableRow((TableRow)parentRow,field_order.KEY_EXERCISE_LOG_VIDEO_LOCATION.ordinal()));
+		        		writer.append("\",\"");
+		        		writer.append(getStringFromTableRow((TableRow)parentRow,field_order.KEY_EXERCISE_LOG_VIDEO_NOTES.ordinal()));
+		        		writer.append("\",\"");
+		        		writer.append(getStringFromTableRow((TableRow)parentRow,field_order.KEY_EXERCISE_LOG_AUDIO_LOCATION.ordinal()));
+		        		writer.append("\"\n");
+		        				
+		        	}
+		        }
+		      }
+		    writer.flush();
+		    writer.close();
+		}
+	    catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+		
+	}
+
+	
+	private List<ExerciseLog> getAllDisplayedExercises()
+	{
+        
+		int exercise_id = getExerciseIdFromSpinner();
+		if (exercise_id == NONE_SELECTED)
+        {
+        	return ExerciseLog.getAll(dbSQLite);
+        }
+        else
+        {
+        	return ExerciseLog.getAllByExerciseId(dbSQLite,exercise_id);
+        }
+        
+	}
+
 
 	public void showUserVideo(View view){
 		
@@ -206,12 +310,18 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 		return ExerciseLog.TABLE_NAME;
 	}
 
+	
+	private int getExerciseIdFromSpinner()
+	{
+		// Is the spinner populated?
+        TextView htv = (TextView) findViewById(R.id.exerciseIdTextView);
+        return Integer.parseInt(htv.getText().toString());
+	}
+	
 	@Override
 	protected void drawTable() {
 		
-		// Is the spinner populated?
-        TextView htv = (TextView) findViewById(R.id.exerciseIdTextView);
-        int exercise_id = Integer.parseInt(htv.getText().toString());
+		int exercise_id = getExerciseIdFromSpinner();
 		
         // Get the Table Layout 
 	    TableLayout tableLayout = (TableLayout) findViewById(R.id.tlGridTable);
@@ -267,6 +377,17 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
         textView = LayoutUtils.createTextView(this, ExerciseLog.DbKeys.KEY_EXERCISE_LOG_VIDEO_NOTES.getKeyLabel(), FONT_SIZE, LayoutUtils.BACKGROUND_COLOR, LayoutUtils.TEXT_COLOR);
         tableRow.addView(textView);
         
+        textView = LayoutUtils.createTextView(this, ExerciseLog.DbKeys.KEY_EXERCISE_LOG_AUDIO_LOCATION.getKeyLabel(), FONT_SIZE, LayoutUtils.BACKGROUND_COLOR, LayoutUtils.TEXT_COLOR);
+        tableRow.addView(textView);
+        textView.setVisibility(View.GONE);
+
+        textView = LayoutUtils.createTextView(this, "Rec. Audio", FONT_SIZE, LayoutUtils.BACKGROUND_COLOR, LayoutUtils.TEXT_COLOR);
+        tableRow.addView(textView);
+
+        textView = LayoutUtils.createTextView(this, "Play Audio", FONT_SIZE, LayoutUtils.BACKGROUND_COLOR, LayoutUtils.TEXT_COLOR);
+        tableRow.addView(textView);
+
+        
         textView = LayoutUtils.createTextView(this, "Save",   FONT_SIZE, LayoutUtils.BACKGROUND_COLOR, LayoutUtils.TEXT_COLOR);
 	    if (autoSave)
         {
@@ -298,19 +419,11 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
         //LinkedList<DatabaseObject>();
         //rowList.add(tableRow);
 
-        List<DatabaseObject> exerciseLoglist = null;
+        List<ExerciseLog> exerciseLoglist = getAllDisplayedExercises();
         
 
 
-        if (exercise_id == -1)
-        {
-        	exerciseLoglist = ExerciseLog.getAll(dbSQLite);
-        }
-        else
-        {
-        	exerciseLoglist = ExerciseLog.getAllByExerciseId(dbSQLite,exercise_id);
-        }
-        
+
    
         
         for (int i = 0; i < exerciseLoglist.size(); i++){
@@ -328,12 +441,27 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 	        
 	    	button = new ImageButton(this);
 	    	button.setImageResource(android.R.drawable.ic_media_play);
+	    	
+	    	// http://stackoverflow.com/questions/9692169/set-alpha-on-imageview-without-setalpha
+	    	// View.setAlpha(float) and ImageView.setAlpha(int) use completely different scales.
+	    	// This sets the alpha of the foreground image between 0-255
+	    	// ImageView.setAlpha(int) is depricated in API 16. 
+	    	button.setAlpha(160);
+	    	
+	    	// Set the background to a thumbnail of the video
+	    	Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(exerciseLog.getVideoLocation(), Thumbnails.MICRO_KIND);
+	    	button.setBackgroundDrawable(new BitmapDrawable(bitmap));
+	    	
+	    	
 	    	button.setOnClickListener(new View.OnClickListener(){
 		    	public void onClick(View v){
 		    		showUserVideo(v);
 		    	}
 
 	    	});
+	    	
+	    	
+	    	
 	    	tableRow.addView(button);
         	textView = LayoutUtils.createTextView(this, Integer.toString(exerciseLog.getId()), FONT_SIZE, LayoutUtils.TEXT_COLOR,LayoutUtils.BACKGROUND_COLOR);
         	textView.setVisibility(View.GONE);
@@ -399,11 +527,6 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
         	}
 
         	tableRow.addView(textView);
-	        
-
-            
-
-            
 
             
             textView = LayoutUtils.createTextView(this, exerciseLog.getVideoLocation(), FONT_SIZE,LayoutUtils.TEXT_COLOR, LayoutUtils.BACKGROUND_COLOR );
@@ -414,15 +537,55 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
             EditText editText = LayoutUtils.createEditText(this, exerciseLog.getVideoNotes(), FONT_SIZE, LayoutUtils.TEXT_COLOR, LayoutUtils.WHITE);
             tableRow.addView(editText);
             
+            textView = LayoutUtils.createTextView(this, exerciseLog.getAudioLocation(), FONT_SIZE,LayoutUtils.TEXT_COLOR, LayoutUtils.BACKGROUND_COLOR );
+            tableRow.addView(textView);
+            textView.setVisibility(View.GONE);
+            
+	        
+        	// Audio Record
+	    	button = new ImageButton(this);
+	    	// Icon downloaded from http://findicons.com/icon/158437/mic
+	    	button.setImageResource(R.drawable.ic_action_record_audio);
+	    	button.setOnClickListener(new View.OnClickListener(){
+		    	public void onClick(View v){
+		    		startAudioNotesActivity(v);
+		    	}
+
+	    	});
+	    	tableRow.addView(button);
+	    	
+	        
+        	// Audio Playback
+	    	button = new ImageButton(this);
+	    	
+	    	button.setImageResource(R.drawable.ic_action_audio_note);
+	    	
+	    	
+	
+	    	
+	    	if (exerciseLog.getAudioLocation().equals(""))
+	    	{
+	    		button.setEnabled(false);
+	    		button.setClickable(false);
+	    	}
+	    	else 
+	    	{
+	    		button.setEnabled(true);
+	    		button.setClickable(true);
+	        	button.setOnClickListener(new View.OnClickListener(){
+			    	public void onClick(View v){
+			    		playAudioNotes(v);
+			    	}
+
+		    	});
+	    		
+	    	}
+	    		
+	    	tableRow.addView(button);
             
             // Add the save button.
             addSaveFunctionToRow(tableRow);
-            
-
-
-	    	
-
-	        
+ 	        
 	        button = new ImageButton(this);
 	        button.setImageResource(android.R.drawable.ic_menu_delete);
 	        
@@ -465,18 +628,62 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 	        textView.setVisibility(View.GONE);
 	        tableRow.addView(textView);
 
-	        
-	        
-	        
 	        tableLayout.addView(tableRow);
-	        
-
-        
+	                
         }
         
 	}
 
 
+
+
+
+	protected void playAudioNotes(View v) {
+		
+		TableRow tr = (TableRow)v.getParent();
+		String audio_location = ((TextView)tr.getChildAt(field_order.KEY_EXERCISE_LOG_AUDIO_LOCATION.ordinal())).getText().toString();
+		Intent intent = new Intent(this,AudioPlayerView.class);
+		intent.putExtra("audio_location", audio_location);
+		startActivity(intent);
+	}
+
+
+
+	protected void startAudioNotesActivity(View v) {
+		// TODO Auto-generated method stub
+		//Intent intent = new Intent(this, AudioRecordActivity.class);
+		//startActivity(intent);
+		currentExerciseLog = getExerciseLogFromTableRow((TableRow)(v.getParent()));
+		dispatchTakeAudioIntent();
+		
+		
+	}
+
+	
+	/**
+	 * Here we store the file url as it will be null after returning from camera
+	 * app
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	 
+	    // save file url in bundle as it will be null on scren orientation
+	    // changes
+	    outState.putSerializable("ExerciseLogClass", currentExerciseLog);
+	}
+	 
+	/*
+	 * Here we restore the fileUri again
+	 */
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+	    super.onRestoreInstanceState(savedInstanceState);
+	 
+	    // get the file url
+	    currentExerciseLog = (ExerciseLog) savedInstanceState.getSerializable("ExerciseLogClass");
+	}
+    
 
 	protected void showVideoComparison(View view) {
     	TableRow tr = (TableRow) view.getParent();
@@ -499,11 +706,39 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 			int  exercise_id =  Integer.parseInt(((TextView)tr.getChildAt(field_order.KEY_EXERCISE_IDEXERCISE.ordinal())).getText().toString());
 			String create_time = ((TextView)tr.getChildAt(field_order.KEY_CREATE_TIME.ordinal())).getText().toString();
 			String video_location = ((TextView)tr.getChildAt(field_order.KEY_EXERCISE_LOG_VIDEO_LOCATION.ordinal())).getText().toString();
-			String video_notes = ((TextView)tr.getChildAt(field_order.KEY_EXERCISE_LOG_VIDEO_LOCATION.ordinal())).getText().toString();
+			String video_notes = ((TextView)tr.getChildAt(field_order.KEY_EXERCISE_LOG_VIDEO_NOTES.ordinal())).getText().toString();
+			String audio_location = ((TextView)tr.getChildAt(field_order.KEY_EXERCISE_LOG_AUDIO_LOCATION.ordinal())).getText().toString();
 			
-			return new ExerciseLog(id,exercise_id,video_location,video_notes,create_time);
+			
+			return new ExerciseLog(id,exercise_id,video_location,video_notes,audio_location,create_time);
 		
 		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		super.onActivityResult(requestCode, resultCode, data);
+
+		
+        if (requestCode == REQUEST_SOUND_CAPTURE && resultCode == RESULT_OK) 
+		{
+			/// Fixed null pointer exceptions from - http://www.androidhive.info/2013/09/android-working-with-camera-api/
+			
+	        try {
+	        	
+	        	// Capture the log values.
+	        	//currentExerciseLog = (ExerciseLog) data.getExtras().getSerializable("ExerciseLogClass");
+	        	
+	        	currentExerciseLog.setAudioLocation(mediaUri.getPath());
+	        	currentExerciseLog.update(dbSQLite);
+	        	drawTable();
+
+	        } catch (NullPointerException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
 	}
 
 	@Override
@@ -520,7 +755,11 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 
 	@Override
 	protected void updateRow(TableRow tr) {
-		// TODO Auto-generated method stub
+
+		displayToast("Saving log entry...");
+		ExerciseLog log = getExerciseLogFromTableRow(tr);
+		log.update(dbSQLite);
+		
 		
 	}
 

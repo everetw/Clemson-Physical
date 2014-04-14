@@ -85,6 +85,7 @@ public class DatabaseSQL {
 		"  \"idexercise_log\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n"+
 		"  \"exercise_log_video_location\" VARCHAR(255) NOT NULL,\n"+
 		"  \"exercise_log_video_notes\" VARCHAR(255),\n"+
+		"  \"exercise_log_audio_location\" VARCHAR(255),\n"+
 		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
 		"  \"exercise_idexercise\" INTEGER NOT NULL,\n"+
 		"  CONSTRAINT \"fk_exercise_log_exercise1\"\n"+

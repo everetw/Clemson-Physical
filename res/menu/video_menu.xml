@@ -7,28 +7,32 @@
         android:showAsAction="always"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/action_add_annotation"/>
-  
-    <item
-        android:id="@+id/action_annotation_list"
-        android:orderInCategory="103"
-        android:showAsAction="never"
-        android:icon="@drawable/img_btn_playlist"
-        android:title="@string/action_annotation_list"/>
-     
+    
     <item
         android:id="@+id/activity_show_log"
         android:orderInCategory="101"
         android:showAsAction="ifRoom"
         android:icon="@android:drawable/ic_menu_agenda"
         android:title="Show Exercise Log"/>
+    
+    <item
+        android:id="@+id/action_delete_all_annotations"
+        android:orderInCategory="103"
+        android:showAsAction="never"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/action_delete_all_annotations"/>
          
  
+  <!-- 
     <item
-        android:id="@+id/action_about"
-        android:orderInCategory="104"
+        android:id="@+id/action_annotation_list"
+        android:orderInCategory="103"
         android:showAsAction="never"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/action_about"/>
+        android:icon="@drawable/img_btn_playlist"
+        android:title="@string/action_annotation_list"/>
+      -->
+
+ 
     
      <item
         android:id="@+id/action_settings"
@@ -36,6 +40,16 @@
         android:showAsAction="never"
         android:icon="@android:drawable/ic_menu_preferences"
         android:title="@string/action_settings"/>
+     
+        <item
+        android:id="@+id/action_about"
+        android:orderInCategory="104"
+        android:showAsAction="never"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/action_about"/>
+        
+
+     
      
      <!--  Camcorder icon from http://findicons.com/icon/70736/video_camera?id=330029 
      <item

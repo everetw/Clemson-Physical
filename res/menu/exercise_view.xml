@@ -2,10 +2,10 @@
   
     <item
         android:id="@+id/activity_show_log"
-        android:orderInCategory="101"
+        android:orderInCategory="102"
         android:showAsAction="ifRoom"
         android:icon="@android:drawable/ic_menu_agenda"
-        android:title="Show Exercise Log"/>
+        android:title="@string/action_show_log"/>
     
     <item
         android:id="@+id/action_add"
@@ -17,14 +17,21 @@
     
     <item
         android:id="@layout/activity_info_view"
-        android:orderInCategory="102"
+        android:orderInCategory="103"
         android:showAsAction="never"
         android:title="Info"/>
     
     <item
         android:id="@xml/settings"
-        android:orderInCategory="103"
+        android:orderInCategory="104"
         android:showAsAction="never"
         android:title="Settings"/>
+    
+    <item
+        android:id="@+id/action_save"
+        android:orderInCategory="101"
+        android:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_save"
+        android:title="Save Exercise"/>
 
 </menu>

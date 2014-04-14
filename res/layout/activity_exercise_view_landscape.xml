@@ -55,6 +55,13 @@
          android:gravity="center"
          android:layout_gravity="center"
          />
+     <TextView
+        android:id="@+id/exerciseInstructionUrlTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ExerciseInstructionUrl"
+        android:visibility="gone"
+        />
     
     </FrameLayout>
 	<!-- Exercise Instructions -->
@@ -114,15 +121,7 @@
         android:text="ExerciseVideoUrl"
         android:visibility="gone"
         />
-     <TextView
-        android:id="@+id/exerciseInstructionUrlTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:gravity="center"
-        android:text="ExerciseInstructionUrl"
-        android:visibility="gone"
-        />
+
      <TextView
         android:id="@+id/exerciseFileLocationTextView"
         android:layout_width="match_parent"

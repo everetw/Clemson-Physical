@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,8 +40,9 @@ public class ExerciseView extends DatabaseActivity {
 	private WebView exercise_instruction_webview;
 	private ImageButton exercise_play_button;
 	private ImageView exercise_play_view;
-	public Exercise exercise;
-	public ExerciseLog exerciseLog;
+	private Exercise exercise;
+	private ExerciseLog exerciseLog;
+	private boolean editMode = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,26 +71,39 @@ public class ExerciseView extends DatabaseActivity {
 		if (exercise_intent != null)
 			exercise = exercise_intent;
 
+		editMode = intent.getBooleanExtra("edit_mode", false);
 		
 		// Get the widgets
         exercise_id = (TextView) findViewById(R.id.exerciseIdTextView);
         exercise_name = (TextView) findViewById(R.id.exerciseNameTextView);
         exercise_video_url = (TextView) findViewById(R.id.exerciseVideoUrlTextView);
-        exercise_instructions = (TextView) findViewById(R.id.exerciseInstructionUrlTextView);
+        exercise_instructions = (EditText) findViewById(R.id.exerciseInstructionUrlTextView);
         exercise_instruction_webview = (WebView) findViewById(R.id.exerciseInstructionWebView);
-        exercise_file_location = (TextView) findViewById(R.id.exerciseFileLocationTextView);
         exercise_play_button = (ImageButton) findViewById(R.id.exercisePlayImageButton);
+        exercise_file_location = (TextView) findViewById(R.id.exerciseFileLocationTextView);
         exercise_play_view = (ImageView) findViewById(R.id.exercisePlayImageView);
         
 
-        
+        // Set the fields
         exercise_id.setText(Integer.toString(exercise.getId()));
         exercise_name.setText(exercise.getName());
-
         exercise_video_url.setText(exercise.getVideoUrl());
         
         // This is messy.
         // If the instructions are a URL, load the file in the webview.
+        if (editMode)
+        {
+        	exercise_instruction_webview.setVisibility(View.GONE);
+        	exercise_instructions.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+        	exercise_instruction_webview.setVisibility(View.VISIBLE);
+        	exercise_instructions.setVisibility(View.GONE);
+
+        }
+        
+        exercise_instructions.setText(exercise.getInstructions());
         try
         {
         	URL testUrl = new URL(exercise.getInstructions());
@@ -99,28 +114,25 @@ public class ExerciseView extends DatabaseActivity {
         	// If not, assume text.
         	// Next line should work but doesn't. Appears to be a bug in Android API.
         	// exercise_instruction_webview.loadData(exercise.getInstructions(), "text/plain", "UTF-8");
+        	// So we include a null base url.  
         	exercise_instruction_webview.loadDataWithBaseURL(null,exercise.getInstructions(), "text/plain", "UTF-8", null);
         }
         
-        
+	   // Keep webview from automatically redirecting.
+       ///  http://stackoverflow.com/questions/4066438/android-webview-how-to-handle-redirects-in-app-instead-of-opening-a-browser
+	   exercise_instruction_webview.setWebViewClient(new WebViewClient() {
+	        @Override
+	        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+	            return false;
+	        }
+	    });
         
         exercise_file_location.setText(exercise.getFileLocation());
-
-		//TODO Set the background widget to the thumbnail for the video.
-        
-        
-//	        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) exercise_play_button.getLayoutParams();
-//	        layoutParams.height = layoutParams.width;
-//	        exercise_play_button.setLayoutParams(layoutParams);
-//	        
-        // exercise_play_button.getLayoutParams().height = exercise_play_button.getLayoutParams().width;
         
         /// http://android-er.blogspot.com/2011/05/create-thumbnail-for-video-using.html
         // MINI_KIND: 512 x 384 thumbnail 
         exercise_play_view.setImageBitmap(ThumbnailUtils.createVideoThumbnail(exercise.getFileLocation(), Thumbnails.MINI_KIND));
         
-        /// http://stackoverflow.com/questions/2415619/how-to-convert-a-bitmap-to-drawable-in-android
-        //exercise_play_button.setBackgroundDrawable(new BitmapDrawable(getResources(),bmThumbnail));
         
         //Set the title of the Action Bar to the Exercise Name
         getActionBar().setTitle(exercise.getName());
@@ -135,6 +147,9 @@ public class ExerciseView extends DatabaseActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.exercise_view, menu);
+		MenuItem item = menu.findItem(R.id.action_save);
+		item.setVisible(editMode);
+
 		return true;
 	}
 	
@@ -165,11 +180,27 @@ public class ExerciseView extends DatabaseActivity {
         	displayRecordVideoDialog(null);
         	break;
         	
+        case R.id.action_save:
+        	saveExercise();
+        	break;
+        	
         }
  
         return true;
     }
 	
+	private void saveExercise() {
+		// Update all editable fields.
+		String instructions = exercise_instructions.getText().toString();
+		displayToast("Saving exercise...");
+		exercise.setInstructions(instructions);
+		exercise.update(dbSQLite);
+		
+	}
+
+
+
+
 	public void showPractitionerVideo(View view){
 		// add stuff to the intent
 		Intent intent = new Intent(this, PractitionerVideoView.class);
@@ -244,7 +275,7 @@ public class ExerciseView extends DatabaseActivity {
 	        try {
 	        	
 	        	// Capture the log values.
-	        	exerciseLog = new ExerciseLog(0,exercise.getId(),mediaUri.getPath(),"");
+	        	exerciseLog = new ExerciseLog(0,exercise.getId(),mediaUri.getPath());
 	        	try {
 					exerciseLog.add(dbSQLite);
 					// Now get the newly generated id from the database.
@@ -290,10 +321,6 @@ public class ExerciseView extends DatabaseActivity {
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 	    super.onRestoreInstanceState(savedInstanceState);
-	 
-	    // get the file url
-	    //System.err.println("restoring instance state");
-	    
 	    exercise = (Exercise) savedInstanceState.getSerializable("exercise");
 	    exerciseLog = (ExerciseLog) savedInstanceState.getSerializable("exercise_log");
 	    

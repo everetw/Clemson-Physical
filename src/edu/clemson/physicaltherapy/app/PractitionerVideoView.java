@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import edu.clemson.physicaltherapy.R;
 import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
@@ -18,7 +19,7 @@ public class PractitionerVideoView extends VideoViewActivity {
 	
 	private Exercise exercise;
 	private ExerciseAnnotation current_annotation;
-	private List<DatabaseObject> annotationList;
+	
 
 	
 	@Override
@@ -105,11 +106,13 @@ public class PractitionerVideoView extends VideoViewActivity {
 	    	break;
 
 	    case R.id.action_add_annotation:
-	    	displayAnnotationDialog();
+	    	onActionAddAnnotation();
 	    	break;
+	
 	    	
-	    case R.id.action_annotation_list:
-	    	break;	
+	    case R.id.activity_show_log:
+	    	showLog(null);
+	    	break;
 	    	
 	    case R.id.action_settings:
 	    	intent = new Intent(this, SettingsActivity.class);
@@ -118,9 +121,18 @@ public class PractitionerVideoView extends VideoViewActivity {
 //	    case R.id.action_record:
 //	    	dispatchTakeVideoIntent();
 //	    	break;
-//	    	
+	    case R.id.action_delete_all_annotations:
+	    	displayDeleteAllDialog();
+	    	break;
+
 	    }
 	    return true;
+	}
+	
+	public void showLog(View view){
+		Intent intent = new Intent(this, LogView.class);
+		intent.putExtra("ExerciseClass", exercise);
+		startActivity(intent);
 	}
 
 	@Override
@@ -132,6 +144,47 @@ public class PractitionerVideoView extends VideoViewActivity {
 			return null;
 		}
 		return ela.getAnnotation();
+	}
+
+
+
+	@Override
+	public void updateAnnotation(int time, String annotation, int interval) {
+		// TODO Auto-generated method stub
+		ExerciseAnnotation exerciseAnnotation = ExerciseAnnotation.getPreviousAnnotationByTime(dbSQLite, exercise.getId(), time-interval, interval);
+		if (exerciseAnnotation == null)
+		{
+			addAnnotation(time,annotation);
+		}
+		else
+		{
+			exerciseAnnotation.setAnnotation(annotation);
+			exerciseAnnotation.setVideoTime(time);
+			exerciseAnnotation.update(dbSQLite);
+		}
+		System.err.println("updateAnnotation "+annotation);
+		
+	}
+
+	@Override
+	public void deleteAnnotation(int time, String annotation, int interval) {
+		// TODO Auto-generated method stub
+		System.err.println("deleteAnnotation "+annotation);
+		ExerciseAnnotation exerciseAnnotation = ExerciseAnnotation.getPreviousAnnotationByTime(dbSQLite, exercise.getId(), time, interval);
+		if (exerciseAnnotation != null)
+		{
+			exerciseAnnotation.delete(dbSQLite);
+		}
+		
+		removeAnnotation();
+		
+	}
+
+	@Override
+	protected void deleteAllAnnotations() {
+		// TODO Auto-generated method stub
+		ExerciseAnnotation.deleteAllByExerciseId(dbSQLite,exercise.getId());
+		
 	}
 
 

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
@@ -31,11 +32,14 @@ public class MainActivity extends DisplayTableActivity {
 			KEY_EXERCISE_VIDEO_URL,
 			KEY_EXERCISE_INSTRUCTION_URL,
 			KEY_EXERCISE_FILE_LOCATION,
+			DELETE_BUTTON,
 			NEW_ROW;
 		};
 
 	private static int FONT_SIZE = 30;
 	
+	private boolean editMode = false;
+	private Menu menu;
 	
 	
 
@@ -73,7 +77,7 @@ public class MainActivity extends DisplayTableActivity {
 			addToDatabase(new Exercise(0,"VideoView Demo","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/Video_View_Demo.htm",this.getExternalFilesDir("exercises").getCanonicalPath()+"/videoviewdemo.mp4"));
 			addToDatabase(new Exercise(0,"Bicep Curls","url","http://m.dummies.com/how-to/content/how-to-do-the-dumbbell-biceps-curl.seriesId-101966.html",this.getExternalFilesDir("exercises").getCanonicalPath()+"/How to Do Standing Dumbbell Curls - YouTube.mp4"));
 			addToDatabase(new Exercise(0,"Online video","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","online video","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4"));
-//			addToDatabase(new Exercise(0,"Exercise 4","url","instructions","location"));
+			addToDatabase(new Exercise(0,"Sound only","url","No video, just sound",this.getExternalFilesDir("exercises").getCanonicalPath()+"/Dave Matthews Band - Where Are You Going.mp3"));
 //			addToDatabase(new Exercise(0,"Exercise 5","url","instructions","location"));
 //			addToDatabase(new Exercise(0,"Exercise 6","url","instructions","location"));
 //			addToDatabase(new Exercise(0,"Exercise 7","url","instructions","location"));
@@ -89,9 +93,9 @@ public class MainActivity extends DisplayTableActivity {
 //			addToDatabase(new Exercise(0,"Exercise 17","url","instructions","location"));
 //			addToDatabase(new Exercise(0,"Exercise 18","url","instructions","location"));
 //			addToDatabase(new Exercise(0,"Exercise 19","url","instructions","location"));
-			addToDatabase(new ExerciseLog(0,1,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140405_185253_720749121.mp4","Exercise Log Notes"));
-			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls"));
-			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls."));
+			addToDatabase(new ExerciseLog(0,1,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140405_185253_720749121.mp4","Exercise Log Notes",""));
+			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
+			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls.",""));
 
 	    }
 	    catch (Exception e)
@@ -104,7 +108,16 @@ public class MainActivity extends DisplayTableActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
+		this.menu = menu;
 		getMenuInflater().inflate(R.menu.main, menu);
+    	MenuItem itemToggleEdit = menu.findItem(R.id.toggle_edit_mode);
+    	if (editMode)
+    	{
+    		itemToggleEdit.setTitle("Leave Edit Mode");
+    	} else
+    	{
+    		itemToggleEdit.setTitle("Edit Custom Exercises");
+    	}
 		return true;
 	}
 	
@@ -121,6 +134,18 @@ public class MainActivity extends DisplayTableActivity {
             Intent intent = new Intent(this, InfoView.class);
             startActivity(intent);
             break;
+            
+        case R.id.toggle_edit_mode:
+        	editMode = !editMode;
+        	MenuItem itemToggleEdit = menu.findItem(R.id.toggle_edit_mode);
+        	if (editMode)
+        	{
+        		itemToggleEdit.setTitle("Leave Edit Mode");
+        	} else
+        	{
+        		itemToggleEdit.setTitle("Edit Custom Exercises");
+        	}
+        	drawTable();
             
         case R.id.create_data:
             createData();
@@ -203,6 +228,19 @@ public class MainActivity extends DisplayTableActivity {
         textView = LayoutUtils.createTextView(this, "New Row", FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
         textView.setVisibility(View.GONE);
         tableRow.addView(textView);
+        
+        
+        textView = LayoutUtils.createTextView(this, "Delete",  FONT_SIZE, LayoutUtils.BACKGROUND_COLOR, LayoutUtils.TEXT_COLOR);
+        if (editMode)
+        {
+        	textView.setVisibility(View.VISIBLE);	
+        }
+        else
+        {
+        	textView.setVisibility(View.GONE);
+        }
+        
+        tableRow.addView(textView);
 
         
         tableLayout.addView(tableRow);
@@ -269,6 +307,47 @@ public class MainActivity extends DisplayTableActivity {
             tableRow.addView(textView);
             textView.setVisibility(View.GONE);
     
+            
+	        ImageButton button = new ImageButton(this);
+	        button.setImageResource(android.R.drawable.ic_menu_delete);
+	        
+	        button.setOnClickListener(new View.OnClickListener(){
+	            public void onClick(View v){
+	                 // Do some operation for minus after getting v.getId() to get the current row
+	            	// http://stackoverflow.com/questions/14112044/android-how-to-get-the-id-of-a-parent-view
+	            	 //save button.
+	            	TableRow tr = (TableRow)v.getParent();
+	            	
+	            	//Receipt receipt = getReceiptFromTableRow(tr);
+	            	Exercise exercise = getExerciseFromTableRow(tr);
+	            	String keys = LayoutUtils.getKeysFromTableRow(tr);
+
+	            	deleteExerciseDialog(exercise);
+	            	
+	            	//send click through to parent.
+	            	tr.performClick();
+	            	
+
+	            	TableLayout tl = (TableLayout)tr.getParent();
+	            	tl.removeView(tr);
+	            	
+	            	
+	            }
+	        
+	            
+	        });
+	        
+	        if (editMode)
+	        {
+	        	button.setVisibility(View.VISIBLE);	
+	        }
+	        else
+	        {
+	        	button.setVisibility(View.GONE);
+	        }
+	        
+	        tableRow.addView(button);
+	        
 	        // New Row Indicator = Must be last 
 	        textView = LayoutUtils.createTextView(this, "false", FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
 	        textView.setVisibility(View.GONE);
@@ -305,6 +384,61 @@ public class MainActivity extends DisplayTableActivity {
 	
 	}
 
+	private void deleteExerciseDialog(final Exercise exercise)
+	{
+		
+		
+    	String title = "Confirm Delete!";
+    	
+    	String message = "Are you sure you want to delete exercise "+exercise.getName()+" AND all log entries?";
+
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				this);
+
+		alertDialogBuilder.setTitle(title);
+		
+
+		alertDialogBuilder.setMessage(message);
+		// set dialog message
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Yes",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+					// get user input and set it to result
+			    	deleteExercise(exercise);
+				
+			    }
+			  })
+			.setNegativeButton("No",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+			    // Continue the video
+				dialog.cancel();
+			    }
+			  });
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+	}
+	
+	private void deleteExercise(Exercise exercise)
+	{
+		try 
+		{
+			ExerciseLog.deleteAllByExerciseId(dbSQLite, exercise.getId());
+			exercise.delete(dbSQLite);	
+		}
+		catch (Exception e)
+		{
+			displayMessageDialog(e.getMessage(),e.toString());
+		}
+	}
 
 	private void onExerciseFieldClick(View v) 
 	{
@@ -318,6 +452,7 @@ public class MainActivity extends DisplayTableActivity {
     	
     	/// http://stackoverflow.com/questions/2736389/how-to-pass-object-from-one-activity-to-another-in-android
     	intent.putExtra("ExerciseClass", exercise);
+    	intent.putExtra("edit_mode", editMode);
     	 
     	
 		startActivity(intent);

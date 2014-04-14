@@ -3,6 +3,7 @@ package edu.clemson.physicaltherapy.app;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.MediaController;
@@ -38,7 +39,12 @@ public class CompareView extends DatabaseActivity {
 		
 		exerciseVideoView = (VideoView) findViewById(R.id.videoView1);	
 		//Add the media controller.
-		exerciseVideoView.setMediaController(new MediaController(this));
+		MediaController exerciseMediaController = new MediaController(this);
+		
+		// Display controls at the bottom of the VideoView.
+		/// http://stackoverflow.com/questions/3686729/mediacontroller-positioning-over-videoview
+		exerciseMediaController.setAnchorView(exerciseVideoView);
+		exerciseVideoView.setMediaController(exerciseMediaController);
 		
 		exerciseAnnotationTextView = (TextView)findViewById(R.id.textView1);
 		Intent intent = getIntent();
@@ -60,34 +66,12 @@ public class CompareView extends DatabaseActivity {
 		exerciseLogVideoView = (VideoView) findViewById(R.id.videoView2);	
 		
 		//Add the media controller.
-		
-		MediaController elmc = new MediaController(this);
-//		
-//		
-//		/// Mute the playback for the compared video. 
-//		/// http://stackoverflow.com/questions/12435275/mute-a-playing-video-by-videoview-in-android-application
-//		MediaPlayer.OnPreparedListener PreparedListener = new MediaPlayer.OnPreparedListener(){
-//		
-//			@Override
-//		    public void onPrepared(MediaPlayer m) {
-//	         try {
-//	                if (m.isPlaying()) {
-//	                    m.stop();
-//	                    m.release();
-//	                    m = new MediaPlayer();
-//	                }
-//	                m.setVolume(0f, 0f);
-//	                m.setLooping(false);
-//	                m.start();
-//	            } catch (Exception e) {
-//	                e.printStackTrace();
-//	            }    
-//		     }
-//		};
-//		
-//		exerciseLogVideoView.setOnPreparedListener(PreparedListener);
-		 
-		exerciseLogVideoView.setMediaController(elmc);
+		MediaController exerciseLogMediaController = new MediaController(this);
+
+		// Display controls at the bottom of the VideoView.
+		/// http://stackoverflow.com/questions/3686729/mediacontroller-positioning-over-videoview
+		exerciseLogMediaController.setAnchorView(exerciseLogVideoView);
+		exerciseLogVideoView.setMediaController(exerciseLogMediaController);
 		
 		exerciseLogAnnotationTextView = (TextView)findViewById(R.id.textView2);
 		
@@ -106,6 +90,12 @@ public class CompareView extends DatabaseActivity {
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        
+ 		case android.R.id.home:
+
+ 			NavUtils.navigateUpFromSameTask(this);
+ 			return true; 
+ 			
  
         case R.xml.settings:
             Intent i = new Intent(this, SettingsActivity.class);

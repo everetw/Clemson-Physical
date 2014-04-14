@@ -150,6 +150,12 @@ public abstract class DisplayTableActivity extends DatabaseActivity  {
 		
 		return spinnerValue;
 	}
+    
+	
+	protected static String getStringFromTableRow(TableRow parentRow, int field)
+	{
+		return ((TextView)(((TableRow) parentRow).getChildAt(field))).getText().toString();
+	}
 }
     
 

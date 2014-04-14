@@ -19,10 +19,16 @@
         android:title="Create Custom Exercise"/>
     <item
         android:id="@+id/create_data"
-        android:orderInCategory="4"
+        android:orderInCategory="999"
         android:showAsAction="never"
         android:title="Create Data"/>
 
+        <item
+        android:id="@+id/toggle_edit_mode"
+        android:orderInCategory="5"
+        android:showAsAction="never"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="Edit Custom Exercises"/>
     
     
     

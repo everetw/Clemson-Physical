@@ -37,6 +37,8 @@ public class ExerciseLog extends DatabaseObject {
 		KEY_ID ("idexercise_log","Exercise Log ID"),
 		KEY_EXERCISE_LOG_VIDEO_LOCATION ("exercise_log_video_location","Location of Video"),
 		KEY_EXERCISE_LOG_VIDEO_NOTES ("exercise_log_video_notes","Video Notes"),
+		KEY_EXERCISE_LOG_AUDIO_LOCATION ("exercise_log_audio_location","Location of Audio"),
+
 		KEY_CREATE_TIME ("create_time","Time Created"),
 		KEY_EXERCISE_IDEXERCISE ("exercise_idexercise","Exercise ID");
 		
@@ -62,6 +64,8 @@ public class ExerciseLog extends DatabaseObject {
 	
 	private String exercise_log_video_location;
 	private String exercise_log_video_notes;
+	private String exercise_log_audio_location;
+
 	private String create_time;
 	private int exercise_idexercise;
 
@@ -70,19 +74,30 @@ public class ExerciseLog extends DatabaseObject {
 	}
 
 	public ExerciseLog(int id) {
-		this(0,0,"","","");
+		this(0,0,"","","","");
 	}
 	
+	public ExerciseLog(int id, int exercise_id, String video_location)
+	{
+		this(id,exercise_id,video_location,"","", "");
+	}
 	public ExerciseLog(int id, int exercise_id, String video_location, String video_notes)
 	{
-		this(id,exercise_id,video_location,video_notes,"");
+		this(id,exercise_id,video_location,video_notes,"", "");
 	}
 	
-	public ExerciseLog(int id, int exercise_id, String video_location, String video_notes, String create_time)
+	public ExerciseLog(int id, int exercise_id, String video_location, String video_notes, String audio_location)
+	{
+		this(id,exercise_id,video_location,video_notes,audio_location, "");
+	}
+	
+	public ExerciseLog(int id, int exercise_id, String video_location, String video_notes, String audio_location, String create_time)
 	{
 		super(id);
 		this.exercise_log_video_location = video_location;
 		this.exercise_log_video_notes = video_notes;
+		this.exercise_log_audio_location = audio_location;
+
 		this.create_time = create_time;
 		this.exercise_idexercise = exercise_id;
 	}
@@ -116,6 +131,17 @@ public class ExerciseLog extends DatabaseObject {
 	{
 		this.exercise_log_video_notes = video_notes;
 	}
+	
+	public String getAudioLocation()
+	{
+		return this.exercise_log_audio_location;
+	}
+	
+	public void setAudioLocation(String audio_location)
+	{
+		this.exercise_log_audio_location = audio_location;
+	}
+	
 	
 	public String getCreateTime()
 	{
@@ -154,6 +180,7 @@ public class ExerciseLog extends DatabaseObject {
         values.put(DbKeys.KEY_ID.getKeyName(), this.getId());
     	values.put(DbKeys.KEY_EXERCISE_LOG_VIDEO_LOCATION.getKeyName(), this.getVideoLocation());
     	values.put(DbKeys.KEY_EXERCISE_LOG_VIDEO_NOTES.getKeyName(), this.getVideoNotes());
+    	values.put(DbKeys.KEY_EXERCISE_LOG_AUDIO_LOCATION.getKeyName(), this.getAudioLocation());
     	// CREATE_TIME does not get updated.  	
     	values.put(DbKeys.KEY_EXERCISE_IDEXERCISE.getKeyName(), this.getExerciseId());
  
@@ -175,6 +202,8 @@ public class ExerciseLog extends DatabaseObject {
         //values.put(KEY_ID, this.getId());
     	values.put(DbKeys.KEY_EXERCISE_LOG_VIDEO_LOCATION.getKeyName(), this.getVideoLocation());
     	values.put(DbKeys.KEY_EXERCISE_LOG_VIDEO_NOTES.getKeyName(), this.getVideoNotes());
+    	values.put(DbKeys.KEY_EXERCISE_LOG_AUDIO_LOCATION.getKeyName(), this.getAudioLocation());
+
     	// CREATE_TIME does not get updated.  	
     	values.put(DbKeys.KEY_EXERCISE_IDEXERCISE.getKeyName(), this.getExerciseId());
     	
@@ -188,6 +217,7 @@ public class ExerciseLog extends DatabaseObject {
 		
 		super.delete(dbh);
 		DatabaseHandler.deleteFile(this.getVideoLocation());
+		DatabaseHandler.deleteFile(this.getAudioLocation());
 	
 	}
 	
@@ -195,11 +225,11 @@ public class ExerciseLog extends DatabaseObject {
 	public static void deleteAll(DatabaseHandler dbh) 
 	{
 
-		dbh.deleteAllRecordsFromTable(TABLE_NAME);
-    	List<DatabaseObject> exerciseList = getAll(dbh);
+		
+    	List<ExerciseLog> exerciseList = getAll(dbh);
     	for (int index = 0; index < exerciseList.size(); index++)
     	{
-    		DatabaseHandler.deleteFile(((ExerciseLog)(exerciseList.get(index))).getVideoLocation());
+    		((ExerciseLog)(exerciseList.get(index))).delete(dbh);
     	}
 		
 	}
@@ -271,8 +301,8 @@ public class ExerciseLog extends DatabaseObject {
 
 	// Should be in superclass, but Java won't let you override static methods.
 	
-	public static List<DatabaseObject> getAll(DatabaseHandler dbh) {
-        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+	public static List<ExerciseLog> getAll(DatabaseHandler dbh) {
+        List<ExerciseLog> objectList = new ArrayList<ExerciseLog>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_NAME;
  
@@ -283,7 +313,7 @@ public class ExerciseLog extends DatabaseObject {
         if (cursor.moveToFirst()) {
             do {
                 
-            	DatabaseObject object = createObjectFromCursor(cursor);
+            	ExerciseLog object = createObjectFromCursor(cursor);
                
                 // Adding object to list
                 objectList.add(object);
@@ -305,6 +335,9 @@ public class ExerciseLog extends DatabaseObject {
         exercise_log.setExerciseId(Integer.parseInt(cursor.getString(DbKeys.KEY_EXERCISE_IDEXERCISE.ordinal())));
         exercise_log.setVideoLocation(cursor.getString(DbKeys.KEY_EXERCISE_LOG_VIDEO_LOCATION.ordinal()));
         exercise_log.setVideoNotes(cursor.getString(DbKeys.KEY_EXERCISE_LOG_VIDEO_NOTES.ordinal()));
+        exercise_log.setAudioLocation(cursor.getString(DbKeys.KEY_EXERCISE_LOG_AUDIO_LOCATION.ordinal()));
+
+
         exercise_log.setCreateTime(cursor.getString(DbKeys.KEY_CREATE_TIME.ordinal()));
         
         return exercise_log;
@@ -316,9 +349,9 @@ public class ExerciseLog extends DatabaseObject {
 		return DbKeys.KEY_ID.getKeyName();
 	}
 
-	public static List<DatabaseObject> getAllByExerciseId(
+	public static List<ExerciseLog> getAllByExerciseId(
 			DatabaseHandler dbh, int exercise_id) {
-        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+        List<ExerciseLog> objectList = new ArrayList<ExerciseLog>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_NAME + " WHERE "+DbKeys.KEY_EXERCISE_IDEXERCISE.getKeyName()+"="+Integer.toString(exercise_id);
  
@@ -329,7 +362,7 @@ public class ExerciseLog extends DatabaseObject {
         if (cursor.moveToFirst()) {
             do {
                 
-            	DatabaseObject object = createObjectFromCursor(cursor);
+            	ExerciseLog object = createObjectFromCursor(cursor);
                
                 // Adding object to list
                 objectList.add(object);
@@ -340,6 +373,17 @@ public class ExerciseLog extends DatabaseObject {
         cursor.close();
         
         return objectList;	
+	}
+	
+	public static void deleteAllByExerciseId(DatabaseHandler dbh, int exerciseId) {
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        List<ExerciseLog> exerciseLogList = ExerciseLog.getAllByExerciseId(dbh,exerciseId);
+        
+        for (int i = 0; i < exerciseLogList.size(); i++)
+        {
+        	exerciseLogList.get(i).delete(dbh);
+        }
+
 	}
 
 }

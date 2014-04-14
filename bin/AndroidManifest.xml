@@ -11,9 +11,10 @@
         <!-- Accessing camera hardware -->
     <uses-feature android:name="android.hardware.camera" />
  
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -27,6 +28,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                 <action android:name="android.provider.MediaStore.RECORD_SOUND" />
+                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <!-- Solved up navigation problems from http://stackoverflow.com/questions/14462456/returning-from-an-activity-using-navigateupfromsametask -->
@@ -47,6 +52,16 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.clemsonphysical.app.ExerciseView" />
+
+        </activity>
+                <activity
+            android:name="edu.clemson.physicaltherapy.app.AudioPlayerView"
+            android:label="@string/title_audio_player_view" 
+            
+            android:parentActivityName="edu.clemson.physicaltherapy.app.LogView" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.app.LogView" />
 
         </activity>
         <activity
@@ -89,6 +104,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.clemsonphysical.app.MainActivity" />
+        </activity>
+        <activity android:name="edu.clemson.soundrecorder.SoundRecorder"
+                android:configChanges="orientation|screenSize|keyboardHidden"
+                android:screenOrientation="unspecified"
+                android:clearTaskOnLaunch="true"
+                android:theme="@style/Theme.SoundRecorder">
+
         </activity>
     </application>
 
