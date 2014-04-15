@@ -155,6 +155,8 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 
 	@Override
 	public int update(DatabaseHandler dbh) {
+		
+		
 		SQLiteDatabase db = dbh.getWritableDatabase();
 		 
         ContentValues values = new ContentValues();
@@ -262,7 +264,7 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 	public static ExerciseLogAnnotation getPreviousAnnotationByTime(DatabaseHandler dbh, int log_id, int time, int interval)  {
 	    
 		SQLiteDatabase db = dbh.getReadableDatabase();
-	    int min_time = time + interval;
+	    int min_time = time - interval;
 	     
 	     			
         Cursor cursor = db.query(TABLE_NAME,getDbKeyNames(), DbKeys.KEY_IDEXERCISE_LOG.getKeyName() + "=? and "+DbKeys.KEY_EXERCISE_LOG_ANNOTATION_VIDEO_TIME.getKeyName()+ " between ? and ?",
@@ -338,7 +340,7 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 		dbh.deleteAllRecordsFromTable(TABLE_NAME);
 	}
 	
-	public static List<ExerciseLogAnnotation> getAllByExerciseId(
+	public static List<ExerciseLogAnnotation> getAllByExerciseLogId(
 			DatabaseHandler dbh, int exercise_log_id) {
         List<ExerciseLogAnnotation> objectList = new ArrayList<ExerciseLogAnnotation>();
         // Select All Query
@@ -366,7 +368,7 @@ public class ExerciseLogAnnotation extends DatabaseObject {
 	
 	public static void deleteAllByExerciseLogId(DatabaseHandler dbh, int exerciseLogId) {
         SQLiteDatabase db = dbh.getWritableDatabase();
-        List<ExerciseLogAnnotation> exerciseLogAnnotationList = ExerciseLogAnnotation.getAllByExerciseId(dbh,exerciseLogId);
+        List<ExerciseLogAnnotation> exerciseLogAnnotationList = ExerciseLogAnnotation.getAllByExerciseLogId(dbh,exerciseLogId);
         
         for (int i = 0; i < exerciseLogAnnotationList.size(); i++)
         {

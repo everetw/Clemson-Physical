@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.MediaController;
-import android.widget.MediaController.MediaPlayerControl;
 import edu.clemson.physicaltherapy.R;
 
 public class AudioPlayerView extends VideoViewActivity {
@@ -33,8 +32,12 @@ public class AudioPlayerView extends VideoViewActivity {
 		        this.show();
 		    }
 		};
+		
+		
 		setMediaController(controller);
+		
 		start();
+		controller.show(0);
 		
 		
 	}

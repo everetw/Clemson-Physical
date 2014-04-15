@@ -174,6 +174,16 @@ public class ExerciseLog extends DatabaseObject {
 	@Override
 	public int update(DatabaseHandler dbh) {
 		
+		ExerciseLog oldLog;
+		
+		try {
+			oldLog = ExerciseLog.getById(dbh, this.getId());
+		} catch (Exception e) {
+			// Can't find the log. Return 0.  
+			return 0;
+		}
+		
+		
 		SQLiteDatabase db = dbh.getWritableDatabase();
 		 
         ContentValues values = new ContentValues();
@@ -187,6 +197,12 @@ public class ExerciseLog extends DatabaseObject {
         // updating row
         int rc = db.update(getTableName(), values,getIdKeyName() + " = ?",
                 new String[] { String.valueOf(getId()) });
+        
+        // If the audio notes have changed, delete the old audio notes.
+        if (oldLog != null && !oldLog.getAudioLocation().equals("") && !oldLog.getAudioLocation().equals(this.getAudioLocation()))
+        {
+        	DatabaseHandler.deleteFile(oldLog.getAudioLocation());
+        }
         
         
         return rc;

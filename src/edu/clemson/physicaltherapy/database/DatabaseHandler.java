@@ -64,8 +64,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     	for (int i = 0; i < DatabaseSQL.DROP_DATABASE.length; i++)
     		db.execSQL(DatabaseSQL.DROP_DATABASE[i]);
 
-//        // Create tables again
-//        onCreate(db);
+        // Create tables again
+        onCreate(db);
         
         
     }
@@ -82,11 +82,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     
     public void deleteAllRecordsFromTable(String table_name) {
     	
-//    	if (table_name.equals(Receipt.TABLE_NAME))
-//    	{
-//    		deleteAllReceiptImages();
-//    	}
-//    	
     	try {
 	        SQLiteDatabase db = this.getWritableDatabase();
 	        db.delete(table_name, null, null);

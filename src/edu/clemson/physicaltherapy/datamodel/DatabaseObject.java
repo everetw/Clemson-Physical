@@ -99,9 +99,11 @@ public abstract class DatabaseObject implements java.io.Serializable
 	public abstract String getIdKeyName();
 
 	public void delete(DatabaseHandler dbh) {
+		System.err.println("Deleting object from "+this.getTableName()+ " where " + this.getIdKeyName()+" = "+this.getId());
         SQLiteDatabase db = dbh.getWritableDatabase();
-        db.delete(this.getTableName(), this.getIdKeyName() + " = ?",
+        int rc = db.delete(this.getTableName(), this.getIdKeyName() + " = ?",
                 new String[] { String.valueOf(this.getId()) });
+        System.err.println("Delete returned "+rc);
 
 	}
 	
@@ -119,12 +121,6 @@ public abstract class DatabaseObject implements java.io.Serializable
         return count;
 	}
 
-//	public abstract DatabaseObject getById(DatabaseHandler dbh) throws Exception;
-//	public abstract List<DatabaseObject> getAll(DatabaseHandler dbh);
-
-	
-		
-	
 	
     public static void setBaseUrl(String url)
     {

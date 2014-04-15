@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:baselineAligned="false"
     android:weightSum="2"
+    android:background="#CCCCCC" 
     tools:context=".CompareView" >
 	<!-- Move to Action Bar
     <RelativeLayout
@@ -31,6 +32,8 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
 	    android:layout_weight="1"
+	    android:background="#000000"
+	    android:layout_margin="2dp"
 	     >
      
     <VideoView
@@ -57,6 +60,8 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
 	    android:layout_weight="1"
+	    android:background="#000000"
+	    android:layout_margin="2dp"
 	     >
 
     <VideoView

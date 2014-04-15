@@ -1,5 +1,9 @@
 package edu.clemson.physicaltherapy.app;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -8,9 +12,7 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import edu.clemson.physicaltherapy.R;
-import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
-import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLogAnnotation;
 
@@ -18,9 +20,9 @@ public class UserVideoView extends VideoViewActivity  {
 
 	private ExerciseLog exerciseLog;
 	private ExerciseLogAnnotation current_annotation;
-	private List<DatabaseObject> annotationList;
 	
-	private static int POLL_INTERVAL = 100;
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,11 +117,16 @@ public class UserVideoView extends VideoViewActivity  {
 			intent.putExtra("ExerciseLogClass", exerciseLog);
 			
 			startActivity(intent);
+			break;
 
 	    	
 	    case R.id.action_settings:
 	    	intent = new Intent(this, SettingsActivity.class);
 	    	startActivity(intent);
+	    	break;
+	    	
+	    case R.id.action_share:
+	    	exportVideo();
 	    	break;
 
 	    case R.id.action_delete_all_annotations:
@@ -131,11 +138,95 @@ public class UserVideoView extends VideoViewActivity  {
 	}
 
 
+	private void exportVideo() {
+		// TODO Auto-generated method stub
+		// Get the exercise name
+		Exercise exercise;
+		try {
+			exercise = Exercise.getById(dbSQLite, exerciseLog.getExerciseId());
+		
+			boolean hasAudioNotes = !exerciseLog.getAudioLocation().equals("");
+		
+			String message = 
+					"Exercise: "+exercise.getName()+"\n"+
+					"Exercise instructions: "+exercise.getInstructions()+"\n"+
+					"Time Exercise Performed: "+exerciseLog.getCreateTime()+"\n"+
+					"Notes: "+exerciseLog.getCreateTime()+"\n"+
+					"Audio Notes: "+ hasAudioNotes +"\n";
+			
+			List<String> filePaths = new ArrayList<String>();
+			filePaths.add(exerciseLog.getVideoLocation());
+			
+			if (hasAudioNotes)
+			{
+				filePaths.add(exerciseLog.getAudioLocation());
+			}
+			
+			List<ExerciseLogAnnotation> annotationList  = ExerciseLogAnnotation.getAllByExerciseLogId(dbSQLite,exerciseLog.getId());
+			
+			if (annotationList.size() > 0)
+			{
+				// Video is between the last '/' and the '.' for the file extension.
+				String video_name = exerciseLog.getVideoLocation().substring(exerciseLog.getVideoLocation().lastIndexOf('/')+1, exerciseLog.getVideoLocation().lastIndexOf('.'));
+				File annotationsFile = new File(this.getExternalFilesDir("export").getCanonicalPath(), "Annotations-"+video_name+".csv");
+				createCSVForAnnotations(annotationsFile, annotationList);			
+				filePaths.add(annotationsFile.getAbsolutePath());
+			}
+			
+			LayoutUtils.email(this, null, null, "Clemson Physical Therapy Video", message, filePaths);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+
 	@Override
 	protected String getVideoSubdirectory() {
 		
 		return "user_videos";
 	}
+	
+	private void createCSVForAnnotations(File outputFile, List<ExerciseLogAnnotation> annotationList) {
+		//TODO Read everything that is displayed on screen or hidden
+		// Get the Table Layout 
+	    
+	    // Writing to CSV from http://www.mkyong.com/java/how-to-export-data-to-csv-file-java/
+	    FileWriter writer;
+		try {
+			writer = new FileWriter(outputFile);
+		 
+		    
+		    
+		    for (int i = 0; i < annotationList.size(); i++)
+		    {
+		    	ExerciseLogAnnotation annotation = annotationList.get(i);
+		    	writer.append("\"");
+		    	
+		    	int mSeconds = annotation.getVideoTime();
+		    	int hours = mSeconds / 3600000;
+		    	mSeconds = mSeconds % 3600000; 
+		    	int minutes = mSeconds / 60000;
+		    	mSeconds = mSeconds % 60000;
+		    	int seconds = mSeconds / 1000;
+		    	mSeconds = mSeconds % 1000;
+		    	
+		    	writer.append(hours+":"+minutes+":"+seconds+"."+mSeconds);
+		    	writer.append("\",\"");
+		    	writer.append(annotation.getAnnotation());
+		    	writer.append("\"\n");
+		    }
+		    
+		    writer.flush();
+		    writer.close();
+		}
+	    catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	    
 
 
 
@@ -153,7 +244,7 @@ public class UserVideoView extends VideoViewActivity  {
 	@Override
 	public void updateAnnotation(int time, String annotation, int interval) {
 		// TODO Auto-generated method stub
-		ExerciseLogAnnotation exerciseLogAnnotation = ExerciseLogAnnotation.getPreviousAnnotationByTime(dbSQLite, exerciseLog.getId(), time-interval, interval);
+		ExerciseLogAnnotation exerciseLogAnnotation = ExerciseLogAnnotation.getPreviousAnnotationByTime(dbSQLite, exerciseLog.getId(), time, interval);
 		if (exerciseLogAnnotation == null)
 		{
 			addAnnotation(time,annotation);
@@ -170,16 +261,20 @@ public class UserVideoView extends VideoViewActivity  {
 
 	@Override
 	public void deleteAnnotation(int time, String annotation, int interval) {
-		// TODO Auto-generated method stub
 		System.err.println("deleteAnnotation "+annotation);
-		ExerciseLogAnnotation.getPreviousAnnotationByTime(dbSQLite, exerciseLog.getId(), time, interval);
+		ExerciseLogAnnotation exerciseLogAnnotation = ExerciseLogAnnotation.getPreviousAnnotationByTime(dbSQLite, exerciseLog.getId(), time, interval);
+		if (exerciseLogAnnotation != null)
+		{
+			exerciseLogAnnotation.delete(dbSQLite);
+		}
+		
 		removeAnnotation();
 		
 	}
 
 	@Override
 	protected void deleteAllAnnotations() {
-		ExerciseAnnotation.deleteAllByExerciseId(dbSQLite,exerciseLog.getId());
+		ExerciseLogAnnotation.deleteAllByExerciseLogId(dbSQLite,exerciseLog.getId());
 	}
 
 

@@ -1,7 +1,5 @@
 package edu.clemson.physicaltherapy.app;
 
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -9,10 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import edu.clemson.physicaltherapy.R;
-import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
 import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
-import edu.clemson.physicaltherapy.datamodel.ExerciseLogAnnotation;
 
 public class PractitionerVideoView extends VideoViewActivity {
 
@@ -118,9 +114,7 @@ public class PractitionerVideoView extends VideoViewActivity {
 	    	intent = new Intent(this, SettingsActivity.class);
 	    	startActivity(intent);
 	    	break;
-//	    case R.id.action_record:
-//	    	dispatchTakeVideoIntent();
-//	    	break;
+
 	    case R.id.action_delete_all_annotations:
 	    	displayDeleteAllDialog();
 	    	break;
@@ -151,7 +145,7 @@ public class PractitionerVideoView extends VideoViewActivity {
 	@Override
 	public void updateAnnotation(int time, String annotation, int interval) {
 		// TODO Auto-generated method stub
-		ExerciseAnnotation exerciseAnnotation = ExerciseAnnotation.getPreviousAnnotationByTime(dbSQLite, exercise.getId(), time-interval, interval);
+		ExerciseAnnotation exerciseAnnotation = ExerciseAnnotation.getPreviousAnnotationByTime(dbSQLite, exercise.getId(), time, interval);
 		if (exerciseAnnotation == null)
 		{
 			addAnnotation(time,annotation);

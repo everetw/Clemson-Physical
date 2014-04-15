@@ -31,11 +31,6 @@ public abstract class DatabaseActivity extends DisplayActivity {
 	protected List<DatabaseObject> databaseObjectList = new ArrayList<DatabaseObject>();
 	
 
-	
-	
-	
-
- 
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
 

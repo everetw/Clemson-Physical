@@ -32,6 +32,13 @@ public class Exercise extends DatabaseObject {
 	private String exercise_instructions;
 	private String exercise_file_location;
 	
+	/**
+	 * 
+	 * @author jburton
+	 *
+	 * This enum represents the fields in the internal database. 
+	 * 
+	 */
 	public static enum DbKeys
 	{
 		KEY_ID ("idexercise","Exercise ID"),
@@ -43,11 +50,13 @@ public class Exercise extends DatabaseObject {
 		
 		private String key_name;
 		private String key_label;
+		
 		DbKeys(String name,String label)
 		{
 			key_name = name;
 			key_label = label;
 		}
+		
 		public String getKeyName()
 		{
 			return key_name;
@@ -63,28 +72,24 @@ public class Exercise extends DatabaseObject {
 	
 	public static final String TABLE_NAME = "exercise";
 	
-//	public static final String KEY_ID = "idexercise";
-//	public static final String KEY_EXERCISE_NAME = "exercise_name";
-//	public static final String KEY_EXERCISE_VIDEO_URL = "exercise_video_url";
-//	public static final String KEY_EXERCISE_INSTRUCTIONS = "exercise_instructions";
-//	public static final String KEY_EXERCISE_FILE_LOCATION = "exercise_file_location";
 	
 	/**
-	 *
+	 * @fn Exercise()
+	 * @brief Create an empty exercise object.
 	 */
-//	"CREATE TABLE \"exercise\"(\n" +
-//		"  \"idexercise\" INTEGER PRIMARY KEY NOT NULL,\n"+
-//		"  \"exercise_name\" VARCHAR(45) NOT NULL,\n"+
-//		"  \"exercise_video_url\" VARCHAR(127),\n"+
-//		"  \"exercise_instructions\" VARCHAR(127),\n"+
-//		"  \"exercise_file_location\" VARCHAR(127),\n"+
-//		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
-//		"  \"update_time\" TIMESTAMP\n"+
-//		");",
-//	 
 	public Exercise() {
 		this(0,"","","","");
 	}
+	
+	/**
+	 * @fn public Exercise(int id, String name, String video_url, String instructions, String file_location)
+	 * @brief Create a new exercise object. 
+	 * @param id
+	 * @param name
+	 * @param video_url
+	 * @param instructions
+	 * @param file_location
+	 */
 	
 	public Exercise(int id, String name, String video_url, String instructions, String file_location)
 	{
@@ -96,6 +101,8 @@ public class Exercise extends DatabaseObject {
 	}
 
 	/**
+	 * @fn public Exercise(int id)
+	 * @brief create an empty exercise with a specific id.
 	 * @param id
 	 */
 	public Exercise(int id) {
@@ -165,6 +172,10 @@ public class Exercise extends DatabaseObject {
 
 	/* (non-Javadoc)
 	 * @see com.example.clemsonphysical.DatabaseObject#setObjectFromJSON(org.json.JSONObject)
+	 * This method sets the value of an exercise object from a JSONObject. 
+	 * Once the exercise object is created, the object can be stored in the internal database.
+	 * This method should handle the "housekeeping" tasks that allows
+	 * the external data to merge with the data in the internal database.
 	 */
 	@Override
 	public void setObjectFromJSON(JSONObject j) throws JSONException {
@@ -176,6 +187,7 @@ public class Exercise extends DatabaseObject {
 
 	/* (non-Javadoc)
 	 * @see com.example.clemsonphysical.DatabaseObject#update(com.example.clemsonphysical.DatabaseHandler)
+	 * 
 	 */
 	@Override
 	public int update(DatabaseHandler dbh) {
@@ -231,10 +243,10 @@ public class Exercise extends DatabaseObject {
 	{
 		//TODO Delete videos when records are is deleted.
 		dbh.deleteAllRecordsFromTable(TABLE_NAME);
-    	List<DatabaseObject> exerciseList = getAll(dbh);
+    	List<Exercise> exerciseList = getAll(dbh);
     	for (int index = 0; index < exerciseList.size(); index++)
     	{
-    		DatabaseHandler.deleteFile(((Exercise)(exerciseList.get(index))).getFileLocation());
+    		DatabaseHandler.deleteFile(exerciseList.get(index).getFileLocation());
     	}
 		
 	}
@@ -255,7 +267,7 @@ public class Exercise extends DatabaseObject {
 
 	// Should be in superclass, but Java won't let you override static methods. 
 	
-	public static DatabaseObject getById(DatabaseHandler dbh, int id) throws Exception {
+	public static Exercise getById(DatabaseHandler dbh, int id) throws Exception {
 	    
 		SQLiteDatabase db = dbh.getReadableDatabase();
 	     
@@ -265,7 +277,7 @@ public class Exercise extends DatabaseObject {
         if (cursor.getCount() > 0)
         {
             cursor.moveToFirst();
-            DatabaseObject object = createObjectFromCursor(cursor);
+            Exercise object = createObjectFromCursor(cursor);
 	        cursor.close();
 	        
             return object;
@@ -280,8 +292,8 @@ public class Exercise extends DatabaseObject {
 	}
 
 
-	public static List<DatabaseObject> getAll(DatabaseHandler dbh) {
-        List<DatabaseObject> objectList = new ArrayList<DatabaseObject>();
+	public static List<Exercise> getAll(DatabaseHandler dbh) {
+        List<Exercise> objectList = new ArrayList<Exercise>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_NAME;
  
@@ -292,7 +304,7 @@ public class Exercise extends DatabaseObject {
         if (cursor.moveToFirst()) {
             do {
                 
-            	DatabaseObject object = createObjectFromCursor(cursor);
+            	Exercise object = createObjectFromCursor(cursor);
                
                 // Adding object to list
                 objectList.add(object);

@@ -3,6 +3,7 @@ package edu.clemson.physicaltherapy.app;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -91,7 +92,7 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 		int selected = NONE_SELECTED;
 		int selected_id = NONE_SELECTED;
 		
-        List<DatabaseObject> exerciseList = Exercise.getAll(dbSQLite);
+        List<Exercise> exerciseList = Exercise.getAll(dbSQLite);
         
         String [] spinnerList = new String[exerciseList.size()+1];
         spinnerList[0] = "All Exercises";
@@ -208,14 +209,15 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 		try {
 			File exercise_log_csv = new File(this.getExternalFilesDir("export").getCanonicalPath(), "Exercise Log.csv");
 			createCSV(exercise_log_csv);
-			Uri export_uri = Uri.fromFile(exercise_log_csv);
 			
-			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain");
 			
-			intent.putExtra(Intent.EXTRA_SUBJECT, "Clemson Physical Therapy Exercise Log");
-			intent.putExtra(Intent.EXTRA_STREAM,export_uri);
-			startActivity(intent);
+			List<String> filePaths = new ArrayList<String>();
+			
+			filePaths.add(exercise_log_csv.getAbsolutePath());
+			
+			LayoutUtils.email(this, null, null, "Clemson Physical Therapy Exercise Log", null, filePaths);
+			
+
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

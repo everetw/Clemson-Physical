@@ -146,6 +146,7 @@ public class MainActivity extends DisplayTableActivity {
         		itemToggleEdit.setTitle("Edit Custom Exercises");
         	}
         	drawTable();
+        	break;
             
         case R.id.create_data:
             createData();
@@ -251,7 +252,7 @@ public class MainActivity extends DisplayTableActivity {
         //LinkedList<DatabaseObject>();
         //rowList.add(tableRow);
 
-        List<DatabaseObject> exerciselist = null;
+        List<Exercise> exerciselist = null;
         
 
         // TODO Get exercises from plan, if set in preferences.
@@ -260,11 +261,14 @@ public class MainActivity extends DisplayTableActivity {
         
         for (int i = 0; i < exerciselist.size(); i++){
         	
+        	
             // First row: Entered data
         	tableRow = LayoutUtils.createTableRow(this);
         	
         	
         	Exercise exercise = (Exercise) exerciselist.get(i);
+        	
+        	System.err.println("Exercise Id="+exercise.getId()+" Name="+exercise.getName());
         	
         	textView = LayoutUtils.createTextView(this, Integer.toString(exercise.getId()), FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
         	textView.setVisibility(View.GONE);
@@ -429,14 +433,18 @@ public class MainActivity extends DisplayTableActivity {
 	
 	private void deleteExercise(Exercise exercise)
 	{
+		
 		try 
 		{
+			System.err.println("Deleting logs for exercise "+exercise.getName()+" with id "+ exercise.getId());
 			ExerciseLog.deleteAllByExerciseId(dbSQLite, exercise.getId());
+			System.err.println("Deleting exercise "+exercise.getName()+" with id "+ exercise.getId());
 			exercise.delete(dbSQLite);	
 		}
 		catch (Exception e)
 		{
 			displayMessageDialog(e.getMessage(),e.toString());
+			e.printStackTrace();
 		}
 	}
 

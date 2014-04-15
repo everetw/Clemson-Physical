@@ -3,15 +3,19 @@
  */
 package edu.clemson.physicaltherapy.app;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -705,6 +709,46 @@ public class LayoutUtils
 	    float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
 	    return (int)(px/scaledDensity);
 	}
+	
+	public static void email(Context context, String emailTo, String emailCC,
+		    String subject, String emailText, List<String> filePaths)
+		{
+		    //need to "send multiple" to get more than one attachment
+		    final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND_MULTIPLE);
+		    emailIntent.setType("text/plain");
+		    if (emailTo != null)
+		    {
+		    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, 
+		        new String[]{emailTo});
+		    }
+		    if (emailCC != null)
+		    {
+		    emailIntent.putExtra(android.content.Intent.EXTRA_CC, 
+		        new String[]{emailCC});
+		    }
+		    if (subject != null)
+		    {
+		    emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		    }
+		    if (emailText != null)
+		    {
+		    	emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
+		    }
+		    if (filePaths != null && filePaths.size() > 0)
+		    {
+			    //has to be an ArrayList
+			    ArrayList<Uri> uris = new ArrayList<Uri>(filePaths.size());
+			    //convert from paths to Android friendly Parcelable Uri's
+			    for (String file : filePaths)
+			    {
+			        File fileIn = new File(file);
+			        Uri u = Uri.fromFile(fileIn);
+			        uris.add(u);
+			    }
+			    emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+		    }
+		    context.startActivity(emailIntent);
+		}
 	
 	
 }

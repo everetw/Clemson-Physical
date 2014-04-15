@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.MediaController;
+import android.media.MediaPlayer;
 import android.widget.TextView;
 import android.widget.VideoView;
 import edu.clemson.physicaltherapy.R;
@@ -19,7 +20,7 @@ import edu.clemson.physicaltherapy.R;
 
 /// Fix surface has been released problem https://androidproblem.wordpress.com/category/mediaplayer/
 
-public abstract class VideoViewActivity extends DatabaseActivity implements MediaController.MediaPlayerControl {
+public abstract class VideoViewActivity extends DatabaseActivity implements MediaController.MediaPlayerControl, MediaPlayer.OnCompletionListener {
 
 
 	
@@ -69,6 +70,8 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 		/// http://stackoverflow.com/questions/3686729/mediacontroller-positioning-over-videoview
 		mediaController.setAnchorView(videoView);
 		videoView.setMediaController(mediaController);
+		
+		videoView.setOnCompletionListener(this);
 		
 
 		// TextView that holds the annotations.
@@ -127,7 +130,6 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
         annotationTextView.setVisibility(View.VISIBLE);
         annotationDeleteButton.setVisibility(View.VISIBLE);
         annotationDeleteButton.setClickable(true);
-        //displayToast(annotation);
 		
 	}
 	
@@ -139,6 +141,12 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 		
 	}
 	
+	@Override
+	public void onCompletion(MediaPlayer mp)
+	{
+		// Remove the annotation when the video is completed.
+		removeAnnotation();
+	}
 	
 		
 	///Repeat a task with a time delay using handlers - http://stackoverflow.com/questions/6242268/repeat-a-task-with-a-time-delay/
@@ -221,6 +229,8 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 				    public void onClick(DialogInterface dialog,int id) {
 						// get user input and set it to result
 				    	deleteAllAnnotations();
+				    	// Remove the current annotation from view, if there is one.
+				    	removeAnnotation();
 					
 				    }
 				  })
@@ -281,7 +291,9 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 				    	{
 				    		updateAnnotation(getCurrentPosition(),annotationInput.getText().toString(),DISPLAY_TIME+POLL_INTERVAL);
 				    	}
-					
+				    	
+				    	displayAnnotation(annotationInput.getText().toString());
+				    	
 				    }
 				  })
 				.setNegativeButton("Cancel",

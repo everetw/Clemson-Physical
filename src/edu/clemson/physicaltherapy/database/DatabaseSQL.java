@@ -48,6 +48,7 @@ public class DatabaseSQL {
 		"  CONSTRAINT \"fk_exercise_annotation_exercise1\"\n"+
 		"    FOREIGN KEY(\"exercise_idexercise\")\n"+
 		"    REFERENCES \"exercise\"(\"idexercise\")\n"+
+		"    ON DELETE CASCADE ON UPDATE CASCADE\n"+
 		");\n",
 			
 		"CREATE INDEX \"exercise_annotation.fk_exercise_annotation_exercise1_idx\" ON \"exercise_annotation\"(\"exercise_idexercise\");\n",
@@ -69,10 +70,12 @@ public class DatabaseSQL {
 		"  \"exercise_idexercise\" INTEGER NOT NULL,\n"+
 		"  CONSTRAINT \"fk_exercise_plan_item_exercise_plan1\"\n"+
 		"    FOREIGN KEY(\"exercise_plan_idexercise_plan\")\n"+
-		"    REFERENCES \"exercise_plan\"(\"idexercise_plan\"),\n"+
+		"    REFERENCES \"exercise_plan\"(\"idexercise_plan\")\n"+
+		"    ON DELETE CASCADE ON UPDATE CASCADE,\n"+
 		"  CONSTRAINT \"fk_exercise_plan_item_exercise1\"\n"+
 		"    FOREIGN KEY(\"exercise_idexercise\")\n"+
 		"    REFERENCES \"exercise\"(\"idexercise\")\n"+
+		"    ON DELETE CASCADE ON UPDATE CASCADE\n"+
 		");\n",
 	
 		"CREATE INDEX \"exercise_plan_item.fk_exercise_plan_item_exercise_plan1_idx\" ON \"exercise_plan_item\"(\"exercise_plan_idexercise_plan\");\n",
@@ -90,7 +93,8 @@ public class DatabaseSQL {
 		"  \"exercise_idexercise\" INTEGER NOT NULL,\n"+
 		"  CONSTRAINT \"fk_exercise_log_exercise1\"\n"+
 		"    FOREIGN KEY(\"exercise_idexercise\")\n"+
-		"    REFERENCES \"exercise\"(\"idexercise\"),\n"+
+		"    REFERENCES \"exercise\"(\"idexercise\")\n"+
+		"    ON DELETE CASCADE ON UPDATE CASCADE,\n"+
 		"  CONSTRAINT \"exercise_log_video_location_UNIQUE\"\n" +
 		"  UNIQUE(\"exercise_log_video_location\")\n"+
 		");\n",
@@ -106,6 +110,7 @@ public class DatabaseSQL {
 		"  CONSTRAINT \"fk_exercise_log_annotation_exercise_log1\"\n"+
 		"    FOREIGN KEY(\"exercise_log_idexercise_log\")\n"+
 		"    REFERENCES \"exercise_log\"(\"idexercise_log\")\n"+
+		"    ON DELETE CASCADE ON UPDATE CASCADE\n"+
 		");\n",
 		
 		"CREATE INDEX \"exercise_log_annotation.fk_exercise_log_annotation_exercise_log1_idx\" ON \"exercise_log_annotation\"(\"exercise_log_idexercise_log\");\n",
