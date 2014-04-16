@@ -255,13 +255,13 @@ public class UserVideoView extends VideoViewActivity  {
 			exerciseLogAnnotation.setVideoTime(time);
 			exerciseLogAnnotation.update(dbSQLite);
 		}
-		System.err.println("updateAnnotation "+annotation);
+		//System.err.println("updateAnnotation "+annotation);
 		
 	}
 
 	@Override
 	public void deleteAnnotation(int time, String annotation, int interval) {
-		System.err.println("deleteAnnotation "+annotation);
+		//System.err.println("deleteAnnotation "+annotation);
 		ExerciseLogAnnotation exerciseLogAnnotation = ExerciseLogAnnotation.getPreviousAnnotationByTime(dbSQLite, exerciseLog.getId(), time, interval);
 		if (exerciseLogAnnotation != null)
 		{

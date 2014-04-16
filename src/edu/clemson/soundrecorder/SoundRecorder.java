@@ -291,7 +291,7 @@ public class SoundRecorder extends Activity
         
         if (mSaveUri != null)
         {
-        	System.err.println("Saving uri: "+mSaveUri.getPath());
+        	//System.err.println("Saving uri: "+mSaveUri.getPath());
         	mRecorder.setSampleFile(mSaveUri);
         }
 
@@ -321,12 +321,12 @@ public class SoundRecorder extends Activity
         if (myExtras != null) {
         	
             mSaveUri = (Uri) myExtras.getParcelable(MediaStore.EXTRA_OUTPUT);
-            System.err.println("Got "+mSaveUri.getPath()+"from EXTRA_OUTPUT");
+            //System.err.println("Got "+mSaveUri.getPath()+"from EXTRA_OUTPUT");
         }
-        else
-        {
-        	System.err.println("Extras are null. Sorry.");
-        }
+//        else
+//        {
+//        	System.err.println("Extras are null. Sorry.");
+//        }
     }
     
     

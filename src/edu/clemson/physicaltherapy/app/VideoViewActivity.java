@@ -118,7 +118,7 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 		
 		String annotation = annotationTextView.getText().toString();
 		int currentTime = getCurrentPosition();
-		System.err.println("Delete button clicked at "+currentTime);
+		//System.err.println("Delete button clicked at "+currentTime);
 		deleteAnnotation(currentTime,annotation,DISPLAY_TIME+POLL_INTERVAL);
 		removeAnnotation();
 	}
@@ -282,7 +282,7 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 				  new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog,int id) {
 						// get user input and set it to result
-				    	System.err.println("current annotation is:"+currentAnnotation);
+				    	//System.err.println("current annotation is:"+currentAnnotation);
 				    	if (currentAnnotation.equals(""))
 				    	{
 				    		addAnnotation(getCurrentPosition(),annotationInput.getText().toString());

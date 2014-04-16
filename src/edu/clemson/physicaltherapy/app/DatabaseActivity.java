@@ -15,7 +15,23 @@ import android.os.AsyncTask;
 import android.util.Log;
 import edu.clemson.physicaltherapy.database.DatabaseHandler;
 import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
+import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
+import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
+import edu.clemson.physicaltherapy.datamodel.ExerciseLogAnnotation;
+import edu.clemson.physicaltherapy.datamodel.ExercisePlan;
+import edu.clemson.physicaltherapy.datamodel.ExercisePlanItem;
 import edu.clemson.physicaltherapy.web.JSONParser;
+
+/**
+ * 
+ * @author jburton
+ *
+ * @class DatabaseActivity
+ * 
+ * @brief This abstract class provides database connectivity (internal and external) to activities in the app.
+ * @brief Activities that want to connect to the database should inherit from this class.
+ */
 
 
 
@@ -23,22 +39,43 @@ public abstract class DatabaseActivity extends DisplayActivity {
 	
 	private static final String TAG_SUCCESS = "success";
 
-
+	/**
+	 * @var protected DatabaseHandler dbSQLite
+	 * @brief This is the SQLite handler. Every app that connects to the internal database will need
+	 * a database handler to access it
+	 */
 	protected DatabaseHandler dbSQLite = new DatabaseHandler(this);
-	//protected DatabaseMySQLHandler mySQLDB = new DatabaseMySQLHandler(this);
 	
-	protected DatabaseObject myDatabaseObject;
-	protected List<DatabaseObject> databaseObjectList = new ArrayList<DatabaseObject>();
+	/**
+	 * @var private DatabaseObject myDatabaseObject
+	 * @brief Global variable pointing to a database object. This is the object that is used for querying the external database.
+	 */
+	private DatabaseObject myDatabaseObject;
 	
+	/**
+	 * @var private List<DatabaseObject> databaseObjectList
+	 * @brief Global variable pointing to a list of database objects 
+	 */
+	private List<DatabaseObject> databaseObjectList = new ArrayList<DatabaseObject>();
 
-    // JSON parser class
-    JSONParser jsonParser = new JSONParser();
+	/**
+	 * @var private JSONParser jsonParser
+	 * @brief The JSON Parser
+	 */
+
+    private JSONParser jsonParser = new JSONParser();
 
 	public DatabaseActivity() {
 		// TODO Auto-generated constructor stub
 	}
 
-	
+	/**
+	 * 
+	 * @class AddDatabaseObject
+	 * @brief This is an async task that adds the database object stored in myDatabaseObject to the external database.
+	 * This task is started by the this.addToExternalDatabase() method.
+	 *
+	 */
 	
 	
     class AddDatabaseObject extends AsyncTask<String, String, String> {
@@ -119,9 +156,233 @@ public abstract class DatabaseActivity extends DisplayActivity {
         }
  
     }
-    /**
-     * Background Async Task to Get complete product details
-     * */
+    
+
+ 
+	/**
+	 * 
+	 * @class UpdateDatabaseObject
+	 * @brief This is an async task that updates the database object stored in myDatabaseObject in the external database.
+	 * This task is started by the this.updateInExternalDatabase() method.
+	 * 
+	 *
+	 */
+    class UpdateDatabaseObject extends AsyncTask<String, String, String> {
+ 
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (pDialog == null)
+            	pDialog = new ProgressDialog(DatabaseActivity.this);
+            pDialog.setMessage("Saving record ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+ 
+        /**
+         * Saving product
+         * */
+        protected String doInBackground(String... args) {
+ 
+
+
+ 
+            List<NameValuePair> params = myDatabaseObject.getParams();
+            try {
+            // sending modified data through http request
+            // Notice that update product url accepts POST method
+            	System.err.println("Updating via "+myDatabaseObject.getUpdateUrl());
+            JSONObject json = jsonParser.makeHttpRequest(myDatabaseObject.getUpdateUrl(),
+                    "POST", params);
+ 
+            // check json success tag
+            
+                int success = json.getInt(TAG_SUCCESS);
+ 
+                if (success == 1) {
+                    // successfully updated
+                    
+                    return TAG_SUCCESS;
+                } else {
+                    // failed to update product. May not be update
+                	
+                }
+            } 
+            catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+ 
+            return null;
+        }
+ 
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+            // dismiss the dialog once done
+            pDialog.dismiss();
+        }
+    }
+    
+	/**
+	 * 
+	 * @class DeleteDatabaseObject
+	 * @brief This is an async task that deletes the database object stored in myDatabaseObject from the external database.
+	 * This task is started by the this.DeleteInExternalDatabase() method.
+	 * 
+	 *
+	 */
+
+    
+    class DeleteDatabaseObject extends AsyncTask<String, String, String> {
+ 
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (pDialog == null)
+            	pDialog = new ProgressDialog(DatabaseActivity.this);
+            pDialog.setMessage("Deleting...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+ 
+        /**
+         * Deleting product
+         * */
+        protected String doInBackground(String... args) {
+ 
+            // Check for success tag
+            int success;
+            try {
+                // Building Parameters
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair(myDatabaseObject.getIdKeyName(), Integer.toString(myDatabaseObject.getId())));
+ 
+                // getting product details by making HTTP request
+                JSONObject json = jsonParser.makeHttpRequest(
+                        myDatabaseObject.getDeleteUrl(), "POST", params);
+ 
+                // check your log for json response
+                Log.d("Delete ", json.toString());
+ 
+                // json success tag
+                success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                    // product successfully deleted
+                    
+                    return TAG_SUCCESS;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+ 
+            return null;
+        }
+ 
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+            // dismiss the dialog once done
+            pDialog.dismiss();
+        }
+ 
+    }
+	/**
+	 * 
+	 * @class DeleteAllDatabaseObjects
+	 * @brief This is an async task that deletes all database objects for a given table.
+	 * This does NOT use myDatabaseObject, but takes a table name as a parameter to doInBackground.
+	 * This task is started by the this.DeleteAllRecordsFromExternalDatabase() method. 
+	 * 
+	 *
+	 */   
+
+    class DeleteAllDatabaseObjects extends AsyncTask<String, String, String> {
+ 
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (pDialog == null)
+            	pDialog = new ProgressDialog(DatabaseActivity.this);
+            pDialog.setMessage("Deleting All Records...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+ 
+        /**
+         * Deleting table. Table name is the first parameter.
+         * */
+        protected String doInBackground(String... args) {
+ 
+        	String tableName = args[0];
+            // Check for success tag
+            int success;
+            try {
+                // Building Parameters
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("table_name", tableName));
+ 
+                System.err.println("deleteAllUrl="+DatabaseObject.getDeleteAllUrl());
+                // getting product details by making HTTP request
+                JSONObject json = jsonParser.makeHttpRequest(
+                        DatabaseObject.getDeleteAllUrl(), "POST", params);
+ 
+                // check your log for json response
+                Log.d("Delete All", json.toString());
+ 
+                // json success tag
+                success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                    // product successfully deleted
+                    
+                    return TAG_SUCCESS;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+ 
+            return null;
+        }
+ 
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+            // dismiss the dialog once done
+            pDialog.dismiss();
+        }
+ 
+    }
+    
+	/**
+	 * 
+	 * @class GetDatabaseObjectById
+	 * @brief This is an async task that gets an object from the external database from the id of the object stored in myDatabaseObject and stores it in the databaseObjectList.
+	 * myDatabaseObjectList should have one object in it. 
+	 *
+	 */
     class GetDatabaseObjectById extends AsyncTask<String, String, String> {
  
         /**
@@ -199,209 +460,15 @@ public abstract class DatabaseActivity extends DisplayActivity {
             pDialog.dismiss();
         }
     }
- 
-    /**
-     * Background Async Task to  Save product Details
-     * */
-    class UpdateDatabaseObject extends AsyncTask<String, String, String> {
- 
-        /**
-         * Before starting background thread Show Progress Dialog
-         * */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (pDialog == null)
-            	pDialog = new ProgressDialog(DatabaseActivity.this);
-            pDialog.setMessage("Saving record ...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
- 
-        /**
-         * Saving product
-         * */
-        protected String doInBackground(String... args) {
- 
-
-
- 
-            List<NameValuePair> params = myDatabaseObject.getParams();
-            try {
-            // sending modified data through http request
-            // Notice that update product url accepts POST method
-            	System.err.println("Updating via "+myDatabaseObject.getUpdateUrl());
-            JSONObject json = jsonParser.makeHttpRequest(myDatabaseObject.getUpdateUrl(),
-                    "POST", params);
- 
-            // check json success tag
-            
-                int success = json.getInt(TAG_SUCCESS);
- 
-                if (success == 1) {
-                    // successfully updated
-                    
-                    return TAG_SUCCESS;
-                } else {
-                    // failed to update product. May not be update
-                	
-                }
-            } 
-            catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
- 
-            return null;
-        }
- 
-        /**
-         * After completing background task Dismiss the progress dialog
-         * **/
-        @Override
-        protected void onPostExecute(String result) {
-        	super.onPostExecute(result);
-            // dismiss the dialog once done
-            pDialog.dismiss();
-        }
-    }
- 
-    /*****************************************************************
-     * Background Async Task to Delete Product
-     * */
-    class DeleteDatabaseObject extends AsyncTask<String, String, String> {
- 
-        /**
-         * Before starting background thread Show Progress Dialog
-         * */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (pDialog == null)
-            	pDialog = new ProgressDialog(DatabaseActivity.this);
-            pDialog.setMessage("Deleting...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
- 
-        /**
-         * Deleting product
-         * */
-        protected String doInBackground(String... args) {
- 
-            // Check for success tag
-            int success;
-            try {
-                // Building Parameters
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair(myDatabaseObject.getIdKeyName(), Integer.toString(myDatabaseObject.getId())));
- 
-                // getting product details by making HTTP request
-                JSONObject json = jsonParser.makeHttpRequest(
-                        myDatabaseObject.getDeleteUrl(), "POST", params);
- 
-                // check your log for json response
-                Log.d("Delete ", json.toString());
- 
-                // json success tag
-                success = json.getInt(TAG_SUCCESS);
-                if (success == 1) {
-                    // product successfully deleted
-                    
-                    return TAG_SUCCESS;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
- 
-            return null;
-        }
- 
-        /**
-         * After completing background task Dismiss the progress dialog
-         * **/
-        @Override
-        protected void onPostExecute(String result) {
-        	super.onPostExecute(result);
-            // dismiss the dialog once done
-            pDialog.dismiss();
-        }
- 
-    }
     
-    /*****************************************************************
-     * Background Async Task to Delete Product
-     * */
-    class DeleteAllDatabaseObjects extends AsyncTask<String, String, String> {
- 
-        /**
-         * Before starting background thread Show Progress Dialog
-         * */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (pDialog == null)
-            	pDialog = new ProgressDialog(DatabaseActivity.this);
-            pDialog.setMessage("Deleting All Records...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
- 
-        /**
-         * Deleting product
-         * */
-        protected String doInBackground(String... args) {
- 
-        	String tableName = args[0];
-            // Check for success tag
-            int success;
-            try {
-                // Building Parameters
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("table_name", tableName));
- 
-                System.err.println("deleteAllUrl="+DatabaseObject.getDeleteAllUrl());
-                // getting product details by making HTTP request
-                JSONObject json = jsonParser.makeHttpRequest(
-                        DatabaseObject.getDeleteAllUrl(), "POST", params);
- 
-                // check your log for json response
-                Log.d("Delete All", json.toString());
- 
-                // json success tag
-                success = json.getInt(TAG_SUCCESS);
-                if (success == 1) {
-                    // product successfully deleted
-                    
-                    return TAG_SUCCESS;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
- 
-            return null;
-        }
- 
-        /**
-         * After completing background task Dismiss the progress dialog
-         * **/
-        @Override
-        protected void onPostExecute(String result) {
-        	super.onPostExecute(result);
-            // dismiss the dialog once done
-            pDialog.dismiss();
-        }
- 
-    }
-    
-    /**
-     * Background Async Task to Load all product by making HTTP Request
-     * */
+	/**
+	 * 
+	 * @class GetAllDatabaseObjects
+	 * @brief This is an async task that gets all objects from the external database for a given table and stores them in the databaseObjectList.
+	 * The table information will be contained in myDatabaseObject. This can be a "dummy" object of the appropriate class with no data in it. 
+	 *
+	 */
+
     class GetAllDatabaseObjects extends AsyncTask<String, String, String> {
  
         /**
@@ -424,6 +491,7 @@ public abstract class DatabaseActivity extends DisplayActivity {
         protected String doInBackground(String... args) {
             // Building Parameters
             List<NameValuePair> params = new ArrayList<NameValuePair>();
+            
             // getting JSON string from URL
             System.err.println("URL: "+myDatabaseObject.getAllUrl());
             try {
@@ -480,33 +548,43 @@ public abstract class DatabaseActivity extends DisplayActivity {
  
     }
     
+    /**
+     * @fn private void addToListFromJSON(JSONObject c)
+     * @brief Adds a databaseObject to the list from a JSON Object. The type of database object should match the type of myDatabaseObject.
+     * @param c
+     * @throws JSONException
+     */
+    
     private void addToListFromJSON(JSONObject c) throws JSONException
     {
     	
     	DatabaseObject newObj = null;
-//	    if(myDatabaseObject.getTableName().equals(Work.TABLE_NAME))
-//	    {
-//	    	
-//	    	newObj = new Work();
-//	    }
-//	    else if(myDatabaseObject.getTableName().equals(Receipt.TABLE_NAME))
-//	    {
-//	    	newObj = new Receipt();
-//	    }
-//	    else if(myDatabaseObject.getTableName().equals(Item.TABLE_NAME))
-//	    {
-//	    	newObj = new Item();
-//	    }
-//	
-//	    else if(myDatabaseObject.getTableName().equals(Vehicle.TABLE_NAME))
-//	    {
-//	    	newObj = new Vehicle();
-//	    }
-//	
-//	    else if(myDatabaseObject.getTableName().equals(Location.TABLE_NAME))
-//	    {
-//	    	newObj = new Location();
-//	    }
+    	
+    	if (myDatabaseObject instanceof Exercise)
+    	{
+    		newObj = new Exercise();
+    	}
+    	else if (myDatabaseObject instanceof ExerciseLog)
+    	{
+    		newObj = new ExerciseLog();
+    	}
+    	else if (myDatabaseObject instanceof ExerciseAnnotation)
+    	{
+    		newObj = new ExerciseAnnotation();
+    	}
+    	else if (myDatabaseObject instanceof ExerciseLogAnnotation)
+    	{
+    		newObj = new ExerciseLogAnnotation();
+    	}
+    	else if (myDatabaseObject instanceof ExercisePlan)
+    	{
+    		newObj = new ExercisePlan();
+    	}
+    	else if (myDatabaseObject instanceof ExercisePlanItem)
+    	{
+    		newObj = new ExercisePlanItem();
+    	}
+    	
 	    System.err.println("Adding new "+newObj.getTableName()+" object to list");
 	    newObj.setObjectFromJSON(c);
 	    
@@ -514,7 +592,13 @@ public abstract class DatabaseActivity extends DisplayActivity {
 	    databaseObjectList.add(newObj);
     }
     
-    protected void updateInDatabase(DatabaseObject dbo)
+    /**
+     * @fn protected void updateInExternalandInternalDatabase(DatabaseObject dbo)
+     * @brief Update the given DatabaseObject dbo in external and internal database.
+     * @param dbo
+     */
+    
+    protected void updateInExternalAndInternalDatabase(DatabaseObject dbo)
     {
 		myDatabaseObject = dbo;
 		AsyncTask<String,String,String> updateTask = new UpdateDatabaseObject();
@@ -537,20 +621,26 @@ public abstract class DatabaseActivity extends DisplayActivity {
 
     }
     
-    protected void addToDatabase(DatabaseObject dbo)
+    /**
+     * @fn protected void addToExternalandInternalDatabase(DatabaseObject dbo)
+     * @brief Add the given DatabaseObject dbo to the external and internal database.
+     * @param dbo
+     */
+    
+    protected void addToExternalAndInternalDatabase(DatabaseObject dbo)
     {
 		myDatabaseObject = dbo;
-//		AsyncTask<String,String,String> addTask = new AddDatabaseObject();
-//		String output = null;
+		AsyncTask<String,String,String> addTask = new AddDatabaseObject();
+		String output = null;
 		try {
 			//External database add.
-//			output = addTask.execute().get();
-//			if (output != null && output.equals(TAG_SUCCESS))
-//			{
-//				// The global myDatabaseObject does not contain the newly index or any MySQL formatting adjustments. 
-//				// The new object with the index is stored in the list.
-//			    databaseObjectList.get(0).add(dbSQLite);
-//			}
+			output = addTask.execute().get();
+			if (output != null && output.equals(TAG_SUCCESS))
+			{
+				// The global myDatabaseObject does not contain the newly index or any MySQL formatting adjustments. 
+				// The new object with the index is stored in the list.
+			    databaseObjectList.get(0).add(dbSQLite);
+			}
 			dbo.add(dbSQLite);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -566,7 +656,13 @@ public abstract class DatabaseActivity extends DisplayActivity {
 
     }
     
-    protected void deleteFromDatabase(DatabaseObject dbo)
+    /**
+     * @fn protected void deleteFromExternalAndInternalDatabase(DatabaseObject dbo)
+     * @brief Delete the given DatabaseObject dbo from the external and internal database.
+     * @param dbo
+     */
+    
+    protected void deleteFromExternalAndInternalDatabase(DatabaseObject dbo)
     {
 		myDatabaseObject = dbo;
 		AsyncTask<String,String,String> deleteTask = new DeleteDatabaseObject();
@@ -591,33 +687,56 @@ public abstract class DatabaseActivity extends DisplayActivity {
 		}
     }
     
-    protected void deleteAllRecordsFromTable(String tableName)
+    /**
+     * @fn protected void deleteAllRecordsFromExternalAndInternalTable(String tableName)
+     * @brief delete all the records from the internal and external database for table tableName.
+     * @param tableName
+     */
+    
+    protected void deleteAllRecordsFromExternalAndInternalTable(String tableName)
     {
 		
-//		AsyncTask<String,String,String> deleteAllTask = new DeleteAllDatabaseObjects();
-//		String output = null;
+		AsyncTask<String,String,String> deleteAllTask = new DeleteAllDatabaseObjects();
+		String output = null;
 		try {
-//			output = deleteAllTask.execute(tableName).get();
-//			if (output != null && output.equals(TAG_SUCCESS))
-//			{
+			output = deleteAllTask.execute(tableName).get();
+			if (output != null && output.equals(TAG_SUCCESS))
+			{
 			    dbSQLite.deleteAllRecordsFromTable(tableName);
-//			}
+			}
 
 				
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ExecutionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
     
-    protected void rebuildTableFromRemote(DatabaseObject dbo)
+    /**
+     * @fn protected void rebuildInternalTableFromExternal(DatabaseObject dbo)
+     * @brief This method rebuilds the internal table from the external. 
+     * This method should do the following
+     * 1. Get all objects from the external database
+     * 2. Add new objects that have been created in the external database.
+     * 3. Update existing objects in internal database that have been changed in external database.
+     * 4. Delete objects that have been removed from external database.
+     * 5. Maintain data integrity.
+     * 
+     * Note: External and internal autogenerated indices will not match if both are autogenerated. External and internal data records should either have matching ids or a way to map external and internal ids. 
+     * @param dbo
+     * 
+     */
+    
+    
+    protected void rebuildInternalTableFromExternal(DatabaseObject dbo)
     {
+    	// Set the global database object. This can be a "dummy" object. 
     	myDatabaseObject = dbo;
     	AsyncTask<String,String,String> getAllTask = new GetAllDatabaseObjects();
     	
@@ -630,7 +749,9 @@ public abstract class DatabaseActivity extends DisplayActivity {
 		    for (int index = 0; index < databaseObjectList.size(); index++)
 		    {
 		    	System.err.println("Adding id"+databaseObjectList.get(index).getId()+" for table "+databaseObjectList.get(index).getTableName());
-		    	databaseObjectList.get(index).add(dbSQLite);
+		    	//TODO: Intelligently add/update/delete object from the database.
+		    	// Can add/update/delete objects through the datamodel classes.
+		    	// e.g. databaseObjectList.get(index).add(dbSQLite);
 		    }
 
 			
@@ -647,21 +768,36 @@ public abstract class DatabaseActivity extends DisplayActivity {
 		
     }
     
-    protected void deleteAndRebuildAllFromRemote()
+    /**
+     * @fn protected void resynchronizeInternalDbFromExternal()
+     * @brief Resynchronize the internal and external database.
+     * 
+     * For this application, we only need to worry about getting data 
+     * from the external database and storing it in the internal database.
+     */
+    
+    protected void resynchronizeInternalDbFromExternal()
     {
 
-		//DatabaseObject db = new Vehicle();
-		//System.err.println("Inheritance test: "+db.getTableName());
-
-    	dbSQLite.deleteAndRebuild();
-//		rebuildTableFromRemote(new Vehicle());
-//		
-//		rebuildTableFromRemote(new Location());
-//		rebuildTableFromRemote(new Item());
-//		rebuildTableFromRemote(new Receipt());
-//		rebuildTableFromRemote(new Work());
+		rebuildInternalTableFromExternal(new Exercise());
+		
+		// Exercise log data is not in the external database.
+		rebuildInternalTableFromExternal(new ExerciseAnnotation());
+		rebuildInternalTableFromExternal(new ExercisePlan());
+    	rebuildInternalTableFromExternal(new ExercisePlanItem());
 		
     }
+    
+    public void setDatabaseObject(DatabaseObject dbo)
+    {
+    	myDatabaseObject = dbo;
+    }
+    
+    public List<DatabaseObject> getDatabaseObjectList()
+    {
+    	return databaseObjectList;
+    }
+
     
     @Override
 	protected void onStop()

@@ -1,5 +1,6 @@
 package edu.clemson.physicaltherapy.app;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -67,36 +68,38 @@ public class MainActivity extends DisplayTableActivity {
 	
 	private void createData()
 	{
-		deleteAllRecordsFromTable(Exercise.TABLE_NAME);
-		deleteAllRecordsFromTable(ExerciseLog.TABLE_NAME);
-	    
-	    
-	    
+		Exercise.deleteAll(dbSQLite);
+		ExerciseLog.deleteAll(dbSQLite);
 	    try
 	    {
-			addToDatabase(new Exercise(0,"VideoView Demo","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/Video_View_Demo.htm",this.getExternalFilesDir("exercises").getCanonicalPath()+"/videoviewdemo.mp4"));
-			addToDatabase(new Exercise(0,"Bicep Curls","url","http://m.dummies.com/how-to/content/how-to-do-the-dumbbell-biceps-curl.seriesId-101966.html",this.getExternalFilesDir("exercises").getCanonicalPath()+"/How to Do Standing Dumbbell Curls - YouTube.mp4"));
-			addToDatabase(new Exercise(0,"Online video","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","online video","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4"));
-			addToDatabase(new Exercise(0,"Sound only","url","No video, just sound",this.getExternalFilesDir("exercises").getCanonicalPath()+"/Dave Matthews Band - Where Are You Going.mp3"));
-//			addToDatabase(new Exercise(0,"Exercise 5","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 6","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 7","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 8","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 9","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 10","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 11","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 12","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 13","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 14","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 15","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 16","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 17","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 18","url","instructions","location"));
-//			addToDatabase(new Exercise(0,"Exercise 19","url","instructions","location"));
-			addToDatabase(new ExerciseLog(0,1,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140405_185253_720749121.mp4","Exercise Log Notes",""));
-			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
-			addToDatabase(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls.",""));
+			List<DatabaseObject> sampleData = new ArrayList<DatabaseObject>();
+	    	sampleData.add(new Exercise(0,"VideoView Demo","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/Video_View_Demo.htm",this.getExternalFilesDir("exercises").getCanonicalPath()+"/videoviewdemo.mp4"));
+			sampleData.add(new Exercise(0,"Bicep Curls","url","http://m.dummies.com/how-to/content/how-to-do-the-dumbbell-biceps-curl.seriesId-101966.html",this.getExternalFilesDir("exercises").getCanonicalPath()+"/How to Do Standing Dumbbell Curls - YouTube.mp4"));
+			sampleData.add(new Exercise(0,"Online video","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","online video","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4"));
+			sampleData.add(new Exercise(0,"Sound only","url","No video, just sound",this.getExternalFilesDir("exercises").getCanonicalPath()+"/Dave Matthews Band - Where Are You Going.mp3"));
+//			sampleData.add(new Exercise(0,"Exercise 5","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 6","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 7","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 8","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 9","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 10","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 11","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 12","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 13","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 14","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 15","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 16","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 17","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 18","url","instructions","location"));
+//			sampleData.add(new Exercise(0,"Exercise 19","url","instructions","location"));
+			sampleData.add(new ExerciseLog(0,1,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140405_185253_720749121.mp4","Exercise Log Notes",""));
+			sampleData.add(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
+			sampleData.add(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls.",""));
 
+			for (int i = 0; i < sampleData.size(); i++)
+			{
+				sampleData.get(i).add(dbSQLite);
+			}
 	    }
 	    catch (Exception e)
 	    {
@@ -268,7 +271,7 @@ public class MainActivity extends DisplayTableActivity {
         	
         	Exercise exercise = (Exercise) exerciselist.get(i);
         	
-        	System.err.println("Exercise Id="+exercise.getId()+" Name="+exercise.getName());
+        	//System.err.println("Exercise Id="+exercise.getId()+" Name="+exercise.getName());
         	
         	textView = LayoutUtils.createTextView(this, Integer.toString(exercise.getId()), FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
         	textView.setVisibility(View.GONE);
@@ -436,9 +439,9 @@ public class MainActivity extends DisplayTableActivity {
 		
 		try 
 		{
-			System.err.println("Deleting logs for exercise "+exercise.getName()+" with id "+ exercise.getId());
+			//System.err.println("Deleting logs for exercise "+exercise.getName()+" with id "+ exercise.getId());
 			ExerciseLog.deleteAllByExerciseId(dbSQLite, exercise.getId());
-			System.err.println("Deleting exercise "+exercise.getName()+" with id "+ exercise.getId());
+			//System.err.println("Deleting exercise "+exercise.getName()+" with id "+ exercise.getId());
 			exercise.delete(dbSQLite);	
 		}
 		catch (Exception e)

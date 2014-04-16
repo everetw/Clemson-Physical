@@ -391,7 +391,7 @@ public class ExerciseView extends DatabaseActivity {
 	protected void onNewIntent(Intent intent)
 	{
 	    super.onNewIntent(intent);
-	    System.err.println("onNewIntent");
+	    //System.err.println("onNewIntent");
 		Exercise exercise_intent = (Exercise)intent.getSerializableExtra("ExerciseClass");
 		
 		if (exercise_intent != null)

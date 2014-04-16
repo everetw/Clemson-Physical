@@ -105,6 +105,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		{
 			System.err.println("Could not delete "+filename);
 			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	

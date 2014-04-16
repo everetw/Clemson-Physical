@@ -175,7 +175,7 @@ public class Recorder implements OnCompletionListener, OnErrorListener {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(outputfileformat);
         mRecorder.setAudioEncoder(encoder);
-        System.err.println("Setting sample file: "+mSampleFile.getAbsolutePath());
+        //System.err.println("Setting sample file: "+mSampleFile.getAbsolutePath());
         mRecorder.setOutputFile(mSampleFile.getAbsolutePath());
 
         // Handle IOException

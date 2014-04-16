@@ -156,14 +156,14 @@ public class PractitionerVideoView extends VideoViewActivity {
 			exerciseAnnotation.setVideoTime(time);
 			exerciseAnnotation.update(dbSQLite);
 		}
-		System.err.println("updateAnnotation "+annotation);
+		//System.err.println("updateAnnotation "+annotation);
 		
 	}
 
 	@Override
 	public void deleteAnnotation(int time, String annotation, int interval) {
 		// TODO Auto-generated method stub
-		System.err.println("deleteAnnotation "+annotation);
+		//System.err.println("deleteAnnotation "+annotation);
 		ExerciseAnnotation exerciseAnnotation = ExerciseAnnotation.getPreviousAnnotationByTime(dbSQLite, exercise.getId(), time, interval);
 		if (exerciseAnnotation != null)
 		{

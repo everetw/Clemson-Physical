@@ -99,11 +99,11 @@ public abstract class DatabaseObject implements java.io.Serializable
 	public abstract String getIdKeyName();
 
 	public void delete(DatabaseHandler dbh) {
-		System.err.println("Deleting object from "+this.getTableName()+ " where " + this.getIdKeyName()+" = "+this.getId());
+		//System.err.println("Deleting object from "+this.getTableName()+ " where " + this.getIdKeyName()+" = "+this.getId());
         SQLiteDatabase db = dbh.getWritableDatabase();
         int rc = db.delete(this.getTableName(), this.getIdKeyName() + " = ?",
                 new String[] { String.valueOf(this.getId()) });
-        System.err.println("Delete returned "+rc);
+        //System.err.println("Delete returned "+rc);
 
 	}
 	
