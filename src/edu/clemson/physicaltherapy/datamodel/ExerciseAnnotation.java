@@ -163,7 +163,12 @@ public class ExerciseAnnotation extends DatabaseObject {
 	 */
 	@Override
 	public void setObjectFromJSON(JSONObject j) throws JSONException {
-		// TODO Auto-generated method stub
+		String split[] = j.getString("exercise_idexercise").split(":");
+		int time = (Integer.parseInt(split[0])*60000) + (Integer.parseInt(split[1])*1000);
+		setExerciseId(Integer.parseInt(j.getString("exercise_idexercise")));
+		setVideoTime(time);
+		setAnnotation(j.getString("exercise_annotation_annotation"));
+		setCreateTime(j.getString("create_time"));
 
 	}
 

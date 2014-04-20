@@ -3,11 +3,18 @@ package edu.clemson.physicaltherapy.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +29,9 @@ import android.widget.TextView;
 import edu.clemson.physicaltherapy.R;
 import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
+import edu.clemson.physicaltherapy.web.JSONParser;
 
 public class MainActivity extends DisplayTableActivity {
 	
@@ -42,7 +51,10 @@ public class MainActivity extends DisplayTableActivity {
 	private boolean editMode = false;
 	private Menu menu;
 	
+	private static String url_all_exercises = "http://people.cs.clemson.edu/~everetw/clemsonphysical/db_get_exercises.php";
+	private static String url_all_annotations = "http://people.cs.clemson.edu/~everetw/clemsonphysical/db_get_annotations_for_exercise.php";
 	
+	JSONParser jsonParser = new JSONParser();
 
 	
 	@Override
@@ -69,44 +81,159 @@ public class MainActivity extends DisplayTableActivity {
 	private void createData()
 	{
 		Exercise.deleteAll(dbSQLite);
-		ExerciseLog.deleteAll(dbSQLite);
-	    try
-	    {
-			List<DatabaseObject> sampleData = new ArrayList<DatabaseObject>();
-	    	sampleData.add(new Exercise(0,"VideoView Demo","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/Video_View_Demo.htm",this.getExternalFilesDir("exercises").getCanonicalPath()+"/videoviewdemo.mp4"));
-			sampleData.add(new Exercise(0,"Bicep Curls","url","http://m.dummies.com/how-to/content/how-to-do-the-dumbbell-biceps-curl.seriesId-101966.html",this.getExternalFilesDir("exercises").getCanonicalPath()+"/How to Do Standing Dumbbell Curls - YouTube.mp4"));
-			sampleData.add(new Exercise(0,"Online video","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4","online video","http://people.cs.clemson.edu/~jburto2/PhysicalTherapy/videoviewdemo.mp4"));
-			sampleData.add(new Exercise(0,"Sound only","url","No video, just sound",this.getExternalFilesDir("exercises").getCanonicalPath()+"/Dave Matthews Band - Where Are You Going.mp3"));
-//			sampleData.add(new Exercise(0,"Exercise 5","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 6","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 7","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 8","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 9","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 10","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 11","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 12","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 13","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 14","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 15","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 16","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 17","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 18","url","instructions","location"));
-//			sampleData.add(new Exercise(0,"Exercise 19","url","instructions","location"));
-			sampleData.add(new ExerciseLog(0,1,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140405_185253_720749121.mp4","Exercise Log Notes",""));
-			sampleData.add(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
-			sampleData.add(new ExerciseLog(0,2,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls.",""));
-
-			for (int i = 0; i < sampleData.size(); i++)
-			{
-				sampleData.get(i).add(dbSQLite);
-			}
-	    }
-	    catch (Exception e)
-	    {
+		ExerciseAnnotation.deleteAll(dbSQLite);
+		//ExerciseLog.deleteAll(dbSQLite);
+		Log.d("DEBUGGING","before creating data");
+	    new GetAllExercises().execute();
+	    new GetAllAnnotations().execute();
+	    Log.d("DEBUGGING","after creating data");
 	    
-	    }
 	    drawTable();
 	}
+	
+	class GetAllExercises extends AsyncTask<String, String, String> {
+		 
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (pDialog == null)
+            	pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Loading record from remote DB. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+ 
+        /**
+         * Getting product details in background thread
+         * */
+        protected String doInBackground(String... args) {
+ 
+
+                // Check for success tag
+            int success;
+            try {
+                // Building Parameters
+                        List<NameValuePair> params = new ArrayList<NameValuePair>();                        
+                        
+                        // getting product details by making HTTP request
+                // Note that product details url will use GET request
+                JSONObject json = jsonParser.makeHttpRequest(url_all_exercises, "GET", params);
+                Log.d("DEBUGGING","got json data");
+ 
+                        // check your log for json response
+                Log.d("Single Product Details", json.toString());
+ 
+                        // json success tag
+                success = json.getInt("success");
+                if (success == 1) {
+                    // successfully received product details
+                    JSONArray productObj = json.getJSONArray("exercises"); // JSON Array
+                    		Exercise entry = new Exercise();
+                            for(int i=0; i<productObj.length(); i++){
+                            	JSONObject dbObject = productObj.getJSONObject(i);
+                            	entry.setObjectFromJSON(dbObject);
+                            	entry.add(dbSQLite);
+                            }
+                        }
+                else{
+                            // product with pid not found
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+ 
+            return null;
+        }
+ 
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+            // dismiss the dialog once done
+            pDialog.dismiss();
+        }
+    }
+	
+	class GetAllAnnotations extends AsyncTask<String, String, String> {
+		 
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (pDialog == null)
+            	pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Loading record from remote DB. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+ 
+        /**
+         * Getting product details in background thread
+         * */
+        protected String doInBackground(String... args) {
+ 
+
+                // Check for success tag
+            int success;
+            try {
+                // Building Parameters
+                        List<NameValuePair> params = new ArrayList<NameValuePair>();                        
+                        
+                        // getting product details by making HTTP request
+                // Note that product details url will use GET request
+                JSONObject json = jsonParser.makeHttpRequest(url_all_annotations, "GET", params);
+                Log.d("DEBUGGING","got json data");
+ 
+                        // check your log for json response
+                Log.d("Single Product Details", json.toString());
+ 
+                        // json success tag
+                success = json.getInt("success");
+                if (success == 1) {
+                    // successfully received product details
+                    JSONArray productObj = json.getJSONArray("annotations"); // JSON Array
+                    		ExerciseAnnotation entry = new ExerciseAnnotation();
+                            for(int i=0; i<productObj.length(); i++){
+                            	JSONObject dbObject = productObj.getJSONObject(i);
+                            	entry.setObjectFromJSON(dbObject);
+                            	entry.add(dbSQLite);
+                            }
+                        }
+                else{
+                            // product with pid not found
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+ 
+            return null;
+        }
+ 
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+            // dismiss the dialog once done
+        	drawTable();
+            pDialog.dismiss();
+        }
+    }
+ 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,7 +273,7 @@ public class MainActivity extends DisplayTableActivity {
         		itemToggleEdit.setTitle("Leave Edit Mode");
         	} else
         	{
-        		itemToggleEdit.setTitle("Edit Custom Exercises");
+        		itemToggleEdit.setTitle("Edit Exercises");
         	}
         	drawTable();
         	break;
