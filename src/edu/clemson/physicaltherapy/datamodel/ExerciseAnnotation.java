@@ -163,7 +163,11 @@ public class ExerciseAnnotation extends DatabaseObject {
 	 */
 	@Override
 	public void setObjectFromJSON(JSONObject j) throws JSONException {
+<<<<<<< HEAD
 		String split[] = j.getString("exercise_annotation_video_time").split(":");
+=======
+		String split[] = j.getString("exercise_idexercise").split(":");
+>>>>>>> branch 'master' of https://github.com/everetw/Clemson-Physical.git
 		int time = (Integer.parseInt(split[0])*60000) + (Integer.parseInt(split[1])*1000);
 		setExerciseId(Integer.parseInt(j.getString("exercise_idexercise")));
 		setVideoTime(time);
