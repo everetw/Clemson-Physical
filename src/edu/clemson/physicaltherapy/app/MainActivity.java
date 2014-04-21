@@ -1,5 +1,6 @@
 package edu.clemson.physicaltherapy.app;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
 import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
+import edu.clemson.physicaltherapy.web.HTTPDownloader;
 import edu.clemson.physicaltherapy.web.JSONParser;
 
 public class MainActivity extends DisplayTableActivity {
@@ -84,13 +86,41 @@ public class MainActivity extends DisplayTableActivity {
 		ExerciseAnnotation.deleteAll(dbSQLite);
 		//ExerciseLog.deleteAll(dbSQLite);
 		Log.d("DEBUGGING","before creating data");
-	    new GetAllExercises().execute();
+	    try {
+			new GetAllExercises().execute(this.getExternalFilesDir("exercises").getCanonicalPath()+"/");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    new GetAllAnnotations().execute();
 	    Log.d("DEBUGGING","after creating data");
+	    downloadVideosFromWeb();
 	    
 	    drawTable();
 	}
 	
+	private void downloadVideosFromWeb() {
+		List<Exercise> exerciseList = Exercise.getAll(dbSQLite);
+		for (int i = 0; i < exerciseList.size(); i++)
+		{
+			Exercise e  = exerciseList.get(i);
+			String filename;
+			if (e.getFileLocation().equals("online video"))
+			{
+				try {
+					displayToast("Downloading video "+e.getVideoUrl());
+					filename = this.getExternalFilesDir("exercises").getCanonicalPath()+"/"+HTTPDownloader.getFilenameFromUrl(e.getVideoUrl());
+					new DownloadFile().execute(e.getVideoUrl(),filename);
+					e.setFileLocation(filename);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+		
+	}
+
 	class GetAllExercises extends AsyncTask<String, String, String> {
 		 
         /**
@@ -112,6 +142,7 @@ public class MainActivity extends DisplayTableActivity {
          * */
         protected String doInBackground(String... args) {
  
+        	String filepath = args[0];
 
                 // Check for success tag
             int success;
@@ -136,7 +167,29 @@ public class MainActivity extends DisplayTableActivity {
                             for(int i=0; i<productObj.length(); i++){
                             	JSONObject dbObject = productObj.getJSONObject(i);
                             	entry.setObjectFromJSON(dbObject);
-                            	entry.add(dbSQLite);
+                            	
+                            	//displayToast("Downloading video "+entry.getVideoUrl());
+            					String filename = filepath+HTTPDownloader.getFilenameFromUrl(entry.getVideoUrl());
+
+            					// Fix up dropbox urls to take you directly to the file.
+            			        if (entry.getVideoUrl().contains("www.dropbox.com"))
+            			        {
+            			        	//System.err.println("Fixing dropbox url");
+            			        	entry.setVideoUrl(entry.getVideoUrl().replaceAll("www.dropbox.com", "dl.dropboxusercontent.com"));
+            			        }
+            			        
+            			        // Android doesn't support Apple's ".m4v" mp4 files. Rename them as a workaround.
+            			        if (filename.contains(".m4v"))
+            			        {
+            			        	//System.err.print("Changing file name from "+filename);
+            			        			
+            			        	filename = filename.replaceAll(".m4v", ".mp4");
+            			        	//System.err.println("to "+filename);
+            			        }
+            			        
+            					HTTPDownloader.downloadFile(entry.getVideoUrl(), filename);
+            					entry.setFileLocation(filename);
+            					entry.add(dbSQLite);
                             }
                         }
                 else{
@@ -230,6 +283,48 @@ public class MainActivity extends DisplayTableActivity {
         	super.onPostExecute(result);
             // dismiss the dialog once done
         	drawTable();
+            pDialog.dismiss();
+        }
+    }
+	
+	
+	class DownloadFile extends AsyncTask<String, String, String> {
+		 
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (pDialog == null)
+            	pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Loading record from remote DB. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+ 
+        /**
+         * Getting product details in background thread
+         * */
+        protected String doInBackground(String... args) {
+ 
+            String url = args[0];
+            String file = args[1];
+        	
+            HTTPDownloader.downloadFile(url,file);
+
+ 
+            return null;
+        }
+ 
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+            // dismiss the dialog once done
             pDialog.dismiss();
         }
     }
