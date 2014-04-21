@@ -27,7 +27,8 @@ public class PractitionerVideoView extends VideoViewActivity {
         //Set the title of the Action Bar to the Exercise Name
         getActionBar().setTitle(exercise.getName());
         
-		setVideoPath(exercise.getFileLocation());
+		//setVideoPath(exercise.getFileLocation());
+		setVideoPath(exercise.getVideoUrl());
 		
 		start();
 		

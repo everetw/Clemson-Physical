@@ -15,6 +15,7 @@ import edu.clemson.physicaltherapy.database.DatabaseHandler;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 /**
@@ -179,11 +180,14 @@ public class Exercise extends DatabaseObject {
 	 */
 	@Override
 	public void setObjectFromJSON(JSONObject j) throws JSONException {
-		// TODO Auto-generated method stub
-
+		setName(j.getString("exercise_name"));
+		setVideoUrl(j.getString("exercise_video_url"));
+		setInstructions(j.getString("exercise_instruction"));
+		setFileLocation("online video");
+		Log.d("VIDEO", j.getString("exercise_video_url"));
 	}
 	
-	
+		
 
 	/* (non-Javadoc)
 	 * @see com.example.clemsonphysical.DatabaseObject#update(com.example.clemsonphysical.DatabaseHandler)
@@ -326,7 +330,7 @@ public class Exercise extends DatabaseObject {
         exercise.setFileLocation(cursor.getString(DbKeys.KEY_EXERCISE_FILE_LOCATION.ordinal()));
         exercise.setInstructions(cursor.getString(DbKeys.KEY_EXERCISE_INSTRUCTIONS.ordinal()));
         exercise.setName(cursor.getString(DbKeys.KEY_EXERCISE_NAME.ordinal()));
-        exercise.setVideoUrl(cursor.getColumnName(DbKeys.KEY_EXERCISE_VIDEO_URL.ordinal()));
+        exercise.setVideoUrl(cursor.getString(DbKeys.KEY_EXERCISE_VIDEO_URL.ordinal()));
         
         return exercise;
 	}

@@ -146,6 +146,7 @@ public class ExerciseView extends DatabaseActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
+		/// http://stackoverflow.com/questions/7133141/android-changing-option-menu-items-programmatically
 		getMenuInflater().inflate(R.menu.exercise_view, menu);
 		MenuItem item = menu.findItem(R.id.action_save);
 		item.setVisible(editMode);
