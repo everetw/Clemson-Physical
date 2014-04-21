@@ -15,6 +15,7 @@ public class PractitionerVideoView extends VideoViewActivity {
 	
 	private Exercise exercise;
 	private ExerciseAnnotation current_annotation;
+	private boolean playLocally = true;
 	
 
 	
@@ -26,12 +27,17 @@ public class PractitionerVideoView extends VideoViewActivity {
 		
         //Set the title of the Action Bar to the Exercise Name
         getActionBar().setTitle(exercise.getName());
-//        System.err.println("Playing "+exercise.getFileLocation());
-		setVideoPath(exercise.getFileLocation());
-      
-//        System.err.println("Playing "+exercise.getVideoUrl());
-//		setVideoPath(exercise.getVideoUrl());
-		
+        
+        if (playLocally == true || exercise.getVideoUrl().equals(""))
+        {
+	        System.err.println("Playing "+exercise.getFileLocation());
+			setVideoPath(exercise.getFileLocation());
+        }
+        else
+        {
+        	System.err.println("Playing "+exercise.getVideoUrl());
+        	setVideoPath(exercise.getVideoUrl());
+        }
 		start();
 		
 	

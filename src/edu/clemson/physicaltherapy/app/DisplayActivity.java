@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -250,7 +251,10 @@ public abstract class DisplayActivity extends Activity  {
             if (videoFile != null)
             {
             	mediaUri = Uri.fromFile(videoFile);
-            	// Use high quality (.mp4) video. Low quality (.3gp) video sucks. 
+
+            	// Would like to force SD quality video, but not supported by Android Camera. 
+            	//intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, CamcorderProfile.QUALITY_480P);
+            	// Low quality video is useless, so force high quality.
             	intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,  mediaUri );
                 //takePictureIntent.putExtra("filename", "file:"+photoFile.getAbsolutePath());

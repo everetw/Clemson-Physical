@@ -27,6 +27,7 @@
 	        android:gravity="center"
 	        android:layout_gravity="center"
 	        android:scaleType="fitCenter"
+	        android:background="@android:color/background_dark"
 	        />
 	    <ImageButton
 	        android:id="@+id/exercisePlayImageButton"
