@@ -1,7 +1,13 @@
 package edu.clemson.physicaltherapy.app;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +15,7 @@ import android.view.View;
 import edu.clemson.physicaltherapy.R;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
 import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
+import edu.clemson.physicaltherapy.web.HTTPDownloader;
 
 public class PractitionerVideoView extends VideoViewActivity {
 
@@ -28,19 +35,51 @@ public class PractitionerVideoView extends VideoViewActivity {
         //Set the title of the Action Bar to the Exercise Name
         getActionBar().setTitle(exercise.getName());
         
+        String filePath = "./";
+        
+        try {
+			filePath = this.getExternalFilesDir(getVideoSubdirectory()).getCanonicalPath()+"/";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        playLocally = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsActivity.KEY_DOWNLOAD, false);
+
+        // If we are playing locally or this is a local video, play locally.
         if (playLocally == true || exercise.getVideoUrl().equals(""))
         {
-	        System.err.println("Playing "+exercise.getFileLocation());
-			setVideoPath(exercise.getFileLocation());
+        	// if we don't have the video, download it.
+        	if (exercise.getFileLocation().equals("online video"))
+        	{
+        		DownloadSingle task = new DownloadSingle();
+        		task.execute(exercise.getVideoUrl(),filePath);
+
+        	}
+        	else
+        	{
+        		System.err.println("Playing local "+exercise.getFileLocation());
+        		setVideoPath(exercise.getFileLocation());
+        		start();
+        	}
         }
         else
         {
-        	System.err.println("Playing "+exercise.getVideoUrl());
+        	System.err.println("Playing remote"+exercise.getVideoUrl());
         	setVideoPath(exercise.getVideoUrl());
+        	start();
         }
-		start();
+		
 		
 	
+	}
+	
+	private void updateFileLocationAndStart(String result)
+	{
+		exercise.setFileLocation(result);
+		exercise.update(dbSQLite);
+		setVideoPath(exercise.getFileLocation());
+		start();
 	}
 	
 	@Override
@@ -125,7 +164,7 @@ public class PractitionerVideoView extends VideoViewActivity {
 	    	break;
 
 	    case R.id.action_delete_all_annotations:
-	    	displayDeleteAllDialog();
+	    	displayDeleteDialog(DELETE_ALL);
 	    	break;
 
 	    }
@@ -189,6 +228,68 @@ public class PractitionerVideoView extends VideoViewActivity {
 		ExerciseAnnotation.deleteAllByExerciseId(dbSQLite,exercise.getId());
 		
 	}
+	
+	class DownloadSingle extends AsyncTask<String, String, String> {
+		 
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (pDialog == null)
+            	pDialog = new ProgressDialog(PractitionerVideoView.this);
+            pDialog.setMessage("Downloading video files from remote servers. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+ 
+        /**
+         * Getting product details in background thread
+         * */
+        protected String doInBackground(String... args) {
+ 
+        	String videoUrl = args[0];
+        	
+            String filepath = args[1];
+
+
+			String url = HTTPDownloader.getDirectUrl(videoUrl);
+			String filename = HTTPDownloader.getLocalFileNameFromUrl(videoUrl);
+			System.err.println("Attempting to download "+filepath+filename+" from "+url);
+			boolean success = HTTPDownloader.downloadFile(url,filepath+filename);
+			// If we successfully downloaded the file, return the filename.
+			if (success)
+				{
+				return filepath+filename;
+				}
+			
+		
+			
+    		return null;
+
+ 
+            
+        }
+ 
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+            // dismiss the dialog once done
+            pDialog.dismiss();
+            
+            // update the exercise with the result and play it.
+            if (result != null)
+            {
+            	updateFileLocationAndStart(result);
+            }
+			
+        }
+    }
 
 
 

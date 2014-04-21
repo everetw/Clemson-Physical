@@ -196,6 +196,16 @@ public class Exercise extends DatabaseObject {
 	@Override
 	public int update(DatabaseHandler dbh) {
 		SQLiteDatabase db = dbh.getWritableDatabase();
+		
+		Exercise oldExercise;
+		
+		try {
+			oldExercise = Exercise.getById(dbh, this.getId());
+		} catch (Exception e) {
+			// Can't find the log. Return 0.  
+			return 0;
+		}
+		
  
         ContentValues values = new ContentValues();
         values.put(DbKeys.KEY_ID.getKeyName(), this.getId());
@@ -207,6 +217,15 @@ public class Exercise extends DatabaseObject {
         // updating row
         int rc = db.update(getTableName(), values,DbKeys.KEY_ID.getKeyName() + " = ?",
                 new String[] { String.valueOf(getId()) });
+        
+        
+        // If the video has changed, delete the old video and the annotations
+        if (oldExercise != null && !oldExercise.getFileLocation().equals("online video") && !oldExercise.getFileLocation().equals(this.getFileLocation()))
+        {
+        	ExerciseAnnotation.deleteAllByExerciseId(dbh, this.getId());
+        	DatabaseHandler.deleteFile(oldExercise.getFileLocation());
+        }
+        
         
         
         return rc;

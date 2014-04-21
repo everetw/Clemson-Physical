@@ -45,6 +45,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.clemsonphysical.app.MainActivity" />
         </activity>
+                <activity
+            android:name="edu.clemson.physicaltherapy.app.ExerciseEditView"
+            android:label="@string/title_activity_exercise_edit_view" 
+            android:parentActivityName="edu.clemson.physicaltherapy.app.MainActivity"
+            
+             >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.clemsonphysical.app.MainActivity" />
+        </activity>
         <activity
             android:name="edu.clemson.physicaltherapy.app.LogView"
             android:label="@string/title_activity_log_view" 

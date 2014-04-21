@@ -130,7 +130,7 @@ public class UserVideoView extends VideoViewActivity  {
 	    	break;
 
 	    case R.id.action_delete_all_annotations:
-	    	displayDeleteAllDialog();
+	    	displayDeleteDialog(DELETE_ALL);
 	    	break;
 	    	
 	    }

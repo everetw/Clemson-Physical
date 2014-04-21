@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:baselineAligned="false"
     android:weightSum="2"
-	    tools:context=".LogView" >
+	    tools:context=".ExerciseView" >
     
     <!-- http://stackoverflow.com/questions/2698817/linear-layout-and-weight-in-android -->
 

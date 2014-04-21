@@ -30,6 +30,12 @@
         android:icon="@android:drawable/ic_menu_edit"
         android:title="Edit Custom Exercises"/>
     
+     <item
+        android:id="@+id/download_videos"
+        android:orderInCategory="5"
+        android:showAsAction="never"
+        android:icon="@android:drawable/ic_popup_sync"
+        android:title="Download videos locally"/>
     
     
 </menu>

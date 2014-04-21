@@ -1,20 +1,27 @@
 package edu.clemson.physicaltherapy.app;
 
 
+import java.util.List;
+
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.MediaController;
-import android.media.MediaPlayer;
 import android.widget.TextView;
 import android.widget.VideoView;
 import edu.clemson.physicaltherapy.R;
+import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.web.HTTPDownloader;
 
 
 
@@ -32,6 +39,10 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 	
 	private static int POLL_INTERVAL = 250;  // Check every 250ms
 	private static int DISPLAY_TIME = 3000;  // Display annotations for 3 seconds.
+	
+	protected static int DELETE_ALL = 0;
+	protected static int DELETE_CURRENT = 1;
+	
 	
 	/**
 	 * @fn protected void onCreate(Bundle savedInstanceState)
@@ -116,11 +127,8 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 	public void onDeleteAnnotationButtonClicked(View v)
 	{
 		
-		String annotation = annotationTextView.getText().toString();
-		int currentTime = getCurrentPosition();
-		//System.err.println("Delete button clicked at "+currentTime);
-		deleteAnnotation(currentTime,annotation,DISPLAY_TIME+POLL_INTERVAL);
-		removeAnnotation();
+		displayDeleteDialog(DELETE_CURRENT);
+		
 	}
 	
 	
@@ -157,6 +165,7 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 	    	 // if the videoView isn't playing, return.
 	    	 // This coding is shameful. 
 	    	 // System.err.println("Checking annotations");
+	    	 // https://blog.trifork.com/2011/08/12/using-android-preferences-in-a-background-service/
 	    	 if (!videoView.isPlaying())
 	    	 {
 	    		 videoHandler.postDelayed(this, POLL_INTERVAL);
@@ -204,14 +213,23 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 	   protected void onActionDeleteAll() 
 	   {
 		   videoView.pause();
-		   displayDeleteAllDialog();
+		   displayDeleteDialog(DELETE_ALL);
 	   }
 	   
-	   protected void displayDeleteAllDialog() {
+	   protected void displayDeleteDialog(final int delete_type) {
 			
 	    	String title = "Confirm Delete!";
 	    	
-	    	String message = "Are you sure you want to delete all annotations for this video?";
+	    	String message;
+	    	
+	    	if (delete_type == DELETE_ALL)
+	    	{
+	    		message = "Are you sure you want to delete all annotations for this video?";
+	    	}
+	    	else
+	    	{
+	    		message = "Are you sure you want to delete this annotation?";
+	    	}
 
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
@@ -228,7 +246,18 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 				  new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog,int id) {
 						// get user input and set it to result
-				    	deleteAllAnnotations();
+				    	if (delete_type == DELETE_ALL)
+				    	{
+				    		deleteAllAnnotations();
+				    	}
+				    	else
+				    	{
+				    		String annotation = annotationTextView.getText().toString();
+				    		int currentTime = getCurrentPosition();
+				    		//System.err.println("Delete button clicked at "+currentTime);
+				    		deleteAnnotation(currentTime,annotation,DISPLAY_TIME+POLL_INTERVAL);
+
+				    	}
 				    	// Remove the current annotation from view, if there is one.
 				    	removeAnnotation();
 					
@@ -312,6 +341,8 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 
 		}
 	   
+	   
+	
 
 	/// Do not poll when activity is in background.
 	@Override
@@ -320,6 +351,7 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 		//System.err.println("On pause");
 		super.onPause();
 		videoHandler.removeCallbacks(checkAnnotations);
+		
 	}
 	
 	/// Resume polling when activity is resumed.	
@@ -328,9 +360,17 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 	{
 		//System.err.println("On resume");
 		super.onResume();
-		videoHandler.postDelayed(checkAnnotations, 0);
+		
+		// If we are showing annotations, start the poller.
+		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsActivity.KEY_ANNOTATIONS, true))
+		{
+			videoHandler.postDelayed(checkAnnotations, 0);
+		}
+	
 	}
 	
+	
+		
 	protected void setVideoPath(String path)
 	{
 		videoView.setVideoPath(path);
@@ -421,6 +461,7 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 		videoView.setMediaController(controller);
 	}
 	
+
 
 	
 

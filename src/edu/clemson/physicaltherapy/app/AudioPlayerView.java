@@ -1,6 +1,7 @@
 package edu.clemson.physicaltherapy.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
@@ -109,5 +110,6 @@ public class AudioPlayerView extends VideoViewActivity {
 		// TODO Auto-generated method stub
 
 	}
+
 
 }

@@ -413,6 +413,17 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
         tableRow.addView(textView);
 
         
+        // Override the on click listener to do nothing.
+        tableRow.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        
+        
         tableLayout.addView(tableRow);
 		
 

@@ -1,6 +1,8 @@
 package edu.clemson.physicaltherapy.app;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +21,7 @@ import edu.clemson.physicaltherapy.R;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	/**
 	 * Determines whether to always show the simplified settings UI, where
 	 * settings are presented in a single list. When false, settings are shown
@@ -27,6 +29,12 @@ public class SettingsActivity extends PreferenceActivity {
 	 * shown on tablets.
 	 */
 	private static final boolean ALWAYS_SIMPLE_PREFS = false;
+	
+	public static final String KEY_USERNAME = "prefUsername";
+	public static final String KEY_PRACTITIONER = "prefPractitioner";
+	public static final String KEY_ANNOTATIONS = "prefAnnotations";
+	public static final String KEY_DOWNLOAD = "prefDownload";
+	public static final String KEY_BASEURL = "baseURL";
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -67,5 +75,55 @@ public class SettingsActivity extends PreferenceActivity {
 		return ALWAYS_SIMPLE_PREFS
 				|| Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
 				|| !isXLargeTablet(context);
+	}
+	
+    
+	@Override
+    protected void onResume() {
+        super.onResume();
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+	@Override
+    protected void onPause() {
+        super.onPause();
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		
+
+        if (key.equals(SettingsActivity.KEY_USERNAME)) {
+        	
+
+        }
+        else if (key.equals(SettingsActivity.KEY_PRACTITIONER))
+        {
+
+        	
+        }
+        
+        else if (key.equals(SettingsActivity.KEY_BASEURL)) {
+
+        	
+
+        }
+        else if (key.equals(SettingsActivity.KEY_ANNOTATIONS))
+        {
+
+        	
+        }
+        else if (key.equals(SettingsActivity.KEY_DOWNLOAD))
+        {
+
+        	
+        }
+        
+		
 	}
 }

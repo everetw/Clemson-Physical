@@ -14,7 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class HTTPDownloader {
 	
-	public static void downloadFile(String url_string, String file_string)
+	public static boolean downloadFile(String url_string, String file_string)
 	{
 		try {
 			
@@ -80,12 +80,15 @@ public class HTTPDownloader {
 	        }
 	        //close the output stream when done
 	        fileOutput.close();
+	        return true;
 
 	//catch some possible errors...
 	} catch (MalformedURLException e) {
 	        e.printStackTrace();
+	        return false;
 	} catch (IOException e) {
 	        e.printStackTrace();
+	        return false;
 	}
 	}
 	
@@ -97,4 +100,35 @@ public class HTTPDownloader {
         return android.net.Uri.decode(baseName+"."+extension);
         
     }
+    
+	public static String getDirectUrl(String videoUrl)
+	{
+
+		// Fix up dropbox urls to take you directly to the file.
+	    if (videoUrl.contains("www.dropbox.com"))
+	    {
+	    	//System.err.println("Fixing dropbox url");
+	    	videoUrl = videoUrl.replaceAll("www.dropbox.com", "dl.dropboxusercontent.com");
+	    }
+	    return videoUrl; 
+	}
+	
+	
+	public static String getLocalFileNameFromUrl(String videoUrl)
+	{
+
+		String filename = HTTPDownloader.getFilenameFromUrl(videoUrl);
+
+	    
+	    // Android doesn't support Apple's ".m4v" mp4 files. Rename them as a workaround.
+	    if (filename.contains(".m4v"))
+	    {
+	    	//System.err.print("Changing file name from "+filename);
+	    			
+	    	filename = filename.replaceAll(".m4v", ".mp4");
+	    	//System.err.println("to "+filename);
+	    }
+	    
+		return filename;
+	}
 }

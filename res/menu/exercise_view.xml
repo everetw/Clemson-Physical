@@ -27,11 +27,5 @@
         android:showAsAction="never"
         android:title="Settings"/>
     
-    <item
-        android:id="@+id/action_save"
-        android:orderInCategory="101"
-        android:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_save"
-        android:title="Save Exercise"/>
 
 </menu>

@@ -15,10 +15,18 @@
     
     <PreferenceCategory android:title="App Settings" >
         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="prefCheckbox"
+            android:defaultValue="true"
+            android:key="prefAnnotations"
             android:summary="@string/checkbox_desc"
             android:title="@string/checkbox" >
+        </CheckBoxPreference>
+            
+        <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="prefDownload"
+        android:summary="@string/pref_description_download_videos"
+        android:title="@string/pref_title_download_videos" >
+    
         </CheckBoxPreference>
     </PreferenceCategory>
 

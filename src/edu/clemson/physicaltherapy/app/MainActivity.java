@@ -12,9 +12,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +30,6 @@ import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 import edu.clemson.physicaltherapy.R;
-import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
 import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
@@ -56,12 +57,17 @@ public class MainActivity extends DisplayTableActivity {
 	private static String url_all_exercises = "http://people.cs.clemson.edu/~everetw/clemsonphysical/db_get_exercises.php";
 	private static String url_all_annotations = "http://people.cs.clemson.edu/~everetw/clemsonphysical/db_get_annotations_for_exercise.php";
 	
+	private boolean downloadVideos;
 	JSONParser jsonParser = new JSONParser();
 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		
+	    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+  
 		setContentView(R.layout.activity_main);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -86,40 +92,53 @@ public class MainActivity extends DisplayTableActivity {
 		ExerciseAnnotation.deleteAll(dbSQLite);
 		//ExerciseLog.deleteAll(dbSQLite);
 		Log.d("DEBUGGING","before creating data");
-	    try {
-			new GetAllExercises().execute(this.getExternalFilesDir("exercises").getCanonicalPath()+"/");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    new GetAllAnnotations().execute();
-	    Log.d("DEBUGGING","after creating data");
-	    downloadVideosFromWeb();
+		new GetAllExercises().execute();
+		new GetAllAnnotations().execute();
+
+
 	    
+	    //new GetAllAnnotations().execute();
+	    Log.d("DEBUGGING","after creating data");
+	    
+//	    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+//        if (settings.getBoolean(SettingsActivity.KEY_DOWNLOAD, true))
+//        {
+//	    	new DownloadFiles().execute();
+//	    }
 	    drawTable();
 	}
 	
-	private void downloadVideosFromWeb() {
-		List<Exercise> exerciseList = Exercise.getAll(dbSQLite);
-		for (int i = 0; i < exerciseList.size(); i++)
-		{
-			Exercise e  = exerciseList.get(i);
-			String filename;
-			if (e.getFileLocation().equals("online video"))
-			{
-				try {
-					displayToast("Downloading video "+e.getVideoUrl());
-					filename = this.getExternalFilesDir("exercises").getCanonicalPath()+"/"+HTTPDownloader.getFilenameFromUrl(e.getVideoUrl());
-					new DownloadFile().execute(e.getVideoUrl(),filename);
-					e.setFileLocation(filename);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
-		
-	}
+//	private void downloadVideosFromWeb() {
+//		List<Exercise> exerciseList = Exercise.getAll(dbSQLite);
+//		for (int i = 0; i < exerciseList.size(); i++)
+//		{
+//			Exercise e  = exerciseList.get(i);
+//			
+//			if (e.getFileLocation().equals("online video"))
+//			{
+//				try {
+//					String url = this.getDirectUrl(e.getVideoUrl());
+//					String filename = this.getLocalFileNameFromUrl(e.getVideoUrl());
+//					DownloadFile task = new DownloadFile();
+//					task.execute(url,filename);
+//					boolean success = task.get();
+//					if (success)
+//						{
+//						e.setVideoUrl(url);
+//						e.setFileLocation(filename);
+//						}
+//					e.update(dbSQLite);
+//				} catch (InterruptedException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				} catch (ExecutionException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//			}
+//		}
+//		
+//	}
 
 	class GetAllExercises extends AsyncTask<String, String, String> {
 		 
@@ -142,7 +161,6 @@ public class MainActivity extends DisplayTableActivity {
          * */
         protected String doInBackground(String... args) {
  
-        	String filepath = args[0];
 
                 // Check for success tag
             int success;
@@ -167,29 +185,7 @@ public class MainActivity extends DisplayTableActivity {
                             for(int i=0; i<productObj.length(); i++){
                             	JSONObject dbObject = productObj.getJSONObject(i);
                             	entry.setObjectFromJSON(dbObject);
-                            	
-                            	//displayToast("Downloading video "+entry.getVideoUrl());
-            					String filename = filepath+HTTPDownloader.getFilenameFromUrl(entry.getVideoUrl());
-
-            					// Fix up dropbox urls to take you directly to the file.
-            			        if (entry.getVideoUrl().contains("www.dropbox.com"))
-            			        {
-            			        	//System.err.println("Fixing dropbox url");
-            			        	entry.setVideoUrl(entry.getVideoUrl().replaceAll("www.dropbox.com", "dl.dropboxusercontent.com"));
-            			        }
-            			        
-            			        // Android doesn't support Apple's ".m4v" mp4 files. Rename them as a workaround.
-            			        if (filename.contains(".m4v"))
-            			        {
-            			        	//System.err.print("Changing file name from "+filename);
-            			        			
-            			        	filename = filename.replaceAll(".m4v", ".mp4");
-            			        	//System.err.println("to "+filename);
-            			        }
-            			        
-            					HTTPDownloader.downloadFile(entry.getVideoUrl(), filename);
-            					entry.setFileLocation(filename);
-            					entry.add(dbSQLite);
+                            	entry.add(dbSQLite);
                             }
                         }
                 else{
@@ -214,6 +210,8 @@ public class MainActivity extends DisplayTableActivity {
             pDialog.dismiss();
         }
     }
+	
+
 	
 	class GetAllAnnotations extends AsyncTask<String, String, String> {
 		 
@@ -288,7 +286,7 @@ public class MainActivity extends DisplayTableActivity {
     }
 	
 	
-	class DownloadFile extends AsyncTask<String, String, String> {
+	class DownloadFiles extends AsyncTask<String, String, String> {
 		 
         /**
          * Before starting background thread Show Progress Dialog
@@ -298,7 +296,7 @@ public class MainActivity extends DisplayTableActivity {
             super.onPreExecute();
             if (pDialog == null)
             	pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Loading record from remote DB. Please wait...");
+            pDialog.setMessage("Downloading video files from remote servers. Please wait...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -309,13 +307,38 @@ public class MainActivity extends DisplayTableActivity {
          * */
         protected String doInBackground(String... args) {
  
-            String url = args[0];
-            String file = args[1];
-        	
-            HTTPDownloader.downloadFile(url,file);
+        	String filepath = args[0];
+
+    		List<Exercise> exerciseList = Exercise.getAll(dbSQLite);
+    		for (int i = 0; i < exerciseList.size(); i++)
+    		{
+    			Exercise e  = exerciseList.get(i);
+    			
+    			// If we have a remote video, get it. Local videos will have no URL.
+    			if (!e.getVideoUrl().equals(""))
+    			{
+
+					String url = HTTPDownloader.getDirectUrl(e.getVideoUrl());
+					String file = HTTPDownloader.getLocalFileNameFromUrl(e.getVideoUrl());
+					System.err.println("Attempting to download "+filepath+file+" from "+url);
+					boolean success = HTTPDownloader.downloadFile(url,filepath+file);
+					// If we successfully downloaded the file, update the database.
+					if (success)
+						{
+						System.err.println("Downloaded file. Updating database.");
+						e.setVideoUrl(url);
+						e.setFileLocation(file);
+						e.update(dbSQLite);
+						}
+					
+				
+    			}
+    			
+    		}
+    		return null;
 
  
-            return null;
+            
         }
  
         /**
@@ -369,7 +392,7 @@ public class MainActivity extends DisplayTableActivity {
         		itemToggleEdit.setTitle("Leave Edit Mode");
         	} else
         	{
-        		itemToggleEdit.setTitle("Edit Exercises");
+        		itemToggleEdit.setTitle("Edit Custom Exercises");
         	}
         	drawTable();
         	break;
@@ -380,6 +403,15 @@ public class MainActivity extends DisplayTableActivity {
         
         case R.id.action_custom_exercise:
         	displayCustomExerciseDialog(null);
+        	break;
+        
+        case R.id.download_videos:
+        	try {
+				new DownloadFiles().execute(this.getExternalFilesDir("exercises").getCanonicalPath()+"/");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	break;
         
         }
@@ -468,6 +500,18 @@ public class MainActivity extends DisplayTableActivity {
         }
         
         tableRow.addView(textView);
+        
+        
+        // Override the on click listener to do nothing.
+        tableRow.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        
 
         
         tableLayout.addView(tableRow);
@@ -494,98 +538,106 @@ public class MainActivity extends DisplayTableActivity {
         	
         	Exercise exercise = (Exercise) exerciselist.get(i);
         	
-        	//System.err.println("Exercise Id="+exercise.getId()+" Name="+exercise.getName());
-        	
-        	textView = LayoutUtils.createTextView(this, Integer.toString(exercise.getId()), FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
-        	textView.setVisibility(View.GONE);
-        	tableRow.addView(textView);
-            
-        	
-            textView = LayoutUtils.createTextView(this, exercise.getName(), FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
-            trlp = new TableRow.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,1f);
-            trlp.setMargins(2, 2, 2, 2);
-            textView.setLayoutParams(trlp);
-            
-            textView.setOnClickListener(new View.OnClickListener() {
-    			
-    			@Override
-    			public void onClick(View v) {
-    				
-    				
-    				ViewGroup vp = (ViewGroup) v.getParent();
-					vp.performClick();
-    				//displayToast(((TextView)v).getText().toString() + " clicked!");
-    				onExerciseFieldClick(v);
-    				// Start the intent.
-    				// Send to the exercise screen.
-
-
-    			}
-    		});
-            
-            tableRow.addView(textView);
-            
-            textView = LayoutUtils.createTextView(this, exercise.getVideoUrl(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
-            tableRow.addView(textView);
-            textView.setVisibility(View.GONE);
-            
-            textView = LayoutUtils.createTextView(this, exercise.getInstructions(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
-            tableRow.addView(textView);
-            textView.setVisibility(View.GONE);
-            
-            textView = LayoutUtils.createTextView(this, exercise.getFileLocation(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
-            tableRow.addView(textView);
-            textView.setVisibility(View.GONE);
-    
-            
-	        ImageButton button = new ImageButton(this);
-	        button.setImageResource(android.R.drawable.ic_menu_delete);
-	        
-	        button.setOnClickListener(new View.OnClickListener(){
-	            public void onClick(View v){
-	                 // Do some operation for minus after getting v.getId() to get the current row
-	            	// http://stackoverflow.com/questions/14112044/android-how-to-get-the-id-of-a-parent-view
-	            	 //save button.
-	            	TableRow tr = (TableRow)v.getParent();
-	            	
-	            	//Receipt receipt = getReceiptFromTableRow(tr);
-	            	Exercise exercise = getExerciseFromTableRow(tr);
-	            	String keys = LayoutUtils.getKeysFromTableRow(tr);
-
-	            	deleteExerciseDialog(exercise);
-	            	
-	            	//send click through to parent.
-	            	tr.performClick();
-	            	
-
-	            	TableLayout tl = (TableLayout)tr.getParent();
-	            	tl.removeView(tr);
-	            	
-	            	
-	            }
-	        
+        	// If not edit mode, display all exercises. If edit mode, only display user exercises.
+        	if (!editMode || exercise.getVideoUrl().equals(""))
+        	{
+        
+	        	//System.err.println("Exercise Id="+exercise.getId()+" Name="+exercise.getName());
+	        	
+	        	textView = LayoutUtils.createTextView(this, Integer.toString(exercise.getId()), FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
+	        	textView.setVisibility(View.GONE);
+	        	tableRow.addView(textView);
 	            
-	        });
-	        
-	        if (editMode)
-	        {
-	        	button.setVisibility(View.VISIBLE);	
-	        }
-	        else
-	        {
-	        	button.setVisibility(View.GONE);
-	        }
-	        
-	        tableRow.addView(button);
-	        
-	        // New Row Indicator = Must be last 
-	        textView = LayoutUtils.createTextView(this, "false", FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
-	        textView.setVisibility(View.GONE);
-	        tableRow.addView(textView);
-
-	        tableLayout.addView(tableRow);
-	        
-
+	        	
+	            textView = LayoutUtils.createTextView(this, exercise.getName(), FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
+	            trlp = new TableRow.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,1f);
+	            trlp.setMargins(2, 2, 2, 2);
+	            textView.setLayoutParams(trlp);
+	            
+	            textView.setOnClickListener(new View.OnClickListener() {
+	    			
+	    			@Override
+	    			public void onClick(View v) {
+	    				
+	    				
+	    				ViewGroup vp = (ViewGroup) v.getParent();
+						vp.performClick();
+	    				//displayToast(((TextView)v).getText().toString() + " clicked!");
+	    				onExerciseFieldClick(v);
+	    				// Start the intent.
+	    				// Send to the exercise screen.
+	
+	
+	    			}
+	    		});
+	            
+	            tableRow.addView(textView);
+	            
+	            textView = LayoutUtils.createTextView(this, exercise.getVideoUrl(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
+	            tableRow.addView(textView);
+	            textView.setVisibility(View.GONE);
+	            
+	            textView = LayoutUtils.createTextView(this, exercise.getInstructions(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
+	            tableRow.addView(textView);
+	            textView.setVisibility(View.GONE);
+	            
+	            textView = LayoutUtils.createTextView(this, exercise.getFileLocation(), FONT_SIZE, LayoutUtils.LIGHT_GRAY, LayoutUtils.DARK_GRAY);
+	            tableRow.addView(textView);
+	            textView.setVisibility(View.GONE);
+	    
+	            
+		        ImageButton button = new ImageButton(this);
+		        
+		        
+	
+					button.setImageResource(android.R.drawable.ic_menu_delete); 	
+			        button.setOnClickListener(new View.OnClickListener(){
+			            public void onClick(View v){
+			                 // Do some operation for minus after getting v.getId() to get the current row
+			            	// http://stackoverflow.com/questions/14112044/android-how-to-get-the-id-of-a-parent-view
+			            	 //save button.
+			            	TableRow tr = (TableRow)v.getParent();
+			            	
+			            	//Receipt receipt = getReceiptFromTableRow(tr);
+			            	Exercise exercise = getExerciseFromTableRow(tr);
+			            	String keys = LayoutUtils.getKeysFromTableRow(tr);
+		
+			            	deleteExerciseDialog(exercise);
+			            	
+			            	//send click through to parent.
+			            	tr.performClick();
+			            	
+		
+			            	TableLayout tl = (TableLayout)tr.getParent();
+			            	tl.removeView(tr);
+			            	
+			            	
+			            }
+			        
+			            
+			        });
+				
+				
+		        
+		        if (editMode)
+		        {
+		        	button.setVisibility(View.VISIBLE);	
+		        }
+		        else
+		        {
+		        	button.setVisibility(View.GONE);
+		        }
+		        
+		        tableRow.addView(button);
+		        
+		        // New Row Indicator = Must be last 
+		        textView = LayoutUtils.createTextView(this, "false", FONT_SIZE, LayoutUtils.DARK_GRAY,LayoutUtils.LIGHT_GRAY);
+		        textView.setVisibility(View.GONE);
+		        tableRow.addView(textView);
+	
+		        tableLayout.addView(tableRow);
+		        
+        	}
         
         }
         
@@ -676,17 +728,26 @@ public class MainActivity extends DisplayTableActivity {
 
 	private void onExerciseFieldClick(View v) 
 	{
-		Intent intent = new Intent(this,ExerciseView.class);
-		
-    	// Get the table row
+		// Get the table row
     	TableRow tr = (TableRow)v.getParent();
     	
     	Exercise exercise = getExerciseFromTableRow(tr);
-    	//String keys = LayoutUtils.getKeysFromTableRow(tr);
+		
+		Intent intent = null;
+		if (editMode && exercise.getVideoUrl().equals(""))
+		{
+			intent = new Intent(this,ExerciseEditView.class);
+		}
+		else
+		{
+			intent = new Intent(this,ExerciseView.class);
+		}
+		
     	
     	/// http://stackoverflow.com/questions/2736389/how-to-pass-object-from-one-activity-to-another-in-android
     	intent.putExtra("ExerciseClass", exercise);
-    	intent.putExtra("edit_mode", editMode);
+    	// Only edit user exercises.
+    	intent.putExtra("edit_mode", editMode && exercise.getVideoUrl().equals(""));
     	 
     	
 		startActivity(intent);
@@ -816,6 +877,7 @@ public class MainActivity extends DisplayTableActivity {
     						// If add doesn't work, try update.
     						
     						Exercise exercise = Exercise.getByName(dbSQLite, exercise_name);
+    						exercise.setVideoUrl("");
     						exercise.setInstructions(exercise_instructions);
     						exercise.setFileLocation(mediaUri.getPath());
     						exercise.update(dbSQLite);
@@ -883,6 +945,7 @@ public class MainActivity extends DisplayTableActivity {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
 				dispatchTakeVideoIntent();
 				
 			}

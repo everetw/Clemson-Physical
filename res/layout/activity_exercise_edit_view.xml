@@ -1,0 +1,151 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+	android:weightSum="2"
+	tools:context=".ExerciseEditView" >
+    
+    <!-- http://stackoverflow.com/questions/2698817/linear-layout-and-weight-in-android -->
+
+
+    
+	<!-- Preview of video -->
+    <FrameLayout
+	    android:id="@+id/frameLayout1"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	     >
+
+         <ImageView
+	        android:id="@+id/exercisePlayImageView"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:adjustViewBounds="true"
+	        android:gravity="center"
+	        android:layout_gravity="center"
+	        android:scaleType="fitCenter"
+	        android:background="@android:color/background_dark"
+	        />
+	    <ImageButton
+	        android:id="@+id/exercisePlayImageButton"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:adjustViewBounds="true"
+	        android:gravity="center"
+	        android:layout_gravity="center"
+	        android:onClick="showPractitionerVideo"
+	        android:scaleType="centerInside"
+	        android:background="@android:color/transparent"
+	        android:src="@android:drawable/ic_media_play" />
+
+    </FrameLayout>
+    <LinearLayout     
+        android:layout_width="fill_parent"
+   		android:layout_height="0dp"
+   		android:layout_weight="1"
+    android:orientation="vertical"
+    android:padding="10dp"
+    >
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exercise Name : "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+ 
+    <EditText
+        android:id="@+id/exerciseNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text" >
+ 
+        <requestFocus />
+ 
+    </EditText>
+        <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exercise Notes : "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+ 
+    <EditText
+        android:id="@+id/exerciseInstructionUrlTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textMultiLine" >
+     </EditText>
+
+        
+	</LinearLayout>
+ 
+
+
+	<!-- Exercise Instructions -->
+    
+	<!-- Button Row 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" 
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="showLog"
+            android:layout_weight="1"
+            android:text="View Log" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="startRecording"
+            android:layout_weight="1"
+            android:text="Do Exercise" />
+
+    </LinearLayout>
+    -->
+    <!-- Hidden fields -->
+    
+    	
+
+    <TextView
+        android:id="@+id/exerciseIdTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:gravity="center"
+        android:text="ExerciseId"
+        android:visibility="gone"
+        />
+    <TextView
+        android:id="@+id/exerciseVideoUrlTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:gravity="center"
+        android:text="ExerciseVideoUrl"
+        android:visibility="gone"
+        />
+
+     <TextView
+        android:id="@+id/exerciseFileLocationTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="ExerciseFileLocation"
+        android:visibility="gone"
+        />
+
+
+
+</LinearLayout>
+

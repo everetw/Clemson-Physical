@@ -41,8 +41,7 @@ public class ExerciseView extends DatabaseActivity {
 	private ImageButton exercise_play_button;
 	private ImageView exercise_play_view;
 	private Exercise exercise;
-	private ExerciseLog exerciseLog;
-	private boolean editMode = false;
+	private ExerciseLog exerciseLog;	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,6 @@ public class ExerciseView extends DatabaseActivity {
 		if (exercise_intent != null)
 			exercise = exercise_intent;
 
-		editMode = intent.getBooleanExtra("edit_mode", false);
 		
 		// Get the widgets
         exercise_id = (TextView) findViewById(R.id.exerciseIdTextView);
@@ -91,17 +89,7 @@ public class ExerciseView extends DatabaseActivity {
         
         // This is messy.
         // If the instructions are a URL, load the file in the webview.
-        if (editMode)
-        {
-        	exercise_instruction_webview.setVisibility(View.GONE);
-        	exercise_instructions.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-        	exercise_instruction_webview.setVisibility(View.VISIBLE);
-        	exercise_instructions.setVisibility(View.GONE);
 
-        }
         
         exercise_instructions.setText(exercise.getInstructions());
         try
@@ -148,8 +136,7 @@ public class ExerciseView extends DatabaseActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		/// http://stackoverflow.com/questions/7133141/android-changing-option-menu-items-programmatically
 		getMenuInflater().inflate(R.menu.exercise_view, menu);
-		MenuItem item = menu.findItem(R.id.action_save);
-		item.setVisible(editMode);
+
 
 		return true;
 	}
@@ -181,23 +168,12 @@ public class ExerciseView extends DatabaseActivity {
         	displayRecordVideoDialog(null);
         	break;
         	
-        case R.id.action_save:
-        	saveExercise();
-        	break;
-        	
+
         }
  
         return true;
     }
 	
-	private void saveExercise() {
-		// Update all editable fields.
-		String instructions = exercise_instructions.getText().toString();
-		displayToast("Saving exercise...");
-		exercise.setInstructions(instructions);
-		exercise.update(dbSQLite);
-		
-	}
 
 
 
