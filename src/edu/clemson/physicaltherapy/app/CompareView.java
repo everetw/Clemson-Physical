@@ -66,7 +66,7 @@ public class CompareView extends DatabaseActivity {
 		//Set the title of the Action Bar to the Exercise Name
 		getActionBar().setTitle("Compare: "+exercise.getName());
 		
-		exerciseVideoView.setVideoPath(exercise.getFileLocation());
+		
 		//displayToast(exerciseLog.getVideoLocation());
 		
 		exerciseLogVideoView = (VideoView) findViewById(R.id.videoView2);	
@@ -78,6 +78,7 @@ public class CompareView extends DatabaseActivity {
 		/// http://stackoverflow.com/questions/3686729/mediacontroller-positioning-over-videoview
 		exerciseLogMediaController.setAnchorView(exerciseLogVideoView);
 		exerciseLogVideoView.setMediaController(exerciseLogMediaController);
+		exerciseLogVideoView.setVideoPath(exerciseLog.getVideoLocation());
 		
 		exerciseLogAnnotationTextView = (TextView)findViewById(R.id.textView2);
         
@@ -104,15 +105,15 @@ public class CompareView extends DatabaseActivity {
         	else
         	{
         		System.err.println("Playing local "+exercise.getFileLocation());
-        		exerciseLogVideoView.setVideoPath(exercise.getFileLocation());
-        		exerciseLogVideoView.start();
+        		exerciseVideoView.setVideoPath(exercise.getFileLocation());
+        		
         	}
         }
         else
         {
         	System.err.println("Playing remote"+exercise.getVideoUrl());
-        	exerciseLogVideoView.setVideoPath(exercise.getVideoUrl());
-        	exerciseLogVideoView.start();
+        	exerciseVideoView.setVideoPath(exercise.getVideoUrl());
+        	exerciseVideoView.start();
         }
 		
 		
