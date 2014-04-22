@@ -12,15 +12,27 @@ import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.io.FilenameUtils;
 
+/**
+ * @class HTTPDownloader
+ * @author jburton
+ * @brief Utilities to download files via HTTP.
+ * From http://www.androidsnippets.com/download-an-http-file-to-sdcard-with-progress-notification
+ *
+ */
+
 public class HTTPDownloader {
 	
 	public static boolean downloadFile(String url_string, String file_string)
 	{
 		try {
+		
+			// Fix up url string to get rid of spaces. 
+			url_string = url_string.replaceAll(" ","%20");
 			
+			// Fix up url string to get rid of ampersands. 
+			url_string = url_string.replaceAll("&","%26");
 
-			
-	        //set the download URL, a url that points to a file on the internet
+			//set the download URL, a url that points to a file on the internet
 	        //this is the file to be downloaded
 	        URL url = new URL(url_string);
 	        
@@ -31,7 +43,7 @@ public class HTTPDownloader {
 	        
 
 	        
-	        System.err.println("Downloading "+url_string);
+	        System.err.println("Downloading " + url_string);
 	        if (url.getProtocol().equalsIgnoreCase("https"))
 	        {
 	        	urlConnection = (HttpsURLConnection) url.openConnection();
@@ -82,14 +94,14 @@ public class HTTPDownloader {
 	        fileOutput.close();
 	        return true;
 
-	//catch some possible errors...
-	} catch (MalformedURLException e) {
-	        e.printStackTrace();
-	        return false;
-	} catch (IOException e) {
-	        e.printStackTrace();
-	        return false;
-	}
+		//catch some possible errors...
+		} catch (MalformedURLException e) {
+		        e.printStackTrace();
+		        return false;
+		} catch (IOException e) {
+		        e.printStackTrace();
+		        return false;
+		} 
 	}
 	
     public static String getFilenameFromUrl(String url_string) {
@@ -131,4 +143,6 @@ public class HTTPDownloader {
 	    
 		return filename;
 	}
+	
+
 }

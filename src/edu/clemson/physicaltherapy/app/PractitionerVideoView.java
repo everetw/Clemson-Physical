@@ -46,6 +46,7 @@ public class PractitionerVideoView extends VideoViewActivity {
         
         playLocally = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsActivity.KEY_DOWNLOAD, false);
 
+        System.err.println("Playing exercise id "+exercise.getId());
         // If we are playing locally or this is a local video, play locally.
         if (playLocally == true || exercise.getVideoUrl().equals(""))
         {

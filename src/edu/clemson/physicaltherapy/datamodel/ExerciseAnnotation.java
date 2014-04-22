@@ -165,10 +165,13 @@ public class ExerciseAnnotation extends DatabaseObject {
 	public void setObjectFromJSON(JSONObject j) throws JSONException {
 		String split[] = j.getString("exercise_annotation_video_time").split(":");
 		int time = (Integer.parseInt(split[0])*60000) + (Integer.parseInt(split[1])*1000);
+		
 		setExerciseId(Integer.parseInt(j.getString("exercise_idexercise")));
 		setVideoTime(time);
 		setAnnotation(j.getString("exercise_annotation_annotation"));
 		setCreateTime(j.getString("create_time"));
+		
+		System.err.println("Annotation for Exercise "+this.getExerciseId()+" at "+time);
 
 	}
 
