@@ -24,7 +24,7 @@
 <input type="text" name="name" size="50" value="<?= $name ?>"><br/>
 <h3><u>Video File (only if different from the current video)</u></h3>
 <input type="file" name="load" accept="video/*"><br/>
-<h3><u>Instrctions</u></h3><h4>either place text instructions or a url to a page containing text instructions here.</h4>
+<h3><u>Instructions</u></h3><h4>either place text instructions or a url to a page containing text instructions here.</h4>
 <textarea name="instruct" rows="25" cols="150"><?= $inst ?></textarea>
 <input type="hidden" name="exerciseID" value="<?= $id ?>"/>
 <input type="submit" value="Update"><br/><br/>
