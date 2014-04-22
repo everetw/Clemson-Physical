@@ -1,8 +1,13 @@
 package edu.clemson.physicaltherapy.app;
 
+import java.io.IOException;
+
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +17,7 @@ import android.widget.VideoView;
 import edu.clemson.physicaltherapy.R;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
+import edu.clemson.physicaltherapy.web.HTTPDownloader;
 
 public class CompareView extends DatabaseActivity {
 	
@@ -74,8 +80,41 @@ public class CompareView extends DatabaseActivity {
 		exerciseLogVideoView.setMediaController(exerciseLogMediaController);
 		
 		exerciseLogAnnotationTextView = (TextView)findViewById(R.id.textView2);
+        
+		String filePath = "./";
+        
+        try {
+			filePath = this.getExternalFilesDir(getVideoSubdirectory()).getCanonicalPath()+"/";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+        boolean playLocally = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsActivity.KEY_DOWNLOAD, false);
+
+        // If we are playing locally or this is a local video, play locally.
+        if (playLocally == true || exercise.getVideoUrl().equals(""))
+        {
+        	// if we don't have the video, download it.
+        	if (exercise.getFileLocation().equals("online video"))
+        	{
+        		DownloadSingle task = new DownloadSingle();
+        		task.execute(exercise.getVideoUrl(),filePath);
+
+        	}
+        	else
+        	{
+        		System.err.println("Playing local "+exercise.getFileLocation());
+        		exerciseLogVideoView.setVideoPath(exercise.getFileLocation());
+        		exerciseLogVideoView.start();
+        	}
+        }
+        else
+        {
+        	System.err.println("Playing remote"+exercise.getVideoUrl());
+        	exerciseLogVideoView.setVideoPath(exercise.getVideoUrl());
+        	exerciseLogVideoView.start();
+        }
 		
-		exerciseLogVideoView.setVideoPath(exerciseLog.getVideoLocation());
 		
 
 	}
@@ -110,5 +149,70 @@ public class CompareView extends DatabaseActivity {
  
         return true;
     }
+	
+	class DownloadSingle extends AsyncTask<String, String, String> {
+		 
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (pDialog == null)
+            	pDialog = new ProgressDialog(CompareView.this);
+            pDialog.setMessage("Downloading video files from remote servers. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+ 
+        /**
+         * Getting product details in background thread
+         * */
+        protected String doInBackground(String... args) {
+ 
+        	String videoUrl = args[0];
+        	
+            String filepath = args[1];
+
+
+			String url = HTTPDownloader.getDirectUrl(videoUrl);
+			String filename = HTTPDownloader.getLocalFileNameFromUrl(videoUrl);
+			System.err.println("Attempting to download "+filepath+filename+" from "+url);
+			boolean success = HTTPDownloader.downloadFile(url,filepath+filename);
+			// If we successfully downloaded the file, return the filename.
+			if (success)
+				{
+				return filepath+filename;
+				}
+			return null;
+        }
+	
+ 
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+            // dismiss the dialog once done
+            pDialog.dismiss();
+            
+            // update the exercise with the result and play it.
+            if (result != null)
+            {
+            	updateFileLocationAndStart(result);
+            }
+			
+        }
+	}
+        
+    	private void updateFileLocationAndStart(String result)
+    	{
+    		exercise.setFileLocation(result);
+    		exercise.update(dbSQLite);
+    		exerciseVideoView.setVideoPath(exercise.getFileLocation());
+    		exerciseVideoView.start();
+    	}
 
 }

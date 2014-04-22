@@ -180,6 +180,7 @@ public class Exercise extends DatabaseObject {
 	 */
 	@Override
 	public void setObjectFromJSON(JSONObject j) throws JSONException {
+		setId(Integer.parseInt(j.getString("idexercise")));
 		setName(j.getString("exercise_name"));
 		setVideoUrl(j.getString("exercise_video_url"));
 		setInstructions(j.getString("exercise_instruction"));

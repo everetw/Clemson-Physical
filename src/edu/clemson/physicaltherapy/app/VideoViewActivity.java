@@ -1,13 +1,9 @@
 package edu.clemson.physicaltherapy.app;
 
 
-import java.util.List;
-
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,8 +16,6 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 import edu.clemson.physicaltherapy.R;
-import edu.clemson.physicaltherapy.datamodel.Exercise;
-import edu.clemson.physicaltherapy.web.HTTPDownloader;
 
 
 
