@@ -30,6 +30,7 @@ import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 import edu.clemson.physicaltherapy.R;
+import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
 import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
@@ -105,40 +106,28 @@ public class MainActivity extends DisplayTableActivity {
 //        {
 //	    	new DownloadFiles().execute();
 //	    }
+	    //Exercise bicep;
+		try {
+			//bicep = Exercise.getByName(dbSQLite, "Bicep Curls");
+		    List<DatabaseObject> sampleData = new ArrayList<DatabaseObject>();
+			sampleData.add(new ExerciseLog(0,3,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
+			sampleData.add(new ExerciseLog(0,3,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls.",""));
+			for (int i = 0; i < sampleData.size(); i++)
+	
+				{
+	
+					sampleData.get(i).add(dbSQLite);
+
+				}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
 	    drawTable();
 	}
 	
-//	private void downloadVideosFromWeb() {
-//		List<Exercise> exerciseList = Exercise.getAll(dbSQLite);
-//		for (int i = 0; i < exerciseList.size(); i++)
-//		{
-//			Exercise e  = exerciseList.get(i);
-//			
-//			if (e.getFileLocation().equals("online video"))
-//			{
-//				try {
-//					String url = this.getDirectUrl(e.getVideoUrl());
-//					String filename = this.getLocalFileNameFromUrl(e.getVideoUrl());
-//					DownloadFile task = new DownloadFile();
-//					task.execute(url,filename);
-//					boolean success = task.get();
-//					if (success)
-//						{
-//						e.setVideoUrl(url);
-//						e.setFileLocation(filename);
-//						}
-//					e.update(dbSQLite);
-//				} catch (InterruptedException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				} catch (ExecutionException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//			}
-//		}
-//		
-//	}
 
 	class GetAllExercises extends AsyncTask<String, String, String> {
 		 
