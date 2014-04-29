@@ -54,7 +54,7 @@ public class PractitionerVideoView extends VideoViewActivity {
 
         System.err.println("Playing exercise id "+exercise.getId());
         // If we are playing locally or this is a local video, play locally.
-        if (playLocally == true || exercise.getVideoUrl().equals(""))
+        if (playLocally == true || exercise.getExternalId() < 0)
         {
         	// if we don't have the video, download it.
         	if (exercise.getFileLocation().equals("online video"))

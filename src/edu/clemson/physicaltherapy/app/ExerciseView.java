@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -145,7 +146,8 @@ public class ExerciseView extends VideoViewActivity {
 
 
         System.err.println("Playing exercise id "+exercise.getId());
-    	if (exercise.getFileLocation().equals("online video") || ! exercise.getVideoUrl().equals(""))
+        boolean playLocally = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsActivity.KEY_DOWNLOAD, false);
+    	if (exercise.getFileLocation().equals("online video") || !playLocally)
     	{
     		System.err.println("Playing remote"+exercise.getVideoUrl());
         	setVideoPath(exercise.getVideoUrl());

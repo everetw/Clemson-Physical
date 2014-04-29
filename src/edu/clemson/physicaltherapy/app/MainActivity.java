@@ -114,16 +114,41 @@ public class MainActivity extends DisplayTableActivity {
 
 	private void createData()
 	{
-		downloadDataFromExternal();
+		//downloadDataFromExternal();
+		System.err.println("Creating data");
 		try {
 			Exercise bicep = Exercise.getByName(dbSQLite, "Bicep Curls");
+			Exercise protraction = Exercise.getByName(dbSQLite, "Scapular Protraction 90 of Flexion");
+			Exercise side = Exercise.getByName(dbSQLite, "Prog. Resisted Ext. Rotation (Side-Lying)");
 		    List<DatabaseObject> sampleData = new ArrayList<DatabaseObject>();
-			sampleData.add(new ExerciseLog(0,bicep.getId(),this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
+		    //ExerciseLog.deleteAll(dbSQLite);
+		    try {
+		    sampleData.add(new ExerciseLog(0,bicep.getId(),this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
+		    } catch (Exception e) { 
+		    	
+		    }
+		    try {
 			sampleData.add(new ExerciseLog(0,bicep.getId(),this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls.",""));
+		    } catch (Exception e) { 
+		    	
+		    }
+		    try {
+
+			sampleData.add(new ExerciseLog(0,side.getId(),this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140428_214132_911766269.mp4","15 reps, right shoulder",""));
+		    } catch (Exception e) { 
+		    	
+		    }
+		    try {
+
+			sampleData.add(new ExerciseLog(0,protraction.getId(),this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140428_214440_-1606374857.mp4","15 reps",""));
+		    } catch (Exception e) { 
+		    	
+		    }
+
 			for (int i = 0; i < sampleData.size(); i++)
 	
 				{
-	
+					System.err.println("Adding log entry");
 					sampleData.get(i).add(dbSQLite);
 
 				}
@@ -364,7 +389,7 @@ public class MainActivity extends DisplayTableActivity {
 						{
 						System.err.println("Downloaded file. Updating database.");
 						e.setVideoUrl(url);
-						e.setFileLocation(file);
+						e.setFileLocation(filepath+file);
 						e.update(dbSQLite);
 						}
 					
@@ -441,6 +466,10 @@ public class MainActivity extends DisplayTableActivity {
         	}
         	drawTable();
         	break;
+
+        case R.id.resync_data:
+            downloadDataFromExternal();
+            break;
             
         case R.id.create_data:
             createData();
@@ -471,6 +500,17 @@ public class MainActivity extends DisplayTableActivity {
 //        	{
 //        		LayoutUtils.displayMessageDialog(this, "Download Videos", "Your phone must be connected to WiFi to download all videos locally.\n");
 //        	}
+	        	
+	        // Now change the preferences to actually use the internal video	
+            // We need an Editor object to make preference changes.
+            // All objects are from android.context.Context
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(SettingsActivity.KEY_DOWNLOAD, true);
+
+            // Commit the edits!
+	        editor.commit();
+
         	break;
         
         }

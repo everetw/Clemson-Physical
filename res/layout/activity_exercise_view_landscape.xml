@@ -70,7 +70,8 @@
 		        
 		        android:text=""
 		        android:textColor="#FFFFFF"
-		        android:background="#44000000"
+		        android:background="#BB000000"
+		        android:padding="5dip"
 		        android:textAppearance="?android:attr/textAppearanceMedium" 
 		        android:visibility="invisible"
 		         />
@@ -80,8 +81,8 @@
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_toRightOf="@+id/textView1"
-	            android:background="#44000000"
-	            android:src="@android:drawable/ic_input_delete"
+	            android:background="#BB000000"
+	            android:src="@android:drawable/ic_delete"
 	            android:onClick="onDeleteAnnotationButtonClicked"
 	            android:visibility="invisible" />
 	        
