@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -612,23 +614,13 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 	            	//Receipt receipt = getReceiptFromTableRow(tr);
 	            	ExerciseLog exerciseLog = getExerciseLogFromTableRow(tr);
 	            	String keys = LayoutUtils.getKeysFromTableRow(tr);
-	            	try 
-	            	{
-	            		exerciseLog.delete(dbSQLite);	
-	            	}
-	            	catch (Exception e)
-	            	{
-	            		displayMessageDialog(e.getMessage(),e.toString());
-	            	}
+
 	            	
 	            	
 	            	//send click through to parent.
 	            	tr.performClick();
 	            	
-
-	            	TableLayout tl = (TableLayout)tr.getParent();
-	            	tl.removeView(tr);
-	            	
+	            	deleteExerciseLogDialog(exerciseLog,tr);
 	            	
 	            }
 	        
@@ -787,6 +779,65 @@ public class LogView extends UpdateTableActivity implements AdapterView.OnItemSe
 		return "videos";
 	}
 	
+	
+	private void deleteExerciseLog(ExerciseLog exerciseLog)
+	{
+		try 
+		{
+			exerciseLog.delete(dbSQLite);	
+		}
+		catch (Exception e)
+		{
+			displayMessageDialog(e.getMessage(),e.toString());
+		}
+	}
+	
+	private void deleteExerciseLogDialog(final ExerciseLog exerciseLog, final TableRow tr)
+	{
+		
+		
+    	String title = "Delete Log Entry";
+    	
+    	String message = "Are you sure you want to delete log entry from "+exerciseLog.getCreateTime()+" AND associated video and audio notes?";
+
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				this);
+
+		alertDialogBuilder.setTitle(title);
+		
+
+		alertDialogBuilder.setMessage(message);
+		// set dialog message
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Yes",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+					// get user input and set it to result
+			    	deleteExerciseLog(exerciseLog);
+			    	// Only remove the view if confirmed.
+			    	TableLayout tl = (TableLayout) tr.getParent();
+			    	tl.removeView(tr);
+			    	dialog.cancel();
+				
+			    }
+			  })
+			.setNegativeButton("No",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+			    // Continue the video
+				dialog.cancel();
+			    }
+			  });
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+	}
 
 	
 }

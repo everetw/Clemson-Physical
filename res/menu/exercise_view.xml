@@ -14,6 +14,13 @@
         android:icon="@drawable/ic_action_record"
         android:title="Add"/>
     
+        <item
+        android:id="@+id/action_fullscreen"
+        android:orderInCategory="99"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_fullscreen"
+        android:title="Fullscreen"/>
+    
     
     <item
         android:id="@layout/activity_info_view"

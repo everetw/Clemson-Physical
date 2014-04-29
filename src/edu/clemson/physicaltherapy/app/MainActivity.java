@@ -29,6 +29,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
+import edu.clemson.physicaltherapy.PhysicalTherapyApplication;
 import edu.clemson.physicaltherapy.R;
 import edu.clemson.physicaltherapy.datamodel.DatabaseObject;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
@@ -64,6 +65,16 @@ public class MainActivity extends DisplayTableActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		PhysicalTherapyApplication application = (PhysicalTherapyApplication)getApplicationContext();
+		
+		if (application.firstAccessed())
+		{
+			downloadDataFromExternal();
+		}
+			
+		
+		
 		super.onCreate(savedInstanceState);
 		
 		
@@ -87,31 +98,28 @@ public class MainActivity extends DisplayTableActivity {
 	
 
 	
+	private void downloadDataFromExternal() {
+		// Get all exercises from external.
+		new GetAllExercises().execute();
+		
+	}
+
+
+	protected void getExerciseAnnotationsFromExternal() {
+		new GetAllAnnotations().execute();
+		
+	}
+
+
+
 	private void createData()
 	{
-		Exercise.deleteAll(dbSQLite);
-		ExerciseAnnotation.deleteAll(dbSQLite);
-		//ExerciseLog.deleteAll(dbSQLite);
-		Log.d("DEBUGGING","before creating data");
-		new GetAllExercises().execute();
-		new GetAllAnnotations().execute();
-
-
-	    
-	    //new GetAllAnnotations().execute();
-	    Log.d("DEBUGGING","after creating data");
-	    
-//	    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-//        if (settings.getBoolean(SettingsActivity.KEY_DOWNLOAD, true))
-//        {
-//	    	new DownloadFiles().execute();
-//	    }
-	    //Exercise bicep;
+		downloadDataFromExternal();
 		try {
-			//bicep = Exercise.getByName(dbSQLite, "Bicep Curls");
+			Exercise bicep = Exercise.getByName(dbSQLite, "Bicep Curls");
 		    List<DatabaseObject> sampleData = new ArrayList<DatabaseObject>();
-			sampleData.add(new ExerciseLog(0,3,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
-			sampleData.add(new ExerciseLog(0,3,this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls.",""));
+			sampleData.add(new ExerciseLog(0,bicep.getId(),this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140406_185047_526647753.mp4","Did bicep curls",""));
+			sampleData.add(new ExerciseLog(0,bicep.getId(),this.getExternalFilesDir("user_videos").getCanonicalPath()+"/VID_20140408_090425_526647753.mp4","Did 15 bicep curls.\n1 set palms up. 1 set palms down. 1 set hammer curls.",""));
 			for (int i = 0; i < sampleData.size(); i++)
 	
 				{
@@ -163,7 +171,7 @@ public class MainActivity extends DisplayTableActivity {
                 Log.d("DEBUGGING","got json data");
  
                         // check your log for json response
-                Log.d("Single Product Details", json.toString());
+                Log.d("Single Exercise Details", json.toString());
  
                         // json success tag
                 success = json.getInt("success");
@@ -171,15 +179,35 @@ public class MainActivity extends DisplayTableActivity {
                     // successfully received product details
                     JSONArray productObj = json.getJSONArray("exercises"); // JSON Array
                     		Exercise entry = new Exercise();
-                            for(int i=0; i<productObj.length(); i++){
+                    		List<Exercise> externalList = new ArrayList<Exercise>();
+                            for(int i=0; i<productObj.length(); i++)
+                            {
                             	JSONObject dbObject = productObj.getJSONObject(i);
                             	entry.setObjectFromJSON(dbObject);
-                            	entry.add(dbSQLite);
+                            	externalList.add(entry);
+                            	// If the exercise is found, update it.
+                            	try 
+                            	{
+                            		Exercise internal = Exercise.getByExternalId(dbSQLite, entry.getExternalId());
+                            		System.err.println("Created:" + internal.getCreateTime() + " Updated:" + internal.getUpdateTime());
+                            		entry.setId(internal.getId());
+                            		// TODO: Be smart enough to know whether or not to update video.
+                            		entry.setFileLocation(internal.getFileLocation());
+                            		entry.update(dbSQLite);
+                            	}
+                            	// If the exercise is not found, add it.
+                            	catch (Exception e)
+                            	{
+                            		entry.add(dbSQLite);
+                            	}
+                            	
+                            	// TODO: Delete videos that are gone from the server.
                             }
                         }
                 else{
-                            // product with pid not found
+                            
                 }
+                
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -197,6 +225,7 @@ public class MainActivity extends DisplayTableActivity {
         	super.onPostExecute(result);
             // dismiss the dialog once done
             pDialog.dismiss();
+            getExerciseAnnotationsFromExternal();
         }
     }
 	
@@ -247,9 +276,28 @@ public class MainActivity extends DisplayTableActivity {
                             for(int i=0; i<productObj.length(); i++){
                             	JSONObject dbObject = productObj.getJSONObject(i);
                             	entry.setObjectFromJSON(dbObject);
-                            	entry.add(dbSQLite);
+                            	
+
+                            	try
+                            	{
+                                	// Get the exercise by external ID
+                                	Exercise exercise = Exercise.getByExternalId(dbSQLite, entry.getExerciseId());
+                                	// Map it to an internal id
+                                	entry.setExerciseId(exercise.getId());
+                                	// Add it.
+                            		entry.add(dbSQLite);
+                            	}
+                            	catch (Exception e)
+                            	{
+                            		// Annotation is either there or we can't find the exercise id. Do nothing.
+                            	}
                             }
+                            // Delete exercises that have not been updated in the download.
+                            // Expect a 2 minute lag time between when exercise is deleted externally and when this picks up that deletion.
+                            // This is to be sure a slow internet connection doesn't wipe out exercises.
+                            Exercise.deleteStaleExercises(dbSQLite);
                         }
+                
                 else{
                             // product with pid not found
                 }
@@ -359,6 +407,14 @@ public class MainActivity extends DisplayTableActivity {
 		return true;
 	}
 	
+
+
+
+
+
+
+
+
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -395,15 +451,31 @@ public class MainActivity extends DisplayTableActivity {
         	break;
         
         case R.id.download_videos:
-        	try {
-				new DownloadFiles().execute(this.getExternalFilesDir("exercises").getCanonicalPath()+"/");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	
+        	/// http://stackoverflow.com/questions/3841317/how-to-see-if-wifi-is-connected-in-android
+//        	ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        	NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//
+//        	if (mWifi.isConnected()) 
+//        	{
+//        	    // Do whatever
+//        	
+	        	try {
+					new DownloadFiles().execute(this.getExternalFilesDir("exercises").getCanonicalPath()+"/");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//        	}
+//        	else
+//        	{
+//        		LayoutUtils.displayMessageDialog(this, "Download Videos", "Your phone must be connected to WiFi to download all videos locally.\n");
+//        	}
         	break;
         
         }
+        
+        
         
  
         return true;
@@ -577,10 +649,9 @@ public class MainActivity extends DisplayTableActivity {
 	            
 		        ImageButton button = new ImageButton(this);
 		        
-		        
-	
-					button.setImageResource(android.R.drawable.ic_menu_delete); 	
-			        button.setOnClickListener(new View.OnClickListener(){
+		     
+				button.setImageResource(android.R.drawable.ic_menu_delete); 	
+			    button.setOnClickListener(new View.OnClickListener(){
 			            public void onClick(View v){
 			                 // Do some operation for minus after getting v.getId() to get the current row
 			            	// http://stackoverflow.com/questions/14112044/android-how-to-get-the-id-of-a-parent-view
@@ -591,21 +662,14 @@ public class MainActivity extends DisplayTableActivity {
 			            	Exercise exercise = getExerciseFromTableRow(tr);
 			            	String keys = LayoutUtils.getKeysFromTableRow(tr);
 		
-			            	deleteExerciseDialog(exercise);
-			            	
 			            	//send click through to parent.
 			            	tr.performClick();
 			            	
-		
-			            	TableLayout tl = (TableLayout)tr.getParent();
-			            	tl.removeView(tr);
-			            	
-			            	
+			            	deleteExerciseDialog(exercise, tr);
+
 			            }
-			        
 			            
 			        });
-				
 				
 		        
 		        if (editMode)
@@ -655,11 +719,11 @@ public class MainActivity extends DisplayTableActivity {
 	
 	}
 
-	private void deleteExerciseDialog(final Exercise exercise)
+	private void deleteExerciseDialog(final Exercise exercise, final TableRow tr)
 	{
 		
 		
-    	String title = "Confirm Delete!";
+    	String title = "Delete Custom Exercise";
     	
     	String message = "Are you sure you want to delete exercise "+exercise.getName()+" AND all log entries?";
 
@@ -679,6 +743,10 @@ public class MainActivity extends DisplayTableActivity {
 			    public void onClick(DialogInterface dialog,int id) {
 					// get user input and set it to result
 			    	deleteExercise(exercise);
+			    	// Only remove the view if confirmed.
+			    	TableLayout tl = (TableLayout) tr.getParent();
+			    	tl.removeView(tr);
+			    	dialog.cancel();
 				
 			    }
 			  })

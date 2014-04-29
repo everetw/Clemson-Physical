@@ -45,7 +45,13 @@ public class UserVideoView extends VideoViewActivity  {
         
 		setVideoPath(exerciseLog.getVideoLocation());
 		
-		start();
+		int videoTime = 0;
+		if (savedInstanceState != null)
+		{
+			videoTime = savedInstanceState.getInt(VIDEO_TIME,0);
+		}
+
+		resumeVideo(videoTime);
 		
 	}
 	
@@ -252,7 +258,8 @@ public class UserVideoView extends VideoViewActivity  {
 		else
 		{
 			exerciseLogAnnotation.setAnnotation(annotation);
-			exerciseLogAnnotation.setVideoTime(time);
+			// Do not update time when updating annotation. Prevents "annotation" creep.
+			//exerciseLogAnnotation.setVideoTime(time);
 			exerciseLogAnnotation.update(dbSQLite);
 		}
 		//System.err.println("updateAnnotation "+annotation);

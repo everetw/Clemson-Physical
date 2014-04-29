@@ -32,11 +32,17 @@ public class DatabaseSQL {
 		"  \"exercise_video_url\" VARCHAR(127),\n"+
 		"  \"exercise_instruction_url\" VARCHAR(1023),\n"+
 		"  \"exercise_file_location\" VARCHAR(127),\n"+
+		"  \"exercise_external_id\" INTEGER,\n"+
 		"  \"create_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
-		"  \"update_time\" TIMESTAMP,\n"+
+		"  \"update_time\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n"+
 		"  CONSTRAINT \"exercise_name_UNIQUE\"\n"+ 
 		"    UNIQUE(\"exercise_name\")"+ 
 		");",
+		
+		"CREATE TRIGGER update_exercise_timestamp AFTER UPDATE ON exercise\n"+
+		"BEGIN\n"+
+	    "UPDATE exercise SET update_time=DATETIME('now') WHERE idexercise = new.idexercise;\n"+
+		"END;",
 
 
 		"CREATE TABLE \"exercise_annotation\"(\n"+

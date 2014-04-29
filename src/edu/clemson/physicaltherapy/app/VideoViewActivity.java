@@ -24,7 +24,7 @@ import edu.clemson.physicaltherapy.R;
 public abstract class VideoViewActivity extends DatabaseActivity implements MediaController.MediaPlayerControl, MediaPlayer.OnCompletionListener {
 
 
-	
+	public static String VIDEO_TIME = "video_time";
 	private VideoView videoView;
 	private TextView annotationTextView;
 	private Handler videoHandler = new Handler();
@@ -91,7 +91,7 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 //			public void onFocusChange(View v, boolean hasFocus) {
 //				if (hasFocus)
 //	            {
-//					videoView.pause();
+//					pause();
 //	            }
 //				else
 //				{
@@ -108,6 +108,15 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 		// Grab the delete button. 
 		annotationDeleteButton = (ImageButton)findViewById(R.id.imageButton1);
 		
+
+		
+	}
+	
+	protected void resumeVideo(int videoTime)
+	{
+        // Restore value of members from saved state
+        seekTo(videoTime);
+        start();
 	}
 	
 	
@@ -121,6 +130,7 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 	public void onDeleteAnnotationButtonClicked(View v)
 	{
 		
+		pause();
 		displayDeleteDialog(DELETE_CURRENT);
 		
 	}
@@ -160,14 +170,14 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 	    	 // This coding is shameful. 
 	    	 // System.err.println("Checking annotations");
 	    	 // https://blog.trifork.com/2011/08/12/using-android-preferences-in-a-background-service/
-	    	 if (!videoView.isPlaying())
+	    	 if (!isPlaying())
 	    	 {
 	    		 videoHandler.postDelayed(this, POLL_INTERVAL);
 	    		 return;
 	    	 }
 	    	 
 	    	 // Find the current time
-	         int currentTime = videoView.getCurrentPosition();
+	         int currentTime = getCurrentPosition();
 	         
 	         // Calculate the time of the next check. 
 	         int nextTime = currentTime+POLL_INTERVAL;
@@ -199,14 +209,14 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 
 	   protected void onActionAddAnnotation()
 	   {
-		   videoView.pause();
+		   pause();
 		   displayAnnotationDialog();
 		   
 	   }
 	   
 	   protected void onActionDeleteAll() 
 	   {
-		   videoView.pause();
+		   pause();
 		   displayDeleteDialog(DELETE_ALL);
 	   }
 	   
@@ -455,9 +465,13 @@ public abstract class VideoViewActivity extends DatabaseActivity implements Medi
 		videoView.setMediaController(controller);
 	}
 	
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(VIDEO_TIME, getCurrentPosition());
+        super.onSaveInstanceState(outState);
+    }
+    
 
-
-	
 
 
 	

@@ -2,6 +2,7 @@ package edu.clemson.physicaltherapy.app;
 
 
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -9,10 +10,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.media.ThumbnailUtils;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore.Video.Thumbnails;
 import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,11 +24,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import edu.clemson.physicaltherapy.R;
 import edu.clemson.physicaltherapy.datamodel.Exercise;
+import edu.clemson.physicaltherapy.datamodel.ExerciseAnnotation;
 import edu.clemson.physicaltherapy.datamodel.ExerciseLog;
 
 
 
-public class ExerciseView extends DatabaseActivity {
+public class ExerciseView extends VideoViewActivity {
 	
 	private TextView exercise_id;
 	private TextView exercise_name;
@@ -40,27 +39,15 @@ public class ExerciseView extends DatabaseActivity {
 	private WebView exercise_instruction_webview;
 	private ImageButton exercise_play_button;
 	private ImageView exercise_play_view;
+	
 	private Exercise exercise;
 	private ExerciseLog exerciseLog;	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+
 		super.onCreate(savedInstanceState);
-		
-		
-	    int orientation = getResources().getConfiguration().orientation; 
-	    if (Configuration.ORIENTATION_LANDSCAPE == orientation) {
-	    	setContentView(R.layout.activity_exercise_view_landscape);
-	    }
-	    else
-	    {
-	    	setContentView(R.layout.activity_exercise_view);
-	    }
-	    
-	    // Setup the Action Bar
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
 		
 		// Get the exercise from the intent.
 		Intent intent = getIntent();
@@ -77,9 +64,9 @@ public class ExerciseView extends DatabaseActivity {
         exercise_video_url = (TextView) findViewById(R.id.exerciseVideoUrlTextView);
         exercise_instructions = (EditText) findViewById(R.id.exerciseInstructionUrlTextView);
         exercise_instruction_webview = (WebView) findViewById(R.id.exerciseInstructionWebView);
-        exercise_play_button = (ImageButton) findViewById(R.id.exercisePlayImageButton);
+//        exercise_play_button = (ImageButton) findViewById(R.id.exercisePlayImageButton);
         exercise_file_location = (TextView) findViewById(R.id.exerciseFileLocationTextView);
-        exercise_play_view = (ImageView) findViewById(R.id.exercisePlayImageView);
+//        exercise_play_view = (ImageView) findViewById(R.id.exercisePlayImageView);
         
 
         // Set the fields
@@ -95,7 +82,21 @@ public class ExerciseView extends DatabaseActivity {
         try
         {
         	URL testUrl = new URL(exercise.getInstructions());
-        	exercise_instruction_webview.loadUrl(exercise.getInstructions());
+        	
+        	
+        	// Load pdf via Google Viewer http://kylewbanks.com/blog/Loading-PDF-in-Android-WebView
+        	int pdf = exercise.getInstructions().toLowerCase().indexOf(".pdf");
+        	
+        	if (pdf != -1)
+        	{
+        		exercise_instruction_webview.getSettings().setJavaScriptEnabled(true); 
+        		exercise_instruction_webview.loadUrl("http://docs.google.com/gview?embedded=true&url="+testUrl.toString());        		
+        	}
+        	else
+        	{
+        		exercise_instruction_webview.getSettings().setJavaScriptEnabled(false); 
+        		exercise_instruction_webview.loadUrl(exercise.getInstructions());
+        	}
         }
         catch (MalformedURLException mue)
         {
@@ -103,6 +104,7 @@ public class ExerciseView extends DatabaseActivity {
         	// Next line should work but doesn't. Appears to be a bug in Android API.
         	// exercise_instruction_webview.loadData(exercise.getInstructions(), "text/plain", "UTF-8");
         	// So we include a null base url.  
+        	exercise_instruction_webview.getSettings().setJavaScriptEnabled(false);
         	exercise_instruction_webview.loadDataWithBaseURL(null,exercise.getInstructions(), "text/plain", "UTF-8", null);
         }
         
@@ -119,14 +121,50 @@ public class ExerciseView extends DatabaseActivity {
         
         /// http://android-er.blogspot.com/2011/05/create-thumbnail-for-video-using.html
         // MINI_KIND: 512 x 384 thumbnail 
-        exercise_play_view.setImageBitmap(ThumbnailUtils.createVideoThumbnail(exercise.getFileLocation(), Thumbnails.MINI_KIND));
+        //exercise_play_view.setImageBitmap(ThumbnailUtils.createVideoThumbnail(exercise.getFileLocation(), Thumbnails.MINI_KIND));
         
         
         //Set the title of the Action Bar to the Exercise Name
         getActionBar().setTitle(exercise.getName());
         
- 
+        String filePath = "./";
+        
+        try {
+			filePath = this.getExternalFilesDir(getVideoSubdirectory()).getCanonicalPath()+"/";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
+		int videoTime = intent.getIntExtra(VIDEO_TIME, 0);
+		if (savedInstanceState != null)
+		{
+			videoTime = savedInstanceState.getInt(VIDEO_TIME,0);
+		}
+
+
+        System.err.println("Playing exercise id "+exercise.getId());
+    	if (exercise.getFileLocation().equals("online video") || ! exercise.getVideoUrl().equals(""))
+    	{
+    		System.err.println("Playing remote"+exercise.getVideoUrl());
+        	setVideoPath(exercise.getVideoUrl());
+        	resumeVideo(videoTime);
+        }
+    	else {
+
+    		System.err.println("Playing local "+exercise.getFileLocation());
+    		setVideoPath(exercise.getFileLocation());
+    		resumeVideo(videoTime);
+        	
+        }
+		
+		
+	
 	}
+	
+
+	
 	
 
 
@@ -166,6 +204,10 @@ public class ExerciseView extends DatabaseActivity {
         	break;
         case R.id.action_add:
         	displayRecordVideoDialog(null);
+         	break;
+         	
+        case R.id.action_fullscreen:
+        	showPractitionerVideo(null);
         	break;
         	
 
@@ -178,16 +220,19 @@ public class ExerciseView extends DatabaseActivity {
 
 
 
-	public void showPractitionerVideo(View view){
+	public void showPractitionerVideo(View view)
+	{
 		// add stuff to the intent
 		Intent intent = new Intent(this, PractitionerVideoView.class);
 		intent.putExtra("ExerciseClass", exercise);
+		intent.putExtra(VIDEO_TIME, getCurrentPosition());
 		startActivity(intent);
 	}
 	
-	public void showLog(View view){
+	public void showLog(View view)
+	{
 		Intent intent = new Intent(this, LogView.class);
-		intent.putExtra("ExerciseClass", exercise);
+		intent.putExtra(VIDEO_TIME, exercise);
 		startActivity(intent);
 	}
 
@@ -282,7 +327,7 @@ public class ExerciseView extends DatabaseActivity {
 	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-	    super.onSaveInstanceState(outState);
+	    
 	 
 	    // save file url in bundle as it will be null on scren orientation
 	    // changes
@@ -290,6 +335,10 @@ public class ExerciseView extends DatabaseActivity {
 	    outState.putSerializable("exercise", exercise);
 	    outState.putSerializable("exercise_log", exerciseLog);
 	    
+
+	    outState.putInt("video_time", getCurrentPosition());
+	    
+	    super.onSaveInstanceState(outState);
 	    
 	}
 	 
@@ -377,7 +426,75 @@ public class ExerciseView extends DatabaseActivity {
 
 	
 	
+	}
+
+
+
+
+	@Override
+	protected void setContentView() {
+		int orientation = getResources().getConfiguration().orientation; 
+	    if (Configuration.ORIENTATION_LANDSCAPE == orientation) {
+	    	setContentView(R.layout.activity_exercise_view_landscape);
+	    }
+	    else
+	    {
+	    	setContentView(R.layout.activity_exercise_view);
+	    }
+		
+	}
+
+
+
+
+	@Override
+	protected void addAnnotation(int time, String annotation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	protected void deleteAnnotation(int time, String annotation, int interval) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	protected void updateAnnotation(int time, String annotation, int interval) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public String readAnnotation(int time, int interval) {
+		// TODO Auto-generated method stub
+		ExerciseAnnotation ela =  ExerciseAnnotation.getNextAnnotationByTime(dbSQLite, exercise.getId(), time, interval);
+		if (ela == null)
+		{
+			return null;
+		}
+		return ela.getAnnotation();
+	}
+
+	
+
+	@Override
+	protected void deleteAllAnnotations() {
+		// TODO Auto-generated method stub
+		
 	}  
+
+
+
 
 	
 

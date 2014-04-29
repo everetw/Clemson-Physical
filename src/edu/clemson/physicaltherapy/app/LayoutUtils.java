@@ -185,6 +185,7 @@ public class LayoutUtils
 		TableRow.LayoutParams tvlp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
         textView.setLayoutParams(tvlp);
         tvlp.setMargins(2, 2, 2, 2);
+        textView.setPadding(5, 10, 5, 10);
         textView.setText(message);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
@@ -217,6 +218,7 @@ public class LayoutUtils
 		TableRow.LayoutParams tvlp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
         textView.setLayoutParams(tvlp);
         tvlp.setMargins(2, 2, 2, 2);
+        textView.setPadding(5, 10, 5, 10);
         textView.setText(message);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
         textView.setBackgroundColor(backgroundColor);
@@ -264,6 +266,7 @@ public class LayoutUtils
 		TableRow.LayoutParams tvlp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
         editText.setLayoutParams(tvlp);
         tvlp.setMargins(2, 2, 2, 2);
+        editText.setPadding(5, 10, 5, 10);
         editText.setText(message);
         editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
         editText.setBackgroundColor(backgroundColor);
@@ -336,7 +339,7 @@ public class LayoutUtils
 		TableRow.LayoutParams tvlp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
         spinner.setLayoutParams(tvlp);
         tvlp.setMargins(2, 2, 2, 2);
-        spinner.setPadding(0, 0, 0, 0);
+        spinner.setPadding(5, 10, 5, 10);
         //spinner.setText(message);
         //spinner.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
         spinner.setBackgroundColor(backgroundColor);
@@ -370,7 +373,7 @@ public class LayoutUtils
 	{
 	    WebView webview = new WebView(context);
 	    webview.loadData(html, "text/html", null);
-	    webview.setPadding(2,2,2,2);
+	    webview.setPadding(0,0,0,0);
 	    return webview;
 	}
 	

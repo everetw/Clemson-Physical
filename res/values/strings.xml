@@ -29,6 +29,7 @@
     
     <string name="action_about">Info</string>
     <string name="about_text">file:///android_asset/about.html</string>
+    <string name="pdf_text">file:///android_asset/4.Physical Therapy - User Manual.pdf</string>
     <string name="action_delete">Delete</string>
     <string name="action_saveall">Save All</string>
     <string name="action_delete_all_annotations">Delete All Annotations</string>

@@ -165,6 +165,8 @@ public class ExerciseEditView extends DatabaseActivity {
 		exercise.setName(name);
 		exercise.setInstructions(instructions);
 		exercise.update(dbSQLite);
+		// reset the action bar
+		getActionBar().setTitle(exercise.getName());
 		
 	}
 	

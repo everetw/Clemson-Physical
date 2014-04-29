@@ -31,6 +31,12 @@ public class PractitionerVideoView extends VideoViewActivity {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		exercise = (Exercise)intent.getSerializableExtra("ExerciseClass");
+		int videoTime = intent.getIntExtra(VIDEO_TIME, 0);
+		if (savedInstanceState != null)
+		{
+			videoTime = savedInstanceState.getInt(VIDEO_TIME,0);
+		}
+
 		
         //Set the title of the Action Bar to the Exercise Name
         getActionBar().setTitle(exercise.getName());
@@ -61,14 +67,14 @@ public class PractitionerVideoView extends VideoViewActivity {
         	{
         		System.err.println("Playing local "+exercise.getFileLocation());
         		setVideoPath(exercise.getFileLocation());
-        		start();
+        		resumeVideo(videoTime);
         	}
         }
         else
         {
         	System.err.println("Playing remote"+exercise.getVideoUrl());
         	setVideoPath(exercise.getVideoUrl());
-        	start();
+        	resumeVideo(videoTime);
         }
 		
 		
@@ -80,6 +86,7 @@ public class PractitionerVideoView extends VideoViewActivity {
 		exercise.setFileLocation(result);
 		exercise.update(dbSQLite);
 		setVideoPath(exercise.getFileLocation());
+		// if we have just downloaded the video, restart it. 
 		start();
 	}
 	
@@ -202,7 +209,8 @@ public class PractitionerVideoView extends VideoViewActivity {
 		else
 		{
 			exerciseAnnotation.setAnnotation(annotation);
-			exerciseAnnotation.setVideoTime(time);
+			// Do not update video time on annotation. Prevents "annotation creep".
+			//exerciseAnnotation.setVideoTime(time);
 			exerciseAnnotation.update(dbSQLite);
 		}
 		//System.err.println("updateAnnotation "+annotation);

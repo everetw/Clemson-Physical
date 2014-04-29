@@ -69,6 +69,11 @@ public class CompareView extends DatabaseActivity {
 		
 		//displayToast(exerciseLog.getVideoLocation());
 		
+		
+        int exerciseLogVideoTime = 0;
+        int exerciseVideoTime = 0;
+        
+
 		exerciseLogVideoView = (VideoView) findViewById(R.id.videoView2);	
 		
 		//Add the media controller.
@@ -80,6 +85,7 @@ public class CompareView extends DatabaseActivity {
 		exerciseLogVideoView.setMediaController(exerciseLogMediaController);
 		exerciseLogVideoView.setVideoPath(exerciseLog.getVideoLocation());
 		
+		
 		exerciseLogAnnotationTextView = (TextView)findViewById(R.id.textView2);
         
 		String filePath = "./";
@@ -90,6 +96,8 @@ public class CompareView extends DatabaseActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
+        
+
         boolean playLocally = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsActivity.KEY_DOWNLOAD, false);
 
         // If we are playing locally or this is a local video, play locally.
@@ -107,14 +115,30 @@ public class CompareView extends DatabaseActivity {
         		System.err.println("Playing local "+exercise.getFileLocation());
         		exerciseVideoView.setVideoPath(exercise.getFileLocation());
         		
+        		
         	}
         }
         else
         {
         	System.err.println("Playing remote"+exercise.getVideoUrl());
         	exerciseVideoView.setVideoPath(exercise.getVideoUrl());
-        	exerciseVideoView.start();
+        	
+        	
         }
+        
+        
+        // If we are recreating the activity, restart the video.
+        if (savedInstanceState != null)
+        {
+        	exerciseLogVideoTime = savedInstanceState.getInt("log_video_time");
+        	exerciseVideoTime = savedInstanceState.getInt("exercise_video_time");
+        	exerciseLogVideoView.seekTo(exerciseLogVideoTime);
+        	exerciseVideoView.seekTo(exerciseVideoTime);
+        	exerciseLogVideoView.start();
+        	exerciseVideoView.start();
+	               	
+        }
+		
 		
 		
 
@@ -202,18 +226,28 @@ public class CompareView extends DatabaseActivity {
             // update the exercise with the result and play it.
             if (result != null)
             {
-            	updateFileLocationAndStart(result);
+            	updateFileLocation(result);
             }
 			
         }
 	}
         
-    	private void updateFileLocationAndStart(String result)
-    	{
-    		exercise.setFileLocation(result);
-    		exercise.update(dbSQLite);
-    		exerciseVideoView.setVideoPath(exercise.getFileLocation());
-    		exerciseVideoView.start();
-    	}
+	private void updateFileLocation(String result)
+	{
+		exercise.setFileLocation(result);
+		exercise.update(dbSQLite);
+		exerciseVideoView.setVideoPath(exercise.getFileLocation());
+		
+	}
+    	
+	
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("exercise_video_time", exerciseVideoView.getCurrentPosition());
+        outState.putInt("log_video_time", exerciseLogVideoView.getCurrentPosition());
+        super.onSaveInstanceState(outState);
+    }
+        
+
 
 }
