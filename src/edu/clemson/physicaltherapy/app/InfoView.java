@@ -15,13 +15,14 @@ import edu.clemson.physicaltherapy.R;
 /**
  * 
  * @author jburton
- *
+ * 
  * @class InfoView
  * 
- * @brief This class controls activities that displays the information page. 
+ * @brief This class controls activities that displays the information page.
  */
 
-public class InfoView extends Activity {
+public class InfoView extends Activity
+{
 
 	@SuppressLint("NewApi")
 	@Override
@@ -35,38 +36,43 @@ public class InfoView extends Activity {
 	 * 
 	 * @param savedInstanceState
 	 */
-	
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_info_view);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            // Show the Up button in the action bar.
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
+			// Show the Up button in the action bar.
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+		}
 
-        // The about_text resource is the location of the HTML file.
-        String message = getResources().getString(R.string.about_text);
+		// The about_text resource is the location of the HTML file.
+		String message = getResources().getString(R.string.about_text);
 
-        // Create the text view - html style.
-        /// Webview information at http://stackoverflow.com/questions/3295381/android-html-resource-with-references-to-other-resources
-        WebView webView = new WebView(this);
-        
-        webView.loadUrl(message);
+		// Create the text view - html style.
+		// / Webview information at
+		// http://stackoverflow.com/questions/3295381/android-html-resource-with-references-to-other-resources
+		WebView webView = new WebView(this);
 
-        // Set the text view as the activity layout
-        setContentView(webView);
+		webView.loadUrl(message);
+
+		// Set the text view as the activity layout
+		setContentView(webView);
 	}
 
 	/**
 	 * @fn private void setupActionBar()
 	 * 
-	 * Set up the {@link android.app.ActionBar}, if the API is available.
-	 * This enables the up/home button to allow users to return to the main screen.
+	 *     Set up the {@link android.app.ActionBar}, if the API is available.
+	 *     This enables the up/home button to allow users to return to the main
+	 *     screen.
 	 * 
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void setupActionBar() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+	private void setupActionBar()
+	{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+		{
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	}
@@ -78,8 +84,9 @@ public class InfoView extends Activity {
 	 * @param menu The menu
 	 * @return true
 	 */
-	public boolean onCreateOptionsMenu(Menu menu) {
-		
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+
 		getMenuInflater().inflate(R.menu.info, menu);
 		return true;
 	}
@@ -98,17 +105,19 @@ public class InfoView extends Activity {
 	 * @return If Home or Up, navigate up and return true.
 	 * @return Otherwise, parent class functionality.
 	 */
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
 			case android.R.id.home:
-	
+
 				NavUtils.navigateUpFromSameTask(this);
 				return true;
-		    
-		    case R.id.action_settings:
-		    	Intent intent = new Intent(this, SettingsActivity.class);
-		    	startActivity(intent);
-		    	break;
+
+			case R.id.action_settings:
+				Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
