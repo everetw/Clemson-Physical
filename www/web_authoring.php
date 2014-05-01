@@ -1,5 +1,8 @@
 <html>
-<head><title>Web Authoring Tool</title></head>
+<head>
+	<title>Web Authoring Tool</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
 <body>
 <h1> Clemson Physical Therapy Web Authoring Tool</h1>
 <br/>

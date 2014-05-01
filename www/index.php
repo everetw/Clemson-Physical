@@ -1,9 +1,11 @@
 <html>
 <head>
 	<title>Web Authoring Tool</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	<h1>Exercise Repository</h1>
+
 	<table border="black">
             <tr><th>Exercise</th><th>Time Created</th></tr>
 	<?php

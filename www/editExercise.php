@@ -1,5 +1,8 @@
 <html>
-<head><title>Web Authoring Tool</title></head>
+<head>
+    <title>Web Authoring Tool</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
 <?php
     $id = $_POST["exerciseID"];
     include_once("dbconnect.inc.php");

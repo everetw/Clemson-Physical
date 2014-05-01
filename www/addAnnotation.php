@@ -1,5 +1,9 @@
+<!DOCTYPE html>
 <html>
-<head><title>Web Authoring Tool</title></head>
+<head>
+    <title>Web Authoring Tool</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
 <?php
     
     include_once("dbconnect.inc.php");
@@ -118,8 +122,8 @@
 <body>
 <h1> Clemson Physical Therapy Web Authoring Tool</h1>
 <br/>
-<div style="text-align:center" max-width="600" max-height="400">
-    <embed src="<?= $url ?>" height="400" width="600">
+<div style="text-align:center">
+    <video src="<?= $url ?>" type="video/mp4" height="450" controls autoplay>
 </div>
 <form action="annotate.php" method="post">
 <h3><u>Annotations</u></h3>

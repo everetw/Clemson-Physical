@@ -1,0 +1,25 @@
+h1, th, h3{
+	color: purple;
+}
+
+input[type = "submit"]{
+	color: white;
+	background-color: purple;
+}
+
+input[type = "button"]{
+	color: white;
+	background-color: purple;
+}
+
+table{
+	background-color: #C8C8C8;
+}
+
+tbody, table th{
+	background-color: white;
+}
+
+h1 img{
+	float:right;
+}
