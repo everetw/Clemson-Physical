@@ -44,6 +44,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		// Save the context!
 		// http://stackoverflow.com/questions/15586072/using-getassets-gives-the-error-the-method-getassets-is-undefined-for-the-t
 		myContext = context; // save the context!
+		
 	}
 
 	// Creating Tables
@@ -53,7 +54,19 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
 		// Run all the SQL statements
 		for (int i = 0; i < DatabaseSQL.CREATE_DATABASE.length; i++)
+		{
+			
+			db.beginTransaction();
+			
+			System.err.println(DatabaseSQL.CREATE_DATABASE[i]);
 			db.execSQL(DatabaseSQL.CREATE_DATABASE[i]);
+			db.setTransactionSuccessful();
+			db.endTransaction();
+			
+		}
+		//db.close();
+			
+			
 
 	}
 

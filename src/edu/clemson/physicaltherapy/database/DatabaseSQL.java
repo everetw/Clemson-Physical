@@ -23,7 +23,7 @@ public class DatabaseSQL
 
 			"PRAGMA foreign_keys = OFF;\n",
 
-			"BEGIN;",
+			//"BEGIN;",
 
 			"CREATE TABLE \"exercise\"(\n"
 					+ "  \"idexercise\" INTEGER PRIMARY KEY NOT NULL,\n"
@@ -111,9 +111,9 @@ public class DatabaseSQL
 					+ "    REFERENCES \"exercise_log\"(\"idexercise_log\")\n"
 					+ "    ON DELETE CASCADE ON UPDATE CASCADE\n" + ");\n",
 
-			"CREATE INDEX \"exercise_log_annotation.fk_exercise_log_annotation_exercise_log1_idx\" ON \"exercise_log_annotation\"(\"exercise_log_idexercise_log\");\n",
-
-			"COMMIT;\n"							};
+			"CREATE INDEX \"exercise_log_annotation.fk_exercise_log_annotation_exercise_log1_idx\" ON \"exercise_log_annotation\"(\"exercise_log_idexercise_log\");\n"
+	};
+			//"COMMIT;\n"							};
 
 	public static final String[]	DROP_DATABASE	= {
 			"PRAGMA foreign_keys = OFF;\n",
